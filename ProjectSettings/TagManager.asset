@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Floor
   - MovingPlatform
+  - Trap
   layers:
   - Default
   - TransparentFX
@@ -16,9 +17,9 @@ TagManager:
   - Floor
   - Player
   - 
-  - 
-  - 
-  - 
+  - NormalWall
+  - GlassWall
+  - Trap
   - 
   - 
   - 
