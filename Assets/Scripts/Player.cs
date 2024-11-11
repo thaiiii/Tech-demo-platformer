@@ -128,8 +128,8 @@ public class Player : MonoBehaviour
             //Add jump force if available
             if (coyoteJump && !isJumped)
             {
-                rb.velocity = Vector2.up * jumpPower;
                 isJumped = true;
+                rb.velocity = Vector2.up * jumpPower;
             }
             // Mark that you jumped
             isJumped = true;
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
         {
             //Un-parent the transform
             transform.parent = null;
-
+            isJumped = true;
             isGrounded = false;
             StartCoroutine(CoyoteJumpDelay());
         }
@@ -197,7 +197,7 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Stage
-    public void ResetPosision()
+    public void ResetPosition()
     {
         transform.position = startPosition;
         hasMoved = false;
@@ -211,7 +211,7 @@ public class Player : MonoBehaviour
         horizontalValue = 0;
         rb.gravityScale = 0;
         rb.velocity = Vector3.zero;
-        
+        transform.position = startPosition;
     }
 
     #endregion
@@ -220,7 +220,7 @@ public class Player : MonoBehaviour
     //private void OnDrawGizmosSelected()
     //{
     //    Gizmos.color = Color.yellow;
-    //    Gizmos.DrawSphere(transform.position, checkWallRadius);
+    //    Gizmos.DrawSphere(groundCheckCollider.position, groundCheckRadius);
 
 
     //}

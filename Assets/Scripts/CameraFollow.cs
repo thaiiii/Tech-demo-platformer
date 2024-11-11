@@ -8,13 +8,16 @@ public class CameraFollow : MonoBehaviour
     public Transform target;
     public Vector3 offset = new Vector3(0, 0, -10);
 
+    public bool isFollowing = true;
     [Range(1, 10)]
     public float smoothFactor;
     public Vector3 minValues, maxValues;
 
     private void FixedUpdate()
     {
-        Follow();
+        if (isFollowing)
+            Follow();
+        
     }
 
     private void Follow()

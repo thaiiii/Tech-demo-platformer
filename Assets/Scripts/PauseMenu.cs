@@ -69,7 +69,7 @@ public class PauseMenu : MonoBehaviour
 
         gameTimer.StartTimer();
 
-        player.ResetPosision();
+        player.ResetPosition();
         
     }
 }
