@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,14 +9,14 @@ public class LaserEmitter : MonoBehaviour
     public float disableDuration = 5f;
     [Range(0f, 360f)]
     public float laserAngle;
-
-
     public bool isLaserActivate = true;
     public bool disablePermanently = false;
 
     public LineRenderer laserBeam;
     public LayerMask obstacleLayers;
     private PlayerDeath playerDeath;
+    private Coroutine countdownCoroutine;
+
 
     // Start is called before the first frame update
     void Start()
@@ -63,27 +63,31 @@ public class LaserEmitter : MonoBehaviour
    
 
 
-    public void DisableLaser()
+    public void DisableLaserWithoutCountdown()
     {
-        if (disablePermanently)
-        {
-            isLaserActivate = false;
-           
-        }
-        else
-        {
-            StartCoroutine(TemporaryDisable());
-        }
         laserBeam.enabled = false;
-
+        isLaserActivate = false;
+        // Nếu có một countdown đang chạy, hủy nó
+        if (countdownCoroutine != null)
+        {
+            StopCoroutine(countdownCoroutine);
+        }
 
 
 
     }
 
+    public void StartCountdownForLaser()
+    {
+        if (!disablePermanently)
+        {
+            // Bắt đầu đếm ngược để bật lại laser sau khi rời khỏi switch
+            countdownCoroutine = StartCoroutine(TemporaryDisable());
+        }
+    }
+
     IEnumerator TemporaryDisable()
     {
-        isLaserActivate = false;
         yield return new WaitForSeconds(disableDuration);
         isLaserActivate = true;
         laserBeam.enabled = true;
