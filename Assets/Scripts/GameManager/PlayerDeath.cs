@@ -52,7 +52,7 @@ public class PlayerDeath : MonoBehaviour
 
         FindAnyObjectByType<PauseMenu>().RestartStage();
         m_camera.GetComponent<CameraFollow>().isFollowing = true ;
-
+        
     }
 
 }

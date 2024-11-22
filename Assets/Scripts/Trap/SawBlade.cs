@@ -23,7 +23,7 @@ public class SawBlade : MonoBehaviour
     void Update()
     {
         int direction = rotateClockwise ? -1 : 1;
-        transform.Rotate(0, 0, rotationSpeed * direction * Time.deltaTime);
+        transform.Rotate(0, 0, rotationSpeed * direction * Time.deltaTime * 100);
 
     }
 

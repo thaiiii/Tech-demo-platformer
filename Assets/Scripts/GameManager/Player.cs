@@ -205,12 +205,23 @@ public class Player : MonoBehaviour
         rb.gravityScale = 5;
     }
 
-    public void Death()
+    public void LockMove()
     {
         isMoveable = false;
         horizontalValue = 0;
         rb.gravityScale = 0;
         rb.velocity = Vector3.zero;
+    }
+
+    public void UnlockMove()
+    {
+        isMoveable = true;
+        rb.gravityScale = 5;
+    }
+
+    public void Death()
+    {
+        LockMove();
         transform.position = startPosition;
     }
 
