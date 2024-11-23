@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaserSwitch : MonoBehaviour
+public class MovingTrapSwitch : MonoBehaviour
 {
-    public LaserEmitter laserEmitter;
+    public MovingTrap movingTrap;
 
+    // Update is called once per frame
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") || collision.gameObject.CompareTag("MassObject"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("MassObject"))
         {
-            // Tắt laser nhưng không bắt đầu đếm ngược ngay
-            laserEmitter.DisableLaserWithoutCountdown();
+            movingTrap.DisableMoving();
+            Debug.Log("a");
         }
     }
 
@@ -20,9 +21,7 @@ public class LaserSwitch : MonoBehaviour
         if (collision.CompareTag("Player") || collision.gameObject.CompareTag("MassObject"))
         {
             // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
-            laserEmitter.StartCountdownForLaser();
+            movingTrap.EnableMoving();
         }
     }
-
-
 }

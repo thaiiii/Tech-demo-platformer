@@ -6,6 +6,7 @@ public class Trampoline : MonoBehaviour
 {
     public bool isActivated = false;
     public float bounceForce = 20f; //Lưc bat cho nguoi choi
+    public float bounceDelay = 1f;
     private Animator animator;
 
     // Start is called before the first frame update
@@ -14,21 +15,23 @@ public class Trampoline : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (!isActivated && collision.gameObject.CompareTag("Player"))
+        if (!isActivated && (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("MassObject"))) 
         {
             // Kích hoạt animation nhún xuống
             animator.SetTrigger("Bounce");
 
-            // Bật người chơi lên cao
-            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            if (playerRb != null)
-            {
-                playerRb.velocity = new Vector2(playerRb.velocity.x, bounceForce); // Chỉ thay đổi velocity Y
-            }
+            //// Bật người chơi lên cao
+            //Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            //if (playerRb != null)
+            //{
+            //    playerRb.velocity = new Vector2(playerRb.velocity.x, bounceForce); // Chỉ thay đổi velocity Y
+            //}
+            Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
+            rb.velocity = Vector2.up * bounceForce;
 
-            // Đặt block vào trạng thái "đã sử dụng" trong 1 giây
+            // Đặt block vào trạng thái "đã sử dụng" trong  giây
             isActivated = true;
             StartCoroutine(ResetTrampoline());
         }
@@ -38,7 +41,7 @@ public class Trampoline : MonoBehaviour
 
     private IEnumerator ResetTrampoline()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(bounceDelay);
         isActivated = false;
         animator.ResetTrigger("Bounce"); //Reset trang thai cho lan tiep theo
     }

@@ -10,8 +10,8 @@ public class TeleportTower : MonoBehaviour
     public bool isOccupied = false;  // Trạng thái cây trụ
     public enum TowerType
     {
-        TYPE_STATIC,
-        TYPE_DYNAMIC
+        TYPE_TELEPORT,
+        TYPE_SWAP
     }
     public TowerType type;
 
