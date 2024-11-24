@@ -122,17 +122,18 @@ public class Player : MonoBehaviour
             rb.gravityScale = 5;  // Trọng lực được áp dụng lại
         }
         animator.SetBool("isClinging", isTouchingGlassWall || isTouchingNormalWall);
-        //if press Jump button, enable bool jump, othwewise turn it off
+        // Nếu bấm nút nhảy
         if (Input.GetButtonDown("Jump"))
         {
-            //Add jump force if available
-            if (coyoteJump && !isJumped)
+            // Nếu đang trong coyote jump hoặc đứng trên mặt đất
+            if ((coyoteJump || isGrounded) && !isJumped)
             {
-                isJumped = true;
+                isJumped = true; // Đánh dấu trạng thái đang nhảy
+                coyoteJump = false; // Tắt coyote jump ngay lập tức
+
+                // Thêm lực nhảy
                 rb.velocity = Vector2.up * jumpPower;
             }
-            // Mark that you jumped
-            isJumped = true;
         }
     }
 
@@ -156,32 +157,26 @@ public class Player : MonoBehaviour
 
     private void GroundCheck()
     {
+        // Kiểm tra nếu người chơi đang đứng trên mặt đất
         Collider2D[] collider = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayer);
         if (collider.Length > 0)
         {
-            isGrounded = true;
-            isJumped = false;
-            coyoteJump = true;
-            //Check if ground has a tag moving platform
-            foreach (var c in collider)
+            if (!isGrounded) // Nếu mới chạm đất
             {
-                if (c.tag == "MovingPlatform")
-                {
-                    if (isGrounded == false)
-                        isGrounded = true;
-                    transform.parent = c.transform;
-
-                }
+                isGrounded = true;
+                isJumped = false; // Cho phép nhảy lại
             }
+
+            coyoteJump = true; // Coyote jump được kích hoạt lại
 
         }
         else
         {
-            //Un-parent the transform
-            transform.parent = null;
-            isJumped = true;
-            isGrounded = false;
-            StartCoroutine(CoyoteJumpDelay());
+            if (isGrounded) // Nếu rời khỏi mặt đất
+            {
+                isGrounded = false; // Đánh dấu không còn chạm đất
+                StartCoroutine(CoyoteJumpDelay()); // Kích hoạt coyote jump
+            }
         }
 
         //animator.SetBool("Jump", !isGrounded);

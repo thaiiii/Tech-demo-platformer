@@ -152,9 +152,9 @@ public class PlayerAbilities : MonoBehaviour
         canTeleport = true;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, teleportRadius);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.yellow;
+    //    Gizmos.DrawWireSphere(transform.position, teleportRadius);
+    //}
 }

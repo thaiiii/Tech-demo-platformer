@@ -99,6 +99,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laserEmitter: {fileID: 2146555507994513055}
+  applicableTags:
+  - Player
+  - MassObject
+  - Enemy
 --- !u!61 &3767672521994344036
 BoxCollider2D:
   m_ObjectHideFlags: 0
