@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
     private GameTimer gameTimer;
-    private Vector3 startPosition;
+    public Vector3 startPosition;
 
 
     [Header("Movement")]
