@@ -192,7 +192,7 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Stage
-    public void ResetPosition()
+    public void ResetPosition() // Trạng thái về vị trí spawn, chưa từng di chuyển
     {
         transform.position = startPosition;
         hasMoved = false;
@@ -200,7 +200,7 @@ public class Player : MonoBehaviour
         rb.gravityScale = 5;
     }
 
-    public void LockMove()
+    public void LockMove() // Không cho phép di chuyển
     {
         isMoveable = false;
         horizontalValue = 0;
@@ -208,16 +208,17 @@ public class Player : MonoBehaviour
         rb.velocity = Vector3.zero;
     }
 
-    public void UnlockMove()
+    public void UnlockMove() // Cho phép di chuyển
     {
         isMoveable = true;
         rb.gravityScale = 5;
     }
 
-    public void Death()
+    public void Death() //Chết = không cho phép di chuyển + về vị trí spawn, chưa từng di chuyển
     {
+        ResetPosition();
         LockMove();
-        transform.position = startPosition;
+        
     }
 
     #endregion

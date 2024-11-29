@@ -8,6 +8,7 @@ public class TeleportTower : MonoBehaviour
     public Sprite activatedSprite;       // Hình dạng khi người chơi nhập vào
     private SpriteRenderer spriteRenderer;
     public bool isOccupied = false;  // Trạng thái cây trụ
+    private Vector3 startPosition;
     public enum TowerType
     {
         TYPE_TELEPORT,
@@ -18,11 +19,18 @@ public class TeleportTower : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        startPosition = transform.position;
     }
 
     public void Activate(bool occupied)
     {
         isOccupied = occupied;
         spriteRenderer.sprite = isOccupied ? activatedSprite : normalSprite;
+    }
+
+    public void ResetTower()
+    {
+        transform.position = startPosition; ;
+        Activate(false); //Trả lại trạng thái ban đầu
     }
 }

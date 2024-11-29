@@ -8,7 +8,11 @@ public class Cannon : MonoBehaviour
     public float rotationSpeed = 2f;
     public float fireRate = 3f; // thời gian chờ giữa các phát bắn
     private float nextFireTime;
+    public float disableDuration;
     public LayerMask obstacleLayer;
+    private Coroutine countdownCoroutine;
+    public bool isCannonActivated = true;
+    public bool disablePermanently = false;
 
     private Transform player;
 
@@ -20,8 +24,11 @@ public class Cannon : MonoBehaviour
 
     void Update()
     {
-        AimAtPlayer();
-        CheckAndFire();
+        if (isCannonActivated)
+        {
+            AimAtPlayer();
+            CheckAndFire();
+        }
     }
 
     void AimAtPlayer()
@@ -50,5 +57,39 @@ public class Cannon : MonoBehaviour
         GameObject missile = Instantiate(missilePrefab, firePoint.position, firePoint.rotation);
         Missile missileScript = missile.GetComponent<Missile>();
         missileScript.SetTarget(player);
+    }
+
+    public void ClearAllMissiles()
+    {
+        Missile[] missiles = FindObjectsOfType<Missile>();
+        foreach (Missile m in missiles)
+        {
+            Destroy(m.gameObject);
+        }
+    }
+
+    public void DisableLaserWithoutCountdown()
+    {
+        isCannonActivated = false;
+        // Nếu có một countdown đang chạy, hủy nó
+        if (countdownCoroutine != null)
+        {
+            StopCoroutine(countdownCoroutine);
+        }
+    }
+
+    public void StartCountdownForLaser()
+    {
+        if (!disablePermanently)
+        {
+            // Bắt đầu đếm ngược để bật lại laser sau khi rời khỏi switch
+            countdownCoroutine = StartCoroutine(TemporaryDisable());
+        }
+    }
+
+    IEnumerator TemporaryDisable()
+    {
+        yield return new WaitForSeconds(disableDuration);
+        isCannonActivated = true;
     }
 }

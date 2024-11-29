@@ -14,15 +14,19 @@ public class PlayerDeath : MonoBehaviour
    
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Kiểm tra nếu người chơi chạm vào layer của gai
-        if (collision.gameObject.CompareTag("Trap"))
+        // Kiểm tra nếu người chơi chạm vào tag Trap
+        if (collision.gameObject.CompareTag("Trap") && !HiddenStatus())
         {
-
-            Die();
+            KillPlayer();
         }
+        // Kiểm tra nếu người chơi chạm vào tag Enemy
+        //if (collision.gameObject.CompareTag("Enemy"))
+        //{
+        //    KillPlayer();
+        //}
     }
 
-    public void Die()
+    public void KillPlayer()
     {
         // Xử lý cái chết của người chơi, ví dụ: hiển thị hiệu ứng, tải lại màn chơi
         m_camera.GetComponent<CameraFollow>().isFollowing = false;
@@ -35,7 +39,6 @@ public class PlayerDeath : MonoBehaviour
             StartCoroutine(DeathMenu());
         }
     }
-
 
     IEnumerator DeathMenu()
     {
@@ -53,6 +56,11 @@ public class PlayerDeath : MonoBehaviour
         FindAnyObjectByType<PauseMenu>().RestartStage();
         m_camera.GetComponent<CameraFollow>().isFollowing = true ;
         
+    }
+
+    public bool HiddenStatus()
+    {
+        return GetComponent<PlayerAbilities>().isHidden;
     }
 
 }

@@ -9,6 +9,7 @@ TagManager:
   - Trap
   - BreakableTile
   - MassObject
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - Trap
   - BreakableTile
   - Tower
-  - 
+  - Enemy
   - 
   - 
   - 

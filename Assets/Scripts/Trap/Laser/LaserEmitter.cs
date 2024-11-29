@@ -28,12 +28,10 @@ public class LaserEmitter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isLaserActivate)
-        {
-            transform.rotation = Quaternion.Euler(0f, 0f, laserAngle);
+        transform.rotation = Quaternion.Euler(0f, 0f, laserAngle);
+        if (isLaserActivate)   
             UpdateLaserBeam();
-            
-        }
+         
     }
 
     private void UpdateLaserBeam()
@@ -43,10 +41,10 @@ public class LaserEmitter : MonoBehaviour
         if (hit.collider != null)
         {
             endPoint = hit.point;
-            if (hit.collider.CompareTag("Player"))
+            if (hit.collider.CompareTag("Player") && !hit.collider.GetComponent<PlayerDeath>().HiddenStatus())
             {
-                playerDeath.Die();
-                hit.collider.gameObject.GetComponent<Player>().Death();
+                playerDeath.KillPlayer();
+                hit.collider.gameObject.GetComponent<PlayerDeath>().KillPlayer();
             }
         }
         else

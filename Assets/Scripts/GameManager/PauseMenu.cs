@@ -70,6 +70,29 @@ public class PauseMenu : MonoBehaviour
         gameTimer.StartTimer();
 
         player.ResetPosition();
-        
+
+        //Reset objects position
+        ResetTeleportTower();   //Teleport towers
+        SwitchCannonActivation(); //Clear all missiles
+    }
+
+    private void ResetTeleportTower()
+    {
+        // Reset vị trí tất cả các TeleportTower
+        TeleportTower[] teleportTowers = FindObjectsOfType<TeleportTower>();
+        foreach (TeleportTower tower in teleportTowers)
+        {
+            tower.ResetTower();
+        }
+    }
+
+    private void SwitchCannonActivation()
+    {
+        // bật/tắt tất cả Cannon
+        Cannon[] cannons = FindObjectsOfType<Cannon>();
+        foreach (Cannon cannon in cannons)
+        {
+            cannon.ClearAllMissiles();
+        }
     }
 }

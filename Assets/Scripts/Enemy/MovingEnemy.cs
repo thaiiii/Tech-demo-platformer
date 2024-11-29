@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingTrap : MonoBehaviour
+public class MovingEnemy : MonoBehaviour
 {
     [System.Serializable]
     public class SegmentSpeed
@@ -24,7 +24,7 @@ public class MovingTrap : MonoBehaviour
     public int currentWaypointIndex = 0;
     public int nextWaypointIndex;
     public float moveSpeed;
-    
+
 
     private Transform targetWaypoint;
     private Coroutine countdownCoroutine;
@@ -113,6 +113,10 @@ public class MovingTrap : MonoBehaviour
             }
         }
 
+        if (waypoints[nextWaypointIndex].transform.position.x > transform.position.x)
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        else
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         targetWaypoint = waypoints[nextWaypointIndex];
         moveSpeed = GetCurrentSegmentSpeed();
     }

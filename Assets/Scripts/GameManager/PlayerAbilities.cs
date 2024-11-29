@@ -30,7 +30,8 @@ public class PlayerAbilities : MonoBehaviour
     void Update()
     {
         HandleTeleport();
-
+        if (isHidden)
+            transform.position = currentTower.transform.position;
     }
 
     private void HandleTeleport()
@@ -48,7 +49,6 @@ public class PlayerAbilities : MonoBehaviour
             StartCoroutine(TeleportDelay());
             //Kiểm tra trụ gần nhất để teleport
             TeleportTower targetTower = GetClosestTower(towersInRange);
-            Debug.Log(targetTower);
             if (!isHidden)
             {
                //Nếu chưa ẩn, teleport 
@@ -139,7 +139,7 @@ public class PlayerAbilities : MonoBehaviour
             spriteRenderer.enabled = true;
 
             //thả cao hơn một chút
-            rb.transform.position = currentTower.transform.position + new Vector3(0, 2f, 0);
+            rb.transform.position = currentTower.transform.position + new Vector3(0, 1.5f, 0);
             currentTower = null;
             rb.velocity = storedVelocity;
         }

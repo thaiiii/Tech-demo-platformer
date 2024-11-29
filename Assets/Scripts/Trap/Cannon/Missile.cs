@@ -36,12 +36,11 @@ public class Missile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log(collision.name);
-        // Kiểm tra va chạm với người chơi hoặc vật cản
-        if (collision.CompareTag("Player"))
+        // Kiểm tra va chạm với vật cản
+        if (!collision.CompareTag("Player"))
         {
-            collision.GetComponent<PlayerDeath>().Die();
-        }
             Destroy(gameObject); // Tên lửa biến mất khi va chạm vật cản
-        
+        }
+
     }
 }
