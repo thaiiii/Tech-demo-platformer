@@ -46,8 +46,9 @@ public class PlayerAbilities : MonoBehaviour
         {
             if (!isHidden)
             {
-               //Nếu chưa ẩn, teleport 
+                //Nếu chưa ẩn, teleport hoặc swap
                 TryTeleportToTower(targetTower);
+                TrySwapTower(targetTower);
             }
             else
             {
@@ -59,13 +60,18 @@ public class PlayerAbilities : MonoBehaviour
                 }
                 else
                 {
-                    //Nếu đang ẩn, có trụ xung quanh, tele trụ mới
-                    currentTower.Activate(false);
-                    TryTeleportToTower(targetTower);
+                    if (targetTower.type == TeleportTower.TowerType.TYPE_TELEPORT)
+                    {
+                        //Nếu đang ẩn, có trụ xung quanh, tele trụ mới
+                        currentTower.Activate(false);
+                        TryTeleportToTower(targetTower);
+                    }
+                    else if (targetTower.type == TeleportTower.TowerType.TYPE_SWAP)
+                        TrySwapTower(targetTower);
+                }
                 }
             }
         }
-    }
 
     private TeleportTower GetClosestTower(Collider2D[] towersInRange)
     {
@@ -108,38 +114,46 @@ public class PlayerAbilities : MonoBehaviour
             ExitTower();
         }
 
-        if (tower != null && tower.isAvailable) //Kiểm tra nếu tower khả dụng
+        if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_TELEPORT) //Kiểm tra nếu tower teleport khả dụng
         {
-            if (tower.type == TeleportTower.TowerType.TYPE_TELEPORT)
-            {
-                //Lưu lại vận tốc trước khi teleport
-                storedVelocity = rb.velocity;
+            //Lưu lại vận tốc trước khi teleport
+            storedVelocity = rb.velocity;
 
-                // Set parent vào cây trụ, chuyển collider của player sang isTrigger
-                transform.SetParent(tower.transform);
-                transform.position = tower.transform.position + Vector3.up;
+            // Set parent vào cây trụ, chuyển collider của player sang isTrigger
+            transform.SetParent(tower.transform);
+            transform.position = tower.transform.position + Vector3.up;
 
-                playerCollider.isTrigger = true;
+            playerCollider.isTrigger = true;
 
-                // Kích hoạt trạng thái ẩn, cập nhật trụ hiện tại
-                tower.Activate(true);
-                currentTower = tower;
-                isHidden = true;
+            // Kích hoạt trạng thái ẩn, cập nhật trụ hiện tại
+            tower.Activate(true);
+            currentTower = tower;
+            isHidden = true;
 
-                //ko cho phép di chuyển, ẩn sprite renderer
-                gameObject.GetComponent<Player>().LockMove();
-                spriteRenderer.enabled = false;
-            }
-            else if (tower.type == TeleportTower.TowerType.TYPE_SWAP)
+            //ko cho phép di chuyển, ẩn sprite renderer
+            gameObject.GetComponent<Player>().LockMove();
+            spriteRenderer.enabled = false;
+        }
+    }
+
+    private void TrySwapTower(TeleportTower tower)
+    {
+        if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_SWAP) //Kiểm tra nếu tower swap khả dụng
+        {
+            if (!isHidden)
             {
                 Vector3 tempPos = transform.position;
                 transform.position = tower.transform.position;
                 tower.transform.position = tempPos;
             }
-
+            else
+            {
+                Vector3 tempPos = currentTower.transform.position;
+                currentTower.transform.position = tower.transform.position;
+                tower.transform.position = tempPos;
+            }
         }
     }
-
     public void ExitTower()
     {
         if (currentTower != null)
