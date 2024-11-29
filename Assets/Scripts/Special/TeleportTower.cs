@@ -7,7 +7,10 @@ public class TeleportTower : MonoBehaviour
     public Sprite normalSprite;       // Hình dạng bình thường của cây trụ
     public Sprite activatedSprite;       // Hình dạng khi người chơi nhập vào
     private SpriteRenderer spriteRenderer;
-    public bool isOccupied = false;  // Trạng thái cây trụ
+    public GameObject availableMark;
+    public bool isOccupied = false;  // Trạng thái bị chiếm
+    public bool isAvailable = true;  // Trạng thái sẵn sàng
+    public float coolDown = 3f;
     private Vector3 startPosition;
     public enum TowerType
     {
@@ -30,7 +33,15 @@ public class TeleportTower : MonoBehaviour
 
     public void ResetTower()
     {
-        transform.position = startPosition; ;
+        isAvailable = true;
+        transform.position = startPosition;
         Activate(false); //Trả lại trạng thái ban đầu
+    }
+
+    public IEnumerator CoolDownTower()
+    {
+        isAvailable = false;
+        yield return new WaitForSeconds(coolDown);
+        isAvailable = true;
     }
 }

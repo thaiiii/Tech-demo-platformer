@@ -13,7 +13,11 @@ public class TransportPlatform : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (applicableTags.Contains(collision.gameObject.tag))
+        // Kiểm tra nếu gameObject và cha còn tồn tại trước khi hủy liên kết
+        if (applicableTags.Contains(collision.gameObject.tag) &&
+            collision.transform != null &&
+            gameObject.activeInHierarchy &&
+            collision.gameObject.activeInHierarchy)
             collision.transform.SetParent(null);
     }
 }

@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 84388672045597499}
   - component: {fileID: 1078552354849842789}
   - component: {fileID: 2445600872297094039}
+  - component: {fileID: 4477154453305016425}
   m_Layer: 14
   m_Name: Body
   m_TagString: Enemy
@@ -126,7 +127,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2183045365115464699}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -174,7 +175,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -206,25 +207,12 @@ MonoBehaviour:
   waypoints:
   - {fileID: 4576230587512428285}
   - {fileID: 1171966661018158835}
-  - {fileID: 9053670222400502080}
   segmentSpeeds:
   - fromWaypointIndex: 0
     toWaypointIndex: 1
     speed: 5
     delay: 1
   - fromWaypointIndex: 1
-    toWaypointIndex: 2
-    speed: 5
-    delay: 1
-  - fromWaypointIndex: 2
-    toWaypointIndex: 1
-    speed: 5
-    delay: 1
-  - fromWaypointIndex: 1
-    toWaypointIndex: 0
-    speed: 5
-    delay: 1
-  - fromWaypointIndex: 2
     toWaypointIndex: 0
     speed: 5
     delay: 1
@@ -236,6 +224,21 @@ MonoBehaviour:
   currentWaypointIndex: 0
   nextWaypointIndex: 0
   moveSpeed: 0
+--- !u!114 &4477154453305016425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2183045365115464699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40f81fed65a0e904f8e437e4a8524751, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  attackSpeed: 15
+  attackDelay: 1
 --- !u!1 &6721396364282279476
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,38 +264,7 @@ Transform:
   m_GameObject: {fileID: 6721396364282279476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.68, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3279615240798375701}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7108483936927381004
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9053670222400502080}
-  m_Layer: 0
-  m_Name: Point (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9053670222400502080
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7108483936927381004}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.77, y: 2.41, z: 0}
+  m_LocalPosition: {x: 9.56, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -308,7 +280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3279615240798375701}
   m_Layer: 0
-  m_Name: PointyEnemy
+  m_Name: MovingEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -330,6 +302,5 @@ Transform:
   - {fileID: 5598557270367795880}
   - {fileID: 4576230587512428285}
   - {fileID: 1171966661018158835}
-  - {fileID: 9053670222400502080}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

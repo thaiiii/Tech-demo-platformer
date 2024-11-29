@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Build.Content;
 using UnityEngine;
+using static Enemy;
 
 public class PlayerDeath : MonoBehaviour
 {
@@ -19,11 +21,13 @@ public class PlayerDeath : MonoBehaviour
         {
             KillPlayer();
         }
-        // Kiểm tra nếu người chơi chạm vào tag Enemy
-        //if (collision.gameObject.CompareTag("Enemy"))
-        //{
-        //    KillPlayer();
-        //}
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (collision.GetComponent<Enemy>().type == EnemyType.Pointy) 
+                KillPlayer();
+            else if (collision.GetComponent<Enemy>().type == EnemyType.Normal && !HiddenStatus())
+                KillPlayer();
+        }
     }
 
     public void KillPlayer()
@@ -33,6 +37,10 @@ public class PlayerDeath : MonoBehaviour
         // Load lại màn chơi hoặc thực hiện các hành động khi người chơi chết
         if (!isDead)
         {
+            //Nếu isHidden = true, gọi ExitTower, bỏ hết Parent
+            if(GetComponent<PlayerAbilities>().isHidden)
+                GetComponent<PlayerAbilities>().ExitTower();
+            
             isDead = true;  
             //tam dung time
             gameManager.GetComponent<GameTimer>().PauseTimer();
