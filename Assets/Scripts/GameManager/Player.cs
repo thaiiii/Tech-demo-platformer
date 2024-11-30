@@ -204,14 +204,12 @@ public class Player : MonoBehaviour
     {
         isMoveable = false;
         horizontalValue = 0;
-        rb.gravityScale = 0;
         rb.velocity = Vector3.zero;
     }
 
     public void UnlockMove() // Cho phép di chuyển
     {
         isMoveable = true;
-        rb.gravityScale = 5;
     }
 
     public void Death() //Chết = không cho phép di chuyển + về vị trí spawn, chưa từng di chuyển

@@ -12,11 +12,13 @@ public class PauseMenu : MonoBehaviour
     private bool isPaused = false;
     private Player player;
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
+    private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
     private void Start()
     {
         player = FindAnyObjectByType<Player>();
         gameTimer = FindAnyObjectByType<GameTimer>();
+        npcDialogue = FindAnyObjectByType<NPCDialogue>(); 
     }
 
 
@@ -26,6 +28,13 @@ public class PauseMenu : MonoBehaviour
         //Nhan ESC de tam dung
         if(Input.GetKeyDown(KeyCode.Escape))
         {
+            if (npcDialogue != null && npcDialogue.isInConversation)
+            {
+                // Nếu đang trong hội thoại, kết thúc nó
+                npcDialogue.EndConversation();
+                return;
+            }
+
             if (isPaused)
                 ResumeStage();
             else
