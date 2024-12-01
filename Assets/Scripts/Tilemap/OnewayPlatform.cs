@@ -39,7 +39,6 @@ public class OnewayPlatform : MonoBehaviour
         //
         if (isFalling && !IsPlayerAbovePlatform())
         {
-            Debug.Log("Player left platform, resetting offset to 0");
             platformEffector.rotationalOffset = 0f; // Đặt lại để người chơi đứng được
             isFalling = false;
         }
