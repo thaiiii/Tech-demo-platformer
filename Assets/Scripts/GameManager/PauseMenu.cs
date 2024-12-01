@@ -105,4 +105,13 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    private void ResetFan()
+    {
+        Fan[] fans = FindObjectsOfType<Fan>();
+        foreach (Fan fan in fans)
+        {
+            fan.ResetFan();
+        }
+    }
+
 }

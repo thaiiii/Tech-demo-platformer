@@ -11,18 +11,26 @@ public class Enemy : MonoBehaviour
     }
 
     public EnemyType type;
+    private Animator animator;
+    private Rigidbody2D rb;
+    private MovingEnemy movingEnemy; // Tham chiếu đến script MovingEnemy
+    private Vector3 previousPosition;
     public float attackSpeed = 10f; // Tốc độ lao về phía điểm tiếp theo
     public float attackDelay = 1f; // Thời gian dừng trước khi tấn công
-    private MovingEnemy movingEnemy; // Tham chiếu đến script MovingEnemy
+    
     private bool isAttacking = false;
     
     private void Awake()
     {
         movingEnemy = GetComponent<MovingEnemy>();    
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        previousPosition = transform.position;
     }
 
     private void Update()
     {
+        HandleAnimator();
         if (type == EnemyType.Pointy && !isAttacking)
         {
             DetectAndAttackPlayer();
@@ -71,5 +79,13 @@ public class Enemy : MonoBehaviour
 
         isAttacking = false;
         movingEnemy.StartCountdownForMoving(); // Kích hoạt di chuyển trở lại
+    }
+
+    private void HandleAnimator()
+    {
+        // Tính toán vận tốc dựa trên thay đổi vị trí
+        Vector3 currentVelocity = (transform.position - previousPosition) / Time.deltaTime;
+        previousPosition = transform.position;
+        animator.SetFloat("xVelocity", Mathf.Abs( currentVelocity.x));
     }
 }

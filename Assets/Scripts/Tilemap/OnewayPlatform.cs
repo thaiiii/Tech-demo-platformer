@@ -1,52 +1,36 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 public class OnewayPlatform : MonoBehaviour
 {
-    private PlatformEffector2D platformEffector;
-    public Collider2D platformCollider;
-    public bool isFalling = false;
+    public Collider2D platformCollider; // Collider của Tilemap
+    public Collider2D playerCollider; // Collider của người chơi
+    public float fallDuration = 0.3f; // Thời gian để vô hiệu hóa va chạm
 
     private void Awake()
     {
-        platformCollider = GetComponent<Collider2D>();
-        platformEffector = GetComponent<PlatformEffector2D>();
+        platformCollider = GetComponent<CompositeCollider2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         HandlePlatformInteraction();
     }
 
     private void HandlePlatformInteraction()
     {
-        //Khi người chơi chưa rơi và nhấn xuống , cho phép rơi xuống
-        if (Input.GetKeyDown(KeyCode.S) && !isFalling)
+        if (Input.GetKeyDown(KeyCode.S) && IsPlayerAbovePlatform())
         {
-            platformEffector.rotationalOffset = 180f; //Cho phép đi xuyên từ trên xuống
-            isFalling = true;
-            StartCoroutine(ResetRotationalOffset());
-        }
-        
-    }
-
-    private IEnumerator ResetRotationalOffset()
-    {
-        yield return new WaitForSeconds(0.3f);
-        //
-        if (isFalling && !IsPlayerAbovePlatform())
-        {
-            platformEffector.rotationalOffset = 0f; // Đặt lại để người chơi đứng được
-            isFalling = false;
+            playerCollider = FindPlayerAbovePlatform();
+            if (playerCollider != null)
+            {
+                StartCoroutine(AllowPlayerToFall());
+            }
         }
     }
 
-    private bool IsPlayerAbovePlatform ()
+    private bool IsPlayerAbovePlatform()
     {
-        // Lấy tất cả Collider trong phạm vi của platform
         Collider2D[] colliders = Physics2D.OverlapBoxAll(
             platformCollider.bounds.center,
             platformCollider.bounds.size,
@@ -57,9 +41,48 @@ public class OnewayPlatform : MonoBehaviour
         {
             if (col.CompareTag("Player"))
             {
-                return true; // Người chơi vẫn nằm trong phạm vi platform
+                return true; // Người chơi đang đứng trên Tilemap
             }
         }
-        return false; // Không có người chơi trong phạm vi
+        return false;
+    }
+
+    private Collider2D FindPlayerAbovePlatform()
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(
+            platformCollider.bounds.center,
+            platformCollider.bounds.size,
+            0f
+        );
+
+        foreach (var col in colliders)
+        {
+            if (col.CompareTag("Player"))
+            {
+                return col; // Trả về Collider của người chơi
+            }
+        }
+        return null;
+    }
+
+    private IEnumerator AllowPlayerToFall()
+    {
+        // Tạm thời vô hiệu hóa va chạm giữa người chơi và platform
+        Physics2D.IgnoreCollision(playerCollider, platformCollider, true);
+
+        yield return new WaitForSeconds(fallDuration);
+
+        // Kích hoạt lại va chạm
+        Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Hiển thị vùng kiểm tra trong Scene View để debug
+        Gizmos.color = Color.yellow;
+        if (platformCollider != null)
+        {
+            Gizmos.DrawWireCube(platformCollider.bounds.center, platformCollider.bounds.size);
+        }
     }
 }

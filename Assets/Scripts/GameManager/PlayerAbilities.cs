@@ -30,7 +30,12 @@ public class PlayerAbilities : MonoBehaviour
     {
         HandleTeleport();
         if (isHidden)
+        {
             transform.position = currentTower.transform.position;
+            gameObject.GetComponent<Player>().LockMove();
+            Debug.Log(rb.velocity);
+        }
+            
     }
 
     private void HandleTeleport()
@@ -130,8 +135,7 @@ public class PlayerAbilities : MonoBehaviour
             currentTower = tower;
             isHidden = true;
 
-            //ko cho phép di chuyển, ẩn sprite renderer
-            gameObject.GetComponent<Player>().LockMove();
+            //ẩn sprite renderer
             spriteRenderer.enabled = false;
         }
     }

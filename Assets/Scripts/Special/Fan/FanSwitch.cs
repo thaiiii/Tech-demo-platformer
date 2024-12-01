@@ -22,8 +22,11 @@ public class FanSwitch : MonoBehaviour
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
-            if (fan != null)
+            if (fan != null && fan.gameObject.activeSelf) // Kiểm tra Fan đang active
+            {
                 fan.StartCountdownForFan();
+            }
+
         }
     }
 }

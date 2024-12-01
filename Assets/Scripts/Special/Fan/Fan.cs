@@ -9,7 +9,9 @@ public class Fan : MonoBehaviour
     public List<string> affectedTags; // Danh sách tag bị ảnh hưởng
     public Vector3 forceDirection = Vector3.up; // Hướng gió
     private Vector2 boxSize = new Vector2(1f, 1f); // Kích thước vùng tác động (hình hộp chữ nhật)
-    
+    private Vector3 startPosition;
+
+    //public GameObject windZone;
     public bool isFanActivated = true;
     public bool disablePermanently = false;
     public float disableDuration = 3f;
@@ -17,11 +19,12 @@ public class Fan : MonoBehaviour
 
     private Coroutine countdownCoroutine;
     private Animator animator;
-    public GameObject windZone;
+    
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        startPosition = transform.position;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -44,7 +47,7 @@ public class Fan : MonoBehaviour
     public void DisableFanWithoutCountdown()
     {
         isFanActivated = false;
-        animator.SetBool("isFanActivated", isFanActivated);
+        animator.SetBool("isFanActivated", false);
         // Nếu có một countdown đang chạy, hủy nó
         if (countdownCoroutine != null)
         {
@@ -91,4 +94,9 @@ public class Fan : MonoBehaviour
         }
     }
 
+    public void ResetFan()
+    {
+        transform.position = startPosition;
+        isFanActivated = true;
+    }
 }

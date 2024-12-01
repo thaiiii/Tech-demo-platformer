@@ -25,7 +25,18 @@ public class PlayerDeath : MonoBehaviour
         {
             if (collision.GetComponent<Enemy>().type == EnemyType.Pointy) 
                 KillPlayer();
-            else if (collision.GetComponent<Enemy>().type == EnemyType.Normal && !HiddenStatus())
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+
+        if (enemy != null) // Kiểm tra Enemy không null trước
+        {
+            if (enemy.type == EnemyType.Normal && !HiddenStatus())
+                KillPlayer();
+            if (enemy.type == EnemyType.Pointy)
                 KillPlayer();
         }
     }
