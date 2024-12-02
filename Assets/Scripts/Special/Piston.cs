@@ -1,10 +1,12 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Piston : MonoBehaviour
 {
     [Header("Piston Settings")]
-    public Transform pistonBody; // Pít tông di chuyển
+    public List<string> applicableTags; // Các tag được phép đẩy
+    private Transform pistonBody; // Pít tông di chuyển
     public Transform pistonMaxPosition; // Vị trí tối đa
     public Transform pistonMinPosition; // Vị trí tối thiểu
     public float extendSpeed = 0.5f; // Tốc độ giãn ra
@@ -16,6 +18,11 @@ public class Piston : MonoBehaviour
     public bool isExtending = true; // Trạng thái đang giãn
     public bool isMax = false; //Đã giãn hết mức
     public bool isMin = false;   //Đã thu hết mức
+
+    private void Awake()
+    {
+        pistonBody = GetComponent<Transform>();
+    }
 
     private void Update()
     {
@@ -55,4 +62,19 @@ public class Piston : MonoBehaviour
         }
 
     }
+
+    #region Only choosen tags con collide with piston
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!applicableTags.Contains(collision.collider.tag))
+        {
+            // Vô hiệu hóa va chạm với các tag không hợp lệ
+            Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>(), true);
+            Debug.Log($"Collision ignored with: {collision.collider.name}");
+            return;
+        }
+    }
+    #endregion
+
+
 }

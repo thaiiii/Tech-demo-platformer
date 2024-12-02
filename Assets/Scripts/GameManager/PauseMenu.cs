@@ -2,17 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TMPro;
 using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
+    [Header("In Game")]
     public GameObject pauseMenuUI;
     private bool isPaused = false;
     private Player player;
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
     private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
+
+    
 
     private void Start()
     {
@@ -42,6 +46,7 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    #region In Game
     public void PauseStage()
     {
         pauseMenuUI.SetActive(true);
@@ -83,6 +88,7 @@ public class PauseMenu : MonoBehaviour
         //Reset objects position
         ResetTeleportTower();   //Teleport towers
         SwitchCannonActivation(); //Clear all missiles
+        ResetFan(); //Reset all fans
     }
 
     private void ResetTeleportTower()
@@ -113,5 +119,8 @@ public class PauseMenu : MonoBehaviour
             fan.ResetFan();
         }
     }
+    #endregion
 
+
+    
 }

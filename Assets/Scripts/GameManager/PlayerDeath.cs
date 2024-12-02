@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Build.Content;
 using UnityEngine;
+using static Bullet;
 using static Enemy;
 
 public class PlayerDeath : MonoBehaviour
@@ -21,6 +22,12 @@ public class PlayerDeath : MonoBehaviour
         {
             KillPlayer();
         }
+        else if(collision.gameObject.CompareTag("Trap") && HiddenStatus())
+        {
+            if(collision.GetComponent<Bullet>().type == BulletType.SPECIAL)
+                KillPlayer();
+        }
+
         if (collision.gameObject.CompareTag("Enemy"))
         {
             if (collision.GetComponent<Enemy>().type == EnemyType.Pointy) 
@@ -45,14 +52,16 @@ public class PlayerDeath : MonoBehaviour
     {
         // Xử lý cái chết của người chơi, ví dụ: hiển thị hiệu ứng, tải lại màn chơi
         m_camera.GetComponent<CameraFollow>().isFollowing = false;
+        
         // Load lại màn chơi hoặc thực hiện các hành động khi người chơi chết
         if (!isDead)
         {
             //Nếu isHidden = true, gọi ExitTower, bỏ hết Parent
             if(GetComponent<PlayerAbilities>().isHidden)
                 GetComponent<PlayerAbilities>().ExitTower();
-            
             isDead = true;  
+            GameStats.Instance.totalDeaths++;
+
             //tam dung time
             gameManager.GetComponent<GameTimer>().PauseTimer();
             StartCoroutine(DeathMenu());

@@ -194,10 +194,12 @@ public class Player : MonoBehaviour
     #region Stage
     public void ResetPosition() // Trạng thái về vị trí spawn, chưa từng di chuyển
     {
+        LockMove();
         transform.position = startPosition;
         hasMoved = false;
         isMoveable = true;
         rb.gravityScale = 5;
+        UnlockMove();
     }
 
     public void LockMove() // Không cho phép di chuyển
