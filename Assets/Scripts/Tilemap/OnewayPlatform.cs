@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class OnewayPlatform : MonoBehaviour
 {
-    public Collider2D platformCollider; // Collider của Tilemap
-    public Collider2D playerCollider; // Collider của người chơi
+    private Collider2D platformCollider; // Collider của Tilemap
+    private Collider2D playerCollider; // Collider của người chơi
     public float fallDuration = 0.3f; // Thời gian để vô hiệu hóa va chạm
 
     private void Awake()

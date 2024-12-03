@@ -3,8 +3,8 @@ using UnityEngine.UIElements;
 
 public class BoostTilemap : MonoBehaviour
 {
-    public float boostForce = 20f;  // Lực đẩy cố định khi chạm vào BoostTilemap
-    public Rigidbody2D playerRb;
+    public float boostForce = 30f;  // Lực đẩy cố định khi chạm vào BoostTilemap
+    private Rigidbody2D playerRb;
     public Vector2 boostDirection;
 
     private void Start()

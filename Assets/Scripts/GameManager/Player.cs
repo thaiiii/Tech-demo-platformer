@@ -8,31 +8,30 @@ public class Player : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
     private GameTimer gameTimer;
-    public Vector3 startPosition;
-
+    [HideInInspector] public Vector3 startPosition;
 
     [Header("Movement")]
-    public float horizontalValue;
-    public float speed = 0f;
-    public bool hasMoved = false; //Kiem tra xem da di chuyen chua
-    public bool isMoveable = true;
+    private float horizontalValue;
+    private float speed = 4f;
+    private bool hasMoved = false; //Kiem tra xem da di chuyen chua
+    private bool isMoveable = true;
 
     [Header("Wall")]
-    public float wallSlideSpeed = 1f;
+    private float wallSlideSpeed = 1f;
     public LayerMask normalWallLayer; //normal wall block
     public LayerMask glassWallLayer; //glass wall block
-    public bool isTouchingNormalWall = false;
-    public bool isTouchingGlassWall = false;
-    public float checkWallRadius;
+    private bool isTouchingNormalWall = false;
+    private bool isTouchingGlassWall = false;
+    private float checkWallRadius = 0.6f;
 
     [Header("Ground")]
-    [SerializeField] bool isGrounded;
-    [SerializeField] Transform groundCheckCollider;
-    [SerializeField] float groundCheckRadius = 0.01f;
-    [SerializeField] LayerMask groundLayer;
-    [SerializeField] bool isJumped;
-    [SerializeField] bool coyoteJump;
-    [SerializeField] float jumpPower;
+    public Transform groundCheckCollider;
+    private bool isGrounded;
+    private float groundCheckRadius = 0.01f;
+    public LayerMask groundLayer;
+    private bool isJumped;
+    private bool coyoteJump;
+    private float jumpPower = 20f;
 
 
 
@@ -224,12 +223,12 @@ public class Player : MonoBehaviour
     #endregion
 
 
-    //private void OnDrawGizmosSelected()
-    //{
-    //    Gizmos.color = Color.yellow;
-    //    Gizmos.DrawSphere(groundCheckCollider.position, groundCheckRadius);
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position, checkWallRadius);
 
 
-    //}
+    }
 
 }

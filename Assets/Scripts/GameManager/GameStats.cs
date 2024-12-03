@@ -3,10 +3,12 @@
 public class GameStats : MonoBehaviour
 {
     public static GameStats Instance;
+    public static GameTimer gameTimer;
 
     public int totalDeaths = 0; // Tổng số lần chết
-    public float levelStartTime; // Thời gian bắt đầu màn chơi
     public float totalTime = 0; // Tổng thời gian chơi
+    public int levelDeaths = 0; // Số lần chết của màn chơi hiện tại
+    public float levelTime = 0; // Thời gian của màn chơi hiện tại
 
     private void Awake()
     {
@@ -19,15 +21,25 @@ public class GameStats : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        gameTimer = GetComponent<GameTimer>();
     }
 
-    public void StartLevel()
+    public void CalculateStartLevel()
     {
-        levelStartTime = Time.time; // Lưu thời gian bắt đầu
+        levelDeaths = 0;    //Đặt lại số lần chết
     }
 
-    public void EndLevel()
+    public void CalculateEndLevel()
     {
-        totalTime += Time.time - levelStartTime; // Cộng thêm thời gian đã chơi
+        levelTime = gameTimer.elapsedTime;  // Lấy thời gian đã chơi màn hiện tại
+
+        totalTime += levelTime;              // Cộng thời gian màn hiện tại vào tổng thời gian
+        totalDeaths += levelDeaths;          // Cộng số lần chết màn hiện tại vào tổng số lần chết
+    }
+
+    public void AddDeath()
+    {
+        levelDeaths++; // Tăng số lần chết màn hiện tại
     }
 }

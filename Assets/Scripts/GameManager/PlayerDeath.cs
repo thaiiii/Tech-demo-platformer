@@ -9,12 +9,18 @@ using static Enemy;
 public class PlayerDeath : MonoBehaviour
 {
     [Header("Death UI")]
+    private Camera m_camera;
+    private GameObject gameManager;
     public GameObject deathUI;
-    public Camera m_camera;
-    public GameObject gameManager;
+    
     public bool isDead = false;
 
-   
+    private void Awake()
+    {
+        m_camera = FindObjectOfType<Camera>();
+        gameManager = FindObjectOfType<PauseMenu>().gameObject;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Kiểm tra nếu người chơi chạm vào tag Trap
@@ -60,7 +66,7 @@ public class PlayerDeath : MonoBehaviour
             if(GetComponent<PlayerAbilities>().isHidden)
                 GetComponent<PlayerAbilities>().ExitTower();
             isDead = true;  
-            GameStats.Instance.totalDeaths++;
+            GameStats.Instance.AddDeath();
 
             //tam dung time
             gameManager.GetComponent<GameTimer>().PauseTimer();

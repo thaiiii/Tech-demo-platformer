@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 public class BreakableTileManager : MonoBehaviour
 {
-    public Tilemap tilemap;
+    private Tilemap tilemap;
     public Tile[] crackStates;
     public float timeToBreak = 0.5f;
     public float respawnDelay = 5f;
@@ -17,6 +17,10 @@ public class BreakableTileManager : MonoBehaviour
     private Dictionary<Vector3Int, Coroutine> activeBreakTimers = new Dictionary<Vector3Int, Coroutine>();      //Quản lý các block đang bị phá
     private List<Vector3Int> brokenTiles = new List<Vector3Int>();      //Lưu các block đã bị phá
 
+    private void Awake()
+    {
+        tilemap = gameObject.GetComponent<Tilemap>();
+    }
 
     private void Update()
     {

@@ -65,10 +65,10 @@ public class GameTimer : MonoBehaviour
     //Hàm cập nhật hiển thị thời gian
     private void UpdateTimeDisplay()
     {
-        int seconds = Mathf.FloorToInt(elapsedTime);
-        int miliseconds = Mathf.FloorToInt((elapsedTime * 100) % 100);
+        //int seconds = Mathf.FloorToInt(elapsedTime);
+        //int miliseconds = Mathf.FloorToInt((elapsedTime * 100) % 100);
 
-        timerText.text = string.Format("TIME    {0:00}.{1:00}", seconds, miliseconds);
-    
+        //timerText.text = string.Format("TIME    {0:00}.{1:00}", seconds, miliseconds);
+        timerText.text = $"TIME: {elapsedTime:F2}";
     }
 }

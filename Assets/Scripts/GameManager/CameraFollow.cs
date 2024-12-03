@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform target;
-    public Vector3 offset = new Vector3(0, 0, -10);
+    private Transform target;
+    private Vector3 offset = new Vector3(0, 2, -10);
 
-    public bool isFollowing = true;
+    [HideInInspector] public bool isFollowing = true;
     [Range(1, 10)]
     public float smoothFactor;
     public Vector3 minValues, maxValues;
+
+    private void Awake()
+    {
+        target = FindObjectOfType<Player>().gameObject.transform;
+    }
 
     private void FixedUpdate()
     {

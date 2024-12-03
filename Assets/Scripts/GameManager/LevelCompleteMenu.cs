@@ -26,26 +26,29 @@ public class LevelCompleteMenu : MonoBehaviour
     #region Level Complete
     public void CompleteLevel()
     {
+        // Gọi kết thúc thời gian chơi
+        gameTimer.StopTimer();
+        GameStats.Instance.CalculateEndLevel();
+
         // Hiển thị tổng kết màn chơi
         levelSummaryUI.SetActive(true);
         Time.timeScale = 0; // Tạm dừng game
 
         // Hiển thị số lần chết và thời gian
-        deathsText.text = $"Deaths: {GameStats.Instance.totalDeaths}";
-        timeText.text = $"Time: {GameStats.Instance.totalTime:F2} seconds";
+        deathsText.text = $"Deaths: {GameStats.Instance.levelDeaths}";
+        timeText.text = $"Time: {GameStats.Instance.levelTime:F2}";
 
-        // Gọi kết thúc thời gian chơi
-        gameTimer.StopTimer();
+        
     }
 
     public void LoadNextLevel()
     {
         Time.timeScale = 1; // Khôi phục tốc độ game
-        GameStats.Instance.StartLevel(); // Reset thời gian chơi cho màn mới
 
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
         {
+            GameStats.Instance.CalculateStartLevel(); //Reset số liệu màn chơi
             SceneManager.LoadScene(nextSceneIndex);
         }
         else
@@ -63,7 +66,6 @@ public class LevelCompleteMenu : MonoBehaviour
 
     public void RestartLevel()
     {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         pauseMenu.RestartStage();
         levelSummaryUI.SetActive(false);
     }
