@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/TechDemoStage.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/Level_2.unity
+    path: Assets/Scenes/Level (2).unity
     guid: 094988ac57630384e891bad8d51897b9
+  - enabled: 1
+    path: Assets/Scenes/Level (3).unity
+    guid: 20bea33b6949f08439bd1e297395312d
   m_configObjects: {}

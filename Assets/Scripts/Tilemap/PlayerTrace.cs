@@ -1,15 +1,21 @@
-﻿using Unity.Burst.CompilerServices;
+﻿using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class PlayerTrace : MonoBehaviour
 {
     [Header("Tilemaps")]
-    public Tilemap[] tilemaps; // Cac Tilemap ma ban se danh dau khi di qua (nơi Player di chuyển)
-    public Tilemap markTopTilemap; // Tilemap dùng để đặt dấu vết trên
-    public Tilemap markBottomTilemap; // Tilemap dùng để đặt dấu vết dưới
-    public Tilemap markRightTilemap; // Tilemap dùng để đặt dấu vết phải
-    public Tilemap markLeftTilemap; // Tilemap dùng để đặt dấu vết trái
+    private List<Tilemap> tilemaps = new List<Tilemap>(); // Cac Tilemap ma ban se danh dau khi di qua (nơi Player di chuyển)
+
+    private Tilemap floorTilemap;
+    private Tilemap normalWallTilemap;
+    private Tilemap glassWallTilemap;
+
+    private Tilemap markTopTilemap; // Tilemap dùng để đặt dấu vết trên
+    private Tilemap markBottomTilemap; // Tilemap dùng để đặt dấu vết dưới
+    private Tilemap markRightTilemap; // Tilemap dùng để đặt dấu vết phải
+    private Tilemap markLeftTilemap; // Tilemap dùng để đặt dấu vết trái
 
 
     [Header("Marks prite")]
@@ -19,6 +25,29 @@ public class PlayerTrace : MonoBehaviour
     public TileBase markLeftTile; // Tile dấu vết phía trái
     
     public LayerMask floorLayer;
+
+    private void Awake()
+    {
+        //Tìm các tilemap có thể đánh dấu trong scene
+        GameObject grid = GameObject.Find("Grid");
+        GameObject walls = grid.transform.Find("Wall").gameObject;              
+        GameObject marks = grid.transform.Find("Mark").gameObject;              
+        
+        floorTilemap = grid.transform.Find("Floor")?.GetComponent<Tilemap>();               
+        normalWallTilemap = walls.transform.Find("NormalWall")?.GetComponent<Tilemap>();
+        glassWallTilemap = walls.transform.Find("GlassWall")?.GetComponent<Tilemap>();
+        markTopTilemap = marks.transform.Find("MarkTopTilemap")?.GetComponent<Tilemap>();
+        markBottomTilemap = marks.transform.Find("MarkBottomTilemap")?.GetComponent<Tilemap>();
+        markRightTilemap = marks.transform.Find("MarkRightTilemap")?.GetComponent<Tilemap>();
+        markLeftTilemap = marks.transform.Find("MarkLeftTilemap")?.GetComponent<Tilemap>();
+    }
+
+    private void Start()
+    {
+        tilemaps.Add(floorTilemap);
+        tilemaps.Add(normalWallTilemap);
+        tilemaps.Add(glassWallTilemap);
+    }
 
     private void Update()
     {
@@ -40,7 +69,7 @@ public class PlayerTrace : MonoBehaviour
         Vector3 playerPosition = transform.position;
 
         // Chuyển đổi vị trí của Player (có offset) sang tọa độ của các Tile cần mark
-        for (int i = 0; i < tilemaps.Length; i++)
+        for (int i = 0; i < tilemaps.Count  ; i++)
         {
             Vector3Int topTilePosition = tilemaps[i].WorldToCell(playerPosition + topOffset);
             Vector3Int bottomTilePosition = tilemaps[i].WorldToCell(playerPosition + bottomOffset);
@@ -84,10 +113,6 @@ public class PlayerTrace : MonoBehaviour
                 }
             }
         }
-
-
-
-
     }
 
 

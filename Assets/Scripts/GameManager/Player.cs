@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
         // Kiểm tra xem người chơi có chạm vào block thường hay block kính
         isTouchingNormalWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, normalWallLayer);
         isTouchingGlassWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, glassWallLayer);
-        if (Input.GetButton("Jump") && (isTouchingNormalWall || isTouchingGlassWall))
+        if (Input.GetButton("Jump") && !coyoteJump &&(isTouchingNormalWall || isTouchingGlassWall))
         {
             // Tạm thời vô hiệu hóa trọng lực khi giữ Space
             rb.gravityScale = 0;
@@ -120,7 +120,7 @@ public class Player : MonoBehaviour
             // Bật lại trọng lực khi không giữ Space (hoặc không chạm vào tường)
             rb.gravityScale = 5;  // Trọng lực được áp dụng lại
         }
-        animator.SetBool("isClinging", isTouchingGlassWall || isTouchingNormalWall);
+        animator.SetBool("isClinging", !isGrounded && (isTouchingGlassWall || isTouchingNormalWall));
         // Nếu bấm nút nhảy
         if (Input.GetButtonDown("Jump"))
         {
@@ -178,7 +178,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        //animator.SetBool("Jump", !isGrounded);
+        animator.SetBool("Jump", !isGrounded);
     }
 
     IEnumerator CoyoteJumpDelay()

@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEditor.TerrainTools;
 
 public class LevelCompleteMenu : MonoBehaviour
 {
     [Header("Level Complete")]
-    public GameObject levelSummaryUI; // UI tổng kết màn
-    public TextMeshProUGUI deathsText; // Text hiển thị số lần chết
-    public TextMeshProUGUI timeText;   // Text hiển thị thời gian chơi
-    public GameObject nextLevelButton; // Nút qua màn
-    public GameObject restartButton;   // Nút restart
-    public GameObject mainMenuButton;  // Nút về menu chính
+    private GameObject levelSummaryUI; // UI tổng kết màn
+    private TextMeshProUGUI deathsText; // Text hiển thị số lần chết
+    private TextMeshProUGUI timeText;   // Text hiển thị thời gian chơi
+    private Button nextLevelButton; // Nút qua màn
+    private Button restartLevelButton;   // Nút restart
+    private Button mainMenuButton;  // Nút về menu chính
 
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
     private PauseMenu pauseMenu; // Tham chiếu PauseMenu
@@ -21,6 +23,57 @@ public class LevelCompleteMenu : MonoBehaviour
     {
         gameTimer = GetComponent<GameTimer>();
         pauseMenu = GetComponent<PauseMenu>();
+
+        SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
+    }
+
+    private void Start()
+    {
+
+    }
+
+    private void InitializeUIReferences()
+    {
+        //Tìm các UI tong scene
+        GameObject UI = GameObject.Find("UI");
+        if (UI == null)
+        {
+            return;
+        }
+        levelSummaryUI = UI.transform.Find("LevelCompleteUI").gameObject;
+        deathsText = levelSummaryUI.transform.Find("LevelDeath").GetComponent<TextMeshProUGUI>();
+        timeText = levelSummaryUI.transform.Find("LevelTime").GetComponent<TextMeshProUGUI>();
+        nextLevelButton = levelSummaryUI.transform.Find("NextButton").GetComponent<Button>();
+        restartLevelButton = levelSummaryUI.transform.Find("RestartButton").GetComponent<Button>();
+        mainMenuButton = levelSummaryUI.transform.Find("MenuButton").GetComponent<Button>();
+
+        //Gắn sự kiện cho các nút
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.onClick.RemoveAllListeners();
+            nextLevelButton.onClick.AddListener(LoadNextLevel);
+        }
+        if (restartLevelButton != null)
+        {
+            restartLevelButton.onClick.RemoveAllListeners();
+            restartLevelButton.onClick.AddListener(RestartLevel);
+        }
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.onClick.RemoveAllListeners();
+            mainMenuButton.onClick.AddListener(LoadMenu);
+        }
+
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeUIReferences(); // Cập nhật tham chiếu khi scene mới được tải
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded; // Hủy đăng ký sự kiện
     }
 
     #region Level Complete
@@ -38,7 +91,7 @@ public class LevelCompleteMenu : MonoBehaviour
         deathsText.text = $"Deaths: {GameStats.Instance.levelDeaths}";
         timeText.text = $"Time: {GameStats.Instance.levelTime:F2}";
 
-        
+
     }
 
     public void LoadNextLevel()
@@ -53,7 +106,6 @@ public class LevelCompleteMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("No more levels!");
             LoadMenu();
         }
     }

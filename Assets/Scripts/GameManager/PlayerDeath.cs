@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Build.Content;
 using UnityEngine;
+using UnityEngine.UI;
 using static Bullet;
 using static Enemy;
 
 public class PlayerDeath : MonoBehaviour
 {
-    [Header("Death UI")]
     private Camera m_camera;
     private GameObject gameManager;
-    public GameObject deathUI;
+
+    [Header("Death UI")]
+    private GameObject UI;
+    private GameObject deathUI;
+    private Button restartButton;
     
     public bool isDead = false;
 
@@ -19,6 +23,16 @@ public class PlayerDeath : MonoBehaviour
     {
         m_camera = FindObjectOfType<Camera>();
         gameManager = FindObjectOfType<PauseMenu>().gameObject;
+
+        // Tìm trong Scene các thành phần UI
+        UI = GameObject.Find("UI");
+        deathUI = UI.transform.Find("DeathUI")?.gameObject;
+        restartButton = deathUI.transform.Find("RestartButton")?.GetComponent<Button>();
+        if (restartButton != null)
+        {
+            restartButton.onClick.RemoveAllListeners(); // Xóa sự kiện cũ (nếu có)
+            restartButton.onClick.AddListener(DeathRestart); // Gắn hàm DeathRestart
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
