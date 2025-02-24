@@ -18,13 +18,15 @@ public class PlayerAbilities : MonoBehaviour
     public float teleportDelay = 0.5f;
     public Vector2 storedVelocity;
 
+    [Header("Shooting")]
+    public GameObject playerBulletPrefab;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -35,9 +37,10 @@ public class PlayerAbilities : MonoBehaviour
             gameObject.GetComponent<Player>().LockMove();
             Debug.Log(rb.velocity);
         }
-            
+
     }
 
+    #region Teleport
     private void HandleTeleport()
     {
         //Lấy tất cả trụ trong tầm tele
@@ -74,10 +77,9 @@ public class PlayerAbilities : MonoBehaviour
                     else if (targetTower.type == TeleportTower.TowerType.TYPE_SWAP)
                         TrySwapTower(targetTower);
                 }
-                }
             }
         }
-
+    }
     private TeleportTower GetClosestTower(Collider2D[] towersInRange)
     {
         TeleportTower closestAvailableTower = null;
@@ -110,7 +112,6 @@ public class PlayerAbilities : MonoBehaviour
             closestAvailableTower.availableMark.GetComponent<SpriteRenderer>().enabled = true;
         return closestAvailableTower;
     }
-
     private void TryTeleportToTower(TeleportTower tower)
     {
         if (currentTower != null)
@@ -139,7 +140,6 @@ public class PlayerAbilities : MonoBehaviour
             spriteRenderer.enabled = false;
         }
     }
-
     private void TrySwapTower(TeleportTower tower)
     {
         if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_SWAP) //Kiểm tra nếu tower swap khả dụng
@@ -183,10 +183,26 @@ public class PlayerAbilities : MonoBehaviour
             rb.velocity = storedVelocity;
         }
     }
+    #endregion
 
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.yellow;
-    //    Gizmos.DrawWireSphere(transform.position, teleportRadius);
-    //}
+    #region Player skills
+    public void UseItem(InventoryManager.InventorySlot selectedSlot)
+    {
+        switch(selectedSlot.itemName)
+        {
+            case "PlayerBullet":
+                PlayerShoot();
+                break;
+            default:
+                Debug.Log("Loi khi dung skill");
+                break;
+        }
+    }
+
+    private void PlayerShoot()
+    {
+        Instantiate(playerBulletPrefab, transform.position, transform.rotation);
+    }
+
+    #endregion
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     private Transform target;
-    private Vector3 offset = new Vector3(0, 2, -10);
+    private Vector3 offset = new Vector3(0, 3, -10);
 
     [HideInInspector] public bool isFollowing = true;
     [Range(1, 10)]

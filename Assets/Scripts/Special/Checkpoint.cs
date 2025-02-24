@@ -15,9 +15,12 @@ public class Checkpoint : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            collision.gameObject.GetComponent<Player>().startPosition = transform.position + Vector3.up * 5; 
+            collision.gameObject.GetComponent<Player>().startPosition = transform.position + Vector3.up * 5 + Vector3.right * 1; 
             isActivated = true;
             animator.SetBool("isActivated", isActivated);
+
+            //Save inventory hien tai
+            FindAnyObjectByType<InventoryManager>().SaveInventory();
         }
     }
 }

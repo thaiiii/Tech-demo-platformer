@@ -26,6 +26,7 @@ public class PlayerTrace : MonoBehaviour
     
     public LayerMask floorLayer;
 
+    private float playerScale;
     private void Awake()
     {
         //Tìm các tilemap có thể đánh dấu trong scene
@@ -51,22 +52,23 @@ public class PlayerTrace : MonoBehaviour
 
     private void Update()
     {
-        // Phát hiện va chạm dưới chân Player để đặt dấu trên ô dưới
         PlaceMark();
-
-        // Phát hiện va chạm bên trái và phải
-        //PlaceMark(Vector2.left);
-        //PlaceMark(Vector2.right);
     }
 
     void PlaceMark()
     {
-        // Lấy tọa độ của Player (có offset)
+        // Lấy tọa độ, scale của Player (có offset)
+        playerScale = transform.localScale.y;
         Vector3 topOffset = new Vector3(0, -1.5f, 0);
         Vector3 bottomOffset = new Vector3(0, 0.7f, 0);
-        Vector3 rightOffset = new Vector3(-0.6f, 0, 0);
-        Vector3 leftOffset = new Vector3(0.6f, 0, 0);
+        Vector3 rightOffset = new Vector3(-0.6f * playerScale, 0, 0);
+        Vector3 leftOffset = new Vector3(0.6f * playerScale, 0, 0);
         Vector3 playerPosition = transform.position;
+
+        Debug.DrawLine(playerPosition, playerPosition + rightOffset, Color.red);
+        Debug.DrawLine(playerPosition, playerPosition + leftOffset, Color.red);
+        //Debug.DrawLine(playerPosition, playerPosition + leftOffset*10, Color.red);
+        //Debug.DrawLine(new Vector3(0,0,0),new Vector3(1,1,1));
 
         // Chuyển đổi vị trí của Player (có offset) sang tọa độ của các Tile cần mark
         for (int i = 0; i < tilemaps.Count  ; i++)

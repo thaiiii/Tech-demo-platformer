@@ -8,11 +8,11 @@ public class Player : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
     private GameTimer gameTimer;
-    [HideInInspector] public Vector3 startPosition;
+    public Vector3 startPosition;
 
     [Header("Movement")]
     private float horizontalValue;
-    private float speed = 4f;
+    public float speed = 4f;
     private bool hasMoved = false; //Kiem tra xem da di chuyen chua
     private bool isMoveable = true;
 
@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     public LayerMask glassWallLayer; //glass wall block
     private bool isTouchingNormalWall = false;
     private bool isTouchingGlassWall = false;
-    private float checkWallRadius = 0.6f;
+    public float checkWallRadius = 0.6f;
 
     [Header("Ground")]
     public Transform groundCheckCollider;

@@ -59,7 +59,7 @@ public class PlayerDeath : MonoBehaviour
     {
         Enemy enemy = collision.gameObject.GetComponent<Enemy>();
 
-        if (enemy != null) // Kiểm tra Enemy không null trước
+        if (enemy != null && collision.gameObject.CompareTag("Enemy")) // Kiểm tra Enemy không null trước
         {
             if (enemy.type == EnemyType.Normal && !HiddenStatus())
                 KillPlayer();

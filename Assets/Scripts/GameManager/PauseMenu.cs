@@ -17,6 +17,7 @@ public class PauseMenu : MonoBehaviour
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
     private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
+    public List<ItemBase> items;
 
     #region Stage
     private void Awake()
@@ -31,6 +32,7 @@ public class PauseMenu : MonoBehaviour
     {
         InitializeUIReferences(); // Cập nhật tham chiếu khi scene mới được tải
         InitializeGameObjectReferences(); //Cập nhật tham chiếu các game object khác
+        //RestartStage();
     }
 
     private void OnDestroy()
@@ -72,6 +74,18 @@ public class PauseMenu : MonoBehaviour
     private void InitializeGameObjectReferences()
     {
         player = FindAnyObjectByType<Player>();
+
+        //Lấy vị trí các item trong map
+        List<ConsumableItem> consumableItems = new List<ConsumableItem>( FindObjectsOfType<ConsumableItem>());
+        List<StorableItem> storableItems = new List<StorableItem>(FindObjectsOfType<StorableItem>());
+        foreach (ConsumableItem item in consumableItems)
+        {
+            items.Add(item);
+        }
+        foreach (StorableItem item in storableItems)
+        {
+            items.Add(item);
+        }
     }
 
     // Update is called once per frame
@@ -138,6 +152,7 @@ public class PauseMenu : MonoBehaviour
         ResetTeleportTower();   //Teleport towers
         SwitchCannonActivation(); //Clear all missiles
         ResetFan(); //Reset all fans
+        ResetItem();
     }
 
     private void ResetTeleportTower()
@@ -168,6 +183,19 @@ public class PauseMenu : MonoBehaviour
             fan.ResetFan();
         }
     }
+
+    private void ResetItem()
+    {
+        foreach (ItemBase item in items)
+        {
+            item.ActiveItem();
+        }
+        FindObjectOfType<InventoryManager>().LoadSavedInventory();
+    }
+
+
+
+
     #endregion
 
 
