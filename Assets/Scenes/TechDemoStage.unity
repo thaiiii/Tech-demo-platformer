@@ -240,6 +240,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedSlotIndex: -1
+  timeBetweenUses: 0.25
+  _timeSinceLastUse: 0
   inventorySlots: []
   savedInventorySlots: []
 --- !u!114 &449153164
@@ -1193,63 +1195,6 @@ Tilemap:
   m_CorrespondingSourceObject: {fileID: 2900304303317631810, guid: a7b2562f0be0d924bb3f0145990c5bab, type: 3}
   m_PrefabInstance: {fileID: 6841062956740905595}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &2117682549
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -29.84653
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.0072858334
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5212756317080279832, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6821499627227100185, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
-      propertyPath: m_Name
-      value: Turtle
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 32a39a2c586051643a5fa0243866c3b4, type: 3}
 --- !u!1001 &379683211134384468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4239,4 +4184,3 @@ SceneRoots:
   - {fileID: 379683211134384468}
   - {fileID: 682953836}
   - {fileID: 449153162}
-  - {fileID: 2117682549}

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -8,19 +8,20 @@ public class PlayerBullet : MonoBehaviour
     public float speed = 10f;
     public float maxDistance = 10f;
     private Vector3 startPosition;
-    private GameObject player;
+    private float startDirection; // Lưu hướng bắn
 
     // Start is called before the first frame update
     void Start()
     {
-        player = FindFirstObjectByType<Player>().gameObject;
-        startPosition = player.transform.position;  
+        GameObject player = FindFirstObjectByType<Player>().gameObject;
+        startPosition = player.transform.position;
+        startDirection = Mathf.Sign(player.transform.localScale.x);
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector2.right * player.transform.localScale.x * speed * Time.deltaTime);
+        transform.Translate(Vector2.right * startDirection * speed * Time.deltaTime);
 
         //Destroy if travel too far
         if (Vector3.Distance(startPosition, transform.position) > maxDistance)

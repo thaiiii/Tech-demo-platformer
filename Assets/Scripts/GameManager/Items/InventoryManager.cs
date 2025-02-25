@@ -27,6 +27,14 @@ public class InventoryManager : MonoBehaviour
     }
 
     public int selectedSlotIndex = -1; //-1 là chưa được chọn
+    public float timeBetweenUses = 0.25f; // Thời gian giữa các lần dùng item (0.25 giây)
+    public float _timeSinceLastUse;
+    public float timeSinceLastUse
+    {
+        get { return _timeSinceLastUse; }
+        set { _timeSinceLastUse = Math.Clamp(value, 0f, 5f); }
+    } // Thời gian đã trôi qua kể từ lần dùng item cuối cùng, giới hạn giá trị tới 5s
+
     public List<InventorySlot> inventorySlots = new List<InventorySlot>();
     public List<InventorySlot> savedInventorySlots = new List<InventorySlot>();
 
@@ -50,7 +58,10 @@ public class InventoryManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) SelectSlot(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SelectSlot(2);
 
-        if (Input.GetKeyDown(KeyCode.Q)) UseSelectedItem();
+        timeSinceLastUse += Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.Q))
+            UseSelectedItem();
+        if (Input.GetKey(KeyCode.Q)) UseSelectedItem();
     }
 
     private void SelectSlot(int slotIndex)
@@ -64,17 +75,22 @@ public class InventoryManager : MonoBehaviour
 
     private void UseSelectedItem()
     {
-        if (selectedSlotIndex == -1 || selectedSlotIndex >= inventorySlots.Count)
+        if (timeSinceLastUse >= timeBetweenUses)
         {
-            Debug.Log("Không có vật phẩm để dùng!");
-            return;
+            timeSinceLastUse = 0f;
+
+            if (selectedSlotIndex == -1 || selectedSlotIndex >= inventorySlots.Count)
+            {
+                Debug.Log("Không có vật phẩm để dùng!");
+                return;
+            }
+            InventorySlot selectedItem = inventorySlots[selectedSlotIndex];
+            FindObjectOfType<PlayerAbilities>().UseItem(selectedItem);      //Su dung item de dung skill
+            RemoveItem(selectedItem);
+            UpdateUI();
         }
 
-        InventorySlot selectedItem = inventorySlots[selectedSlotIndex];
-        FindObjectOfType<PlayerAbilities>().UseItem(selectedItem);      //Su dung item de dung skill
-        RemoveItem(selectedItem);
 
-        UpdateUI();
     }
     //Add item into inventory
     public void AddItem(Sprite itemSprite, string itemName, int itemCount, bool isCounted)
