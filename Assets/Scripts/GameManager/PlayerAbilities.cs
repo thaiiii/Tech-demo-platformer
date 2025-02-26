@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static InventoryManager;
 
 public class PlayerAbilities : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class PlayerAbilities : MonoBehaviour
     [Header("Shooting")]
     public GameObject playerBulletPrefab;
 
+    [Header("Cannon")]
+    public bool isInCannon = false; //Kiểm tra có ở trong khẩu pháo hay ko
+    public PlayerCannon nearByCannon; //Lưu vị trí pháo gần nhất
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,12 +36,6 @@ public class PlayerAbilities : MonoBehaviour
     void Update()
     {
         HandleTeleport();
-        if (isHidden)
-        {
-            transform.position = currentTower.transform.position;
-            gameObject.GetComponent<Player>().LockMove();
-            Debug.Log(rb.velocity);
-        }
 
     }
 
@@ -78,6 +77,12 @@ public class PlayerAbilities : MonoBehaviour
                         TrySwapTower(targetTower);
                 }
             }
+        }
+        if (isHidden)//trc day ở Update
+        {
+            transform.position = currentTower.transform.position;
+            gameObject.GetComponent<Player>().LockMove();
+            Debug.Log(rb.velocity);
         }
     }
     private TeleportTower GetClosestTower(Collider2D[] towersInRange)
@@ -204,5 +209,36 @@ public class PlayerAbilities : MonoBehaviour
         Instantiate(playerBulletPrefab, transform.position, transform.rotation);
     }
 
+    #endregion
+
+    #region Cannon
+    public void EnterCannon(Vector3 cannonPosition)
+    {
+        isInCannon = true;
+        rb.velocity = Vector2.zero;
+        transform.position = cannonPosition;
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        Debug.Log("alo");           // Ẩn người chơi khi vào trong pháo
+    }
+
+    public void ExitCannon(Vector2 shootDirection, float shootForce)
+    {
+        isInCannon = false;
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        rb.velocity = shootDirection * shootForce; //Bắn theo hướng vào lực truyền vào
+    }
+
+    public bool CanGetInsideCannon()
+    {
+        List<InventorySlot> inventorySlot = InventoryManager.Instance.inventorySlots;
+        foreach (InventorySlot slot in inventorySlot)
+        {
+            if (slot.itemName == "Slime" && slot.itemCount > 8 && slot.isCounted == true)
+                return false;
+        }
+        return true;
+    }
+
+    
     #endregion
 }
