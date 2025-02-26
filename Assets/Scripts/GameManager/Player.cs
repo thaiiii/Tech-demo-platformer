@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public float speed = 4f;
     private bool hasMoved = false; //Kiem tra xem da di chuyen chua
     private bool isMoveable = true;
+    public bool isShotHorizontally = false; //Kiểm tra xem có tác động lực phương ngang không, nếu có sẽ ngưng update vận tốc phương ngang ở Move();
 
     [Header("Wall")]
     private float wallSlideSpeed = 1f;
@@ -26,7 +27,7 @@ public class Player : MonoBehaviour
 
     [Header("Ground")]
     public Transform groundCheckCollider;
-    private bool isGrounded;
+    public bool isGrounded;
     private float groundCheckRadius = 0.01f;
     public LayerMask groundLayer;
     private bool isJumped;
@@ -71,7 +72,8 @@ public class Player : MonoBehaviour
         horizontalValue = Input.GetAxisRaw("Horizontal");
 
         //if move first time, hasMoved = true
-        if(!hasMoved && Mathf.Abs(horizontalValue) > 0) {
+        if (!hasMoved && Mathf.Abs(horizontalValue) > 0)
+        {
             hasMoved = true;
             gameTimer.StartTimer();
         }
@@ -79,7 +81,7 @@ public class Player : MonoBehaviour
         // Kiểm tra xem người chơi có chạm vào block thường hay block kính
         isTouchingNormalWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, normalWallLayer);
         isTouchingGlassWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, glassWallLayer);
-        if (Input.GetButton("Jump") && !coyoteJump &&(isTouchingNormalWall || isTouchingGlassWall))
+        if (Input.GetButton("Jump") && !coyoteJump && (isTouchingNormalWall || isTouchingGlassWall))
         {
             // Tạm thời vô hiệu hóa trọng lực khi giữ Space
             rb.gravityScale = 0;
@@ -94,7 +96,7 @@ public class Player : MonoBehaviour
             {
                 // Trượt chậm nếu chạm vào block kính
                 rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
-                isJumped = false;   
+                isJumped = false;
             }
 
             // Sử dụng Raycast để phát hiện hướng của tường
@@ -138,7 +140,8 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        
+        if (isShotHorizontally) //Ngưng cập nhật vận tốc chiều ngang
+            return;
         Vector2 targetVelocity = new Vector2(horizontalValue * speed * 100 * Time.fixedDeltaTime, rb.velocity.y);
         rb.velocity = targetVelocity;
 
@@ -151,7 +154,11 @@ public class Player : MonoBehaviour
 
         //0 for idle, 6 for walk, 12 for run => Setting xVelocity in Player animator
         animator.SetFloat("xVelocity", Mathf.Abs(rb.velocity.x));
+    }
 
+    public void SwitchUpdateHorizontalVelocity(bool value)
+    {
+        isShotHorizontally = value;
     }
 
     private void GroundCheck()
@@ -203,13 +210,20 @@ public class Player : MonoBehaviour
 
     public void LockMove() // Không cho phép di chuyển
     {
-        isMoveable = false;
-        horizontalValue = 0;
-        rb.velocity = Vector3.zero;
+        if (isMoveable)
+        {
+            //Debug.Log("lockmove: Gravity = 0");
+            rb.gravityScale = 0;
+            isMoveable = false;
+            horizontalValue = 0;
+            rb.velocity = Vector3.zero;
+        }
     }
 
     public void UnlockMove() // Cho phép di chuyển
     {
+        //Debug.Log("Unlockmove: Gravity = 5");
+        rb.gravityScale = 5f;
         isMoveable = true;
     }
 
@@ -217,7 +231,7 @@ public class Player : MonoBehaviour
     {
         ResetPosition();
         LockMove();
-        
+
     }
 
     #endregion
@@ -227,8 +241,6 @@ public class Player : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(transform.position, checkWallRadius);
-
-
     }
 
 }

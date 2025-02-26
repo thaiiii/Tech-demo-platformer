@@ -10,6 +10,8 @@ public class PlayerCannon : MonoBehaviour
     public float minForce = 5f; //Lực bắn tối thiểu
     public float maxForce = 20f;
     public float chargeTime = 3f; //Thời gian nạp tối đa
+    public float force = 0f;
+    public Vector2 direction;
 
     public PlayerAbilities playerAbilities;
     public bool isPlayerInside = false;
@@ -23,7 +25,7 @@ public class PlayerCannon : MonoBehaviour
         {
             if (playerAbilities == null)
                 return;
-            if(isPlayerInRange && !isPlayerInside)
+            if (isPlayerInRange && playerAbilities.CanGetInsideCannon())
                 EnterCannon();
         }
 
@@ -32,39 +34,52 @@ public class PlayerCannon : MonoBehaviour
             RotateCannon(); //Xoay nòng pháo
             ChargeShot(); //Nạp lực bắn
 
-            if (Input.GetKeyDown(KeyCode.E))
-            {
+            if (Input.GetKeyUp(KeyCode.Space))
                 FirePlayer();
+            if (Input.GetKeyDown(KeyCode.Q))        //Thoát khỏi cannon
+            {
+                playerAbilities.ExitCannon(Vector2.up, 10f);
+                isPlayerInside = false;
+                playerAbilities.gameObject.transform.parent = null;
             }
-        }
-    }
 
-    private void RotateCannon()
-    {
-        float rotateInput = Input.GetAxis("Vertical"); //Mũi tên lên/xuống
-        cannonPivot.Rotate(Vector3.forward * -rotateInput * rotationSpeed * Time.deltaTime);
-    }
-    private void ChargeShot()
-    {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            currentChargeTime += Time.deltaTime;
-            currentChargeTime = Mathf.Clamp(currentChargeTime, 0, chargeTime);
         }
     }
     public void EnterCannon()
     {
         isPlayerInside = true;
         playerAbilities.EnterCannon(transform.position);
+        playerAbilities.gameObject.transform.SetParent(transform); //Thành cha của player
+
+    }
+    private void RotateCannon()
+    {
+        float rotateInput = Input.GetAxis("Vertical"); //Mũi tên lên/xuống
+        cannonMuzzle.Rotate(Vector3.forward * rotateInput * rotationSpeed * Time.deltaTime);
+        float angle = cannonMuzzle.eulerAngles.z;
+        direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)).normalized; // Hướng bắn theo nòng pháo
+    }
+    private void ChargeShot()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            currentChargeTime += Time.deltaTime;
+            currentChargeTime = Mathf.Clamp(currentChargeTime, 0.5f, chargeTime);
+        }
     }
     private void FirePlayer()
     {
-        float force = Mathf.Lerp(minForce, maxForce, currentChargeTime / chargeTime);
-        Vector2 direction = cannonMuzzle.right; // Hướng bắn theo nòng pháo
+        // Hướng bắn theo nòng pháo
+        force = Mathf.Lerp(minForce, maxForce, currentChargeTime / chargeTime);
         playerAbilities.ExitCannon(direction, force);
+
         isPlayerInside = false;
         currentChargeTime = 0f;
+
     }
+
+    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

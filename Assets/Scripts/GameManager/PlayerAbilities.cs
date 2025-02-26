@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static InventoryManager;
 
 public class PlayerAbilities : MonoBehaviour
@@ -21,10 +22,6 @@ public class PlayerAbilities : MonoBehaviour
 
     [Header("Shooting")]
     public GameObject playerBulletPrefab;
-
-    [Header("Cannon")]
-    public bool isInCannon = false; //Kiểm tra có ở trong khẩu pháo hay ko
-    public PlayerCannon nearByCannon; //Lưu vị trí pháo gần nhất
 
     private void Awake()
     {
@@ -82,7 +79,6 @@ public class PlayerAbilities : MonoBehaviour
         {
             transform.position = currentTower.transform.position;
             gameObject.GetComponent<Player>().LockMove();
-            Debug.Log(rb.velocity);
         }
     }
     private TeleportTower GetClosestTower(Collider2D[] towersInRange)
@@ -174,6 +170,7 @@ public class PlayerAbilities : MonoBehaviour
             transform.SetParent(null);
             currentTower.Activate(false);
             isHidden = false;
+            rb.gravityScale = 5f;
 
             // Bật lại sprite, tắt isTrigger, cho phép di chuyển
             gameObject.GetComponent<Player>().UnlockMove();
@@ -214,18 +211,18 @@ public class PlayerAbilities : MonoBehaviour
     #region Cannon
     public void EnterCannon(Vector3 cannonPosition)
     {
-        isInCannon = true;
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        Debug.Log("alo");           // Ẩn người chơi khi vào trong pháo
+        gameObject.GetComponent<Player>().LockMove();
     }
 
     public void ExitCannon(Vector2 shootDirection, float shootForce)
     {
-        isInCannon = false;
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         rb.velocity = shootDirection * shootForce; //Bắn theo hướng vào lực truyền vào
+        gameObject.GetComponent<Player>().UnlockMove();
+        StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
 
     public bool CanGetInsideCannon()
@@ -239,6 +236,15 @@ public class PlayerAbilities : MonoBehaviour
         return true;
     }
 
+    private IEnumerator TemporaryStopUpdatingHorizontalVelocity()
+    {
+        gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(true);
+        yield return new WaitForSeconds(0.5f);
+        if (gameObject.GetComponent<Player>().isGrounded)
+            gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(false);
+        else
+            StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
+    }
     
     #endregion
 }

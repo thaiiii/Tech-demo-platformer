@@ -81,7 +81,6 @@ public class InventoryManager : MonoBehaviour
 
             if (selectedSlotIndex == -1 || selectedSlotIndex >= inventorySlots.Count)
             {
-                Debug.Log("Không có vật phẩm để dùng!");
                 return;
             }
             InventorySlot selectedItem = inventorySlots[selectedSlotIndex];
