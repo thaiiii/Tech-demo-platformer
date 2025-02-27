@@ -27,17 +27,18 @@ public class InventoryManager : MonoBehaviour
     }
 
     public int selectedSlotIndex = -1; //-1 là chưa được chọn
-    public float timeBetweenUses = 0.25f; // Thời gian giữa các lần dùng item (0.25 giây)
-    public float _timeSinceLastUse;
+    private float timeBetweenUses = 0.25f; // Thời gian giữa các lần dùng item (0.25 giây)
+    private float _timeSinceLastUse;
     public float timeSinceLastUse
     {
         get { return _timeSinceLastUse; }
         set { _timeSinceLastUse = Math.Clamp(value, 0f, 5f); }
     } // Thời gian đã trôi qua kể từ lần dùng item cuối cùng, giới hạn giá trị tới 5s
+    public bool isFull = false;
 
     public List<InventorySlot> inventorySlots = new List<InventorySlot>();
     public List<InventorySlot> savedInventorySlots = new List<InventorySlot>();
-
+    public GameObject player;
 
     private void Awake()
     {
@@ -50,8 +51,8 @@ public class InventoryManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        player = FindAnyObjectByType<Player>().gameObject;
     }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) SelectSlot(0);
@@ -64,6 +65,7 @@ public class InventoryManager : MonoBehaviour
         if (Input.GetKey(KeyCode.Q)) UseSelectedItem();
     }
 
+
     private void SelectSlot(int slotIndex)
     {
         if (slotIndex < inventorySlots.Count)
@@ -72,7 +74,6 @@ public class InventoryManager : MonoBehaviour
             InventoryUI.Instance.HighlightSlot(slotIndex);
         }
     }
-
     private void UseSelectedItem()
     {
         if (timeSinceLastUse >= timeBetweenUses)
@@ -84,16 +85,35 @@ public class InventoryManager : MonoBehaviour
                 return;
             }
             InventorySlot selectedItem = inventorySlots[selectedSlotIndex];
-            FindObjectOfType<PlayerAbilities>().UseItem(selectedItem);      //Su dung item de dung skill
-            RemoveItem(selectedItem);
-            UpdateUI();
+            if (isSkillAvailable())
+            {
+                FindObjectOfType<PlayerAbilities>().UseItem(selectedItem); //Su dung item de dung skill
+                RemoveItem(selectedItem);
+                UpdateUI();
+            }
         }
 
 
     }
+
+
     //Add item into inventory
     public void AddItem(Sprite itemSprite, string itemName, int itemCount, bool isCounted)
     {
+        if (inventorySlots.Count == 3)
+        {
+            isFull = true;
+            foreach (var slot in inventorySlots)
+            {
+                if (slot.itemName == itemName)
+                    isFull = false;
+            }
+        }
+        if (isFull)
+        {
+            Debug.Log("Full inven");
+            return;
+        }
         foreach (var slot in inventorySlots)
         {
             if (slot.itemName == itemName)
@@ -107,8 +127,8 @@ public class InventoryManager : MonoBehaviour
         InventorySlot newItem = new InventorySlot(itemSprite, itemName, itemCount, isCounted);
         inventorySlots.Add(newItem);
         UpdateUI();
-    }
 
+    }
     public void RemoveItem(InventorySlot selectedItem)
     {
         if (selectedItem.isCounted == false)
@@ -122,19 +142,18 @@ public class InventoryManager : MonoBehaviour
                 if (slot.itemCount <= 0)
                 {
                     inventorySlots.Remove(slot);
+                    isFull = false;
                 }
                 UpdateUI();
                 return;
             }
         }
-        Debug.Log("Loi slot");
+        
     }
-
     public void UpdateUI()
     {
         InventoryUI.Instance.RefreshUI(inventorySlots);
     }
-
     public void SaveInventory()
     {
         savedInventorySlots.Clear();
@@ -152,4 +171,12 @@ public class InventoryManager : MonoBehaviour
         }
         UpdateUI();
     }
+    public bool isSkillAvailable()
+    {
+        if (player.GetComponent<PlayerAbilities>().isInCannon)
+            return false;
+        return true;
+    }
+
+
 }

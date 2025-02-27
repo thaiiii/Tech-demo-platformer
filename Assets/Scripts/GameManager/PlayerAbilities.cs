@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static InventoryManager;
+using static UnityEditor.Timeline.Actions.MenuPriority;
 
 public class PlayerAbilities : MonoBehaviour
 {
@@ -23,16 +25,32 @@ public class PlayerAbilities : MonoBehaviour
     [Header("Shooting")]
     public GameObject playerBulletPrefab;
 
+    [Header("Cannon")]
+    [HideInInspector] public bool isInCannon;
+
+    [Header("SplitBody")]
+    [HideInInspector] public GameObject slimeClonePrefab;
+    [HideInInspector] public float swapControlRadius = 10f;
+    [HideInInspector] public float absorbRadius = 5f;
+    private InventoryManager inventoryManager;
+    public SlimeClone closestClone;
+    public SlimeClone[] clones;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
+    private void Start()
+    {
+        inventoryManager = InventoryManager.Instance;
+    }
     // Update is called once per frame
     void Update()
     {
         HandleTeleport();
+        HandleSlime();
 
     }
 
@@ -190,7 +208,7 @@ public class PlayerAbilities : MonoBehaviour
     #region Player skills
     public void UseItem(InventoryManager.InventorySlot selectedSlot)
     {
-        switch(selectedSlot.itemName)
+        switch (selectedSlot.itemName)
         {
             case "PlayerBullet":
                 PlayerShoot();
@@ -201,10 +219,132 @@ public class PlayerAbilities : MonoBehaviour
         }
     }
 
+    #region Shooting
     private void PlayerShoot()
     {
         Instantiate(playerBulletPrefab, transform.position, transform.rotation);
     }
+    #endregion
+
+    #region SplitBody
+    public void HandleSlime()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+            SplitBody();
+        if (Input.GetKeyDown(KeyCode.R))
+            SwapControl();
+        if (Input.GetKeyDown(KeyCode.E))
+            AbsorbClone();
+    }
+
+    public void SplitBody()
+    {
+        //Kiểm tra số lượng slime
+        int slimeCount = 0;
+        InventorySlot slimeSlot = CheckSlimeQuantity(out slimeCount);
+        if (slimeSlot == null || slimeCount < 8)
+            return; // Không đủ slime để chia đôi
+
+        // Trừ số slime đã chia khỏi người chơi
+        int splitedSlime = slimeCount / 2;
+        slimeSlot.itemCount -= splitedSlime;
+        inventoryManager.UpdateUI();
+
+        // Tạo và cấu hình bản sao của người chơi
+        GameObject clone = Instantiate(slimeClonePrefab, transform.position - new Vector3(1f, 0, 0), Quaternion.identity);
+        SlimeClone cloneScript = clone.GetComponent<SlimeClone>();
+        if (cloneScript != null)
+        {
+            cloneScript.SetSlimeCount(splitedSlime);
+        }
+    }
+    private InventorySlot CheckSlimeQuantity(out int slimeCount)
+    {
+        slimeCount = 0;
+        if (inventoryManager == null || inventoryManager.inventorySlots == null)
+        {
+            Debug.LogError("InventoryManager or inventorySlots is NULL!");
+            return null;
+        }
+        slimeCount = 0;
+        foreach (InventorySlot slot in inventoryManager.inventorySlots)
+        {
+            if (slot.itemName == "Slime")
+            {
+                slimeCount = slot.itemCount;
+                return slot;
+            }
+        }
+        return null;
+    }
+    public void SwapControl()
+    {
+        SlimeClone closestClone = FindClosestClone(swapControlRadius);
+        if (closestClone == null)
+            return;
+
+        //Kiem tra so Slime cua nguoi choi
+        int playerSlimeCount;
+        InventorySlot slimeSlot = CheckSlimeQuantity(out playerSlimeCount);
+
+        //Kiem tra dieu kien hoan doi
+        if (slimeSlot == null || playerSlimeCount < 4)
+            return;
+
+        //Doi vi tri
+        Vector3 tempPosision = transform.position;
+        transform.position = closestClone.transform.position;
+        closestClone.transform.position = tempPosision;
+        //Doi so luong slime
+        int tempSlime = playerSlimeCount;
+        slimeSlot.itemCount = closestClone.slimeCount;
+        closestClone.slimeCount = tempSlime;
+    }
+    private void AbsorbClone()
+    {
+        closestClone = FindClosestClone(absorbRadius);
+        if (closestClone == null)
+            return;
+        int cloneSlime = closestClone.slimeCount;
+        transform.position = closestClone.transform.position;
+        
+        //Kiem tra inventory
+        foreach (InventorySlot slot in inventoryManager.inventorySlots)
+        {
+            if (slot.itemName == "Slime")
+            {
+                inventoryManager.AddItem(slot.itemSprite, slot.itemName, cloneSlime, slot.isCounted);
+                Destroy(closestClone.gameObject);
+                return;
+            }
+        }
+        if (inventoryManager.isFull)
+        {
+            Debug.Log("Da full inven");
+            return;
+        }
+        inventoryManager.AddItem(closestClone.slimeSprite, "Slime", cloneSlime, true);
+        Destroy(closestClone.gameObject);
+
+    }
+    private SlimeClone FindClosestClone(float maxDistance)
+    {
+        //SlimeClone[]
+            clones = FindObjectsOfType<SlimeClone>();
+        SlimeClone closestClone = null;
+        float closestDistance = maxDistance;
+
+        foreach (SlimeClone clone in clones)
+        {
+            float distance = Vector2.Distance(transform.position, clone.transform.position);
+            if (distance < closestDistance)
+            {
+                closestClone = clone;
+            }
+        }
+        return closestClone;
+    }
+    #endregion
 
     #endregion
 
@@ -215,8 +355,8 @@ public class PlayerAbilities : MonoBehaviour
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         gameObject.GetComponent<Player>().LockMove();
+        isInCannon = true;
     }
-
     public void ExitCannon(Vector2 shootDirection, float shootForce)
     {
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
@@ -224,7 +364,6 @@ public class PlayerAbilities : MonoBehaviour
         gameObject.GetComponent<Player>().UnlockMove();
         StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
-
     public bool CanGetInsideCannon()
     {
         List<InventorySlot> inventorySlot = InventoryManager.Instance.inventorySlots;
@@ -233,18 +372,20 @@ public class PlayerAbilities : MonoBehaviour
             if (slot.itemName == "Slime" && slot.itemCount > 8 && slot.isCounted == true)
                 return false;
         }
+        if (isInCannon)
+            return false;
         return true;
     }
-
     private IEnumerator TemporaryStopUpdatingHorizontalVelocity()
     {
         gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(true);
         yield return new WaitForSeconds(0.5f);
+        isInCannon = false;
         if (gameObject.GetComponent<Player>().isGrounded)
             gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(false);
         else
             StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
-    
+
     #endregion
 }
