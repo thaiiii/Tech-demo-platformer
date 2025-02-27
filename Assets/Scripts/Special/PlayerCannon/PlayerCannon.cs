@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class PlayerCannon : MonoBehaviour
 {
-    public Transform cannonMuzzle; //Điểm bắn ra
-    public Transform cannonPivot; //Phần xoay được của pháo
-    public float rotationSpeed = 100f; //Tốc độ xoay góc
+    [HideInInspector]public Transform cannonMuzzle; //Điểm bắn ra
+    [HideInInspector]public Transform cannonPivot; //Phần xoay được của pháo
+   
     public float minForce = 5f; //Lực bắn tối thiểu
     public float maxForce = 20f;
-    public float chargeTime = 3f; //Thời gian nạp tối đa
     public float force = 0f;
-    public Vector2 direction;
+   
+    private float chargeTime = 3f; //Thời gian nạp tối đa
+    private float rotationSpeed = 100f; //Tốc độ xoay góc
+    private float currentChargeTime = 0f;
+    private Vector2 direction;
+    private PlayerAbilities playerAbilities;
 
-    public PlayerAbilities playerAbilities;
-    public bool isPlayerInside = false;
-    public float currentChargeTime = 0f;
-    public bool isPlayerInRange = false; //Kiểm tra người chơi ở trong tầm hoạt động
+    [HideInInspector] public bool isPlayerInside = false;
+    private bool isPlayerInRange = false; //Kiểm tra người chơi ở trong tầm hoạt động
 
     // Update is called once per frame
     void Update()
@@ -65,17 +67,18 @@ public class PlayerCannon : MonoBehaviour
         {
             currentChargeTime += Time.deltaTime;
             currentChargeTime = Mathf.Clamp(currentChargeTime, 0.5f, chargeTime);
+            force = Mathf.Lerp(minForce, maxForce, currentChargeTime / chargeTime);
+            gameObject.GetComponent<PlayerCannonUI>().ShowUI();
         }
     }
     private void FirePlayer()
     {
         // Hướng bắn theo nòng pháo
-        force = Mathf.Lerp(minForce, maxForce, currentChargeTime / chargeTime);
+        
         playerAbilities.ExitCannon(direction, force);
-
         isPlayerInside = false;
         currentChargeTime = 0f;
-
+        gameObject.GetComponent<PlayerCannonUI>().HideUI();
     }
 
     
