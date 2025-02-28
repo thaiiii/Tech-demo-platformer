@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     private bool hasMoved = false; //Kiem tra xem da di chuyen chua
     private bool isMoveable = true;
     public bool isShotHorizontally = false; //Kiểm tra xem có tác động lực phương ngang không, nếu có sẽ ngưng update vận tốc phương ngang ở Move();
+    public float evironmentGravityScale = 5f;
 
     [Header("Wall")]
     private float wallSlideSpeed = 1f;
@@ -117,10 +118,10 @@ public class Player : MonoBehaviour
             }
 
         }
-        else
+        else //if (!Input.GetButton("Jump"))
         {
             // Bật lại trọng lực khi không giữ Space (hoặc không chạm vào tường)
-            rb.gravityScale = 5;  // Trọng lực được áp dụng lại
+            rb.gravityScale = evironmentGravityScale;  // Trọng lực được áp dụng lại
         }
         animator.SetBool("isClinging", !isGrounded && (isTouchingGlassWall || isTouchingNormalWall));
         // Nếu bấm nút nhảy
@@ -204,7 +205,7 @@ public class Player : MonoBehaviour
         transform.position = startPosition;
         hasMoved = false;
         isMoveable = true;
-        rb.gravityScale = 5;
+        rb.gravityScale = 5f;
         UnlockMove();
     }
 

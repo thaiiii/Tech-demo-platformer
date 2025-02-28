@@ -8,6 +8,9 @@ public class SlimeClone : MonoBehaviour
     [HideInInspector]public Sprite slimeSprite;
     private SpriteRenderer spriteRenderer;
 
+    public bool isSaved = false; //trạng thái được checkpoint của clone
+    public Vector3 checkpointPosition;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -18,5 +21,15 @@ public class SlimeClone : MonoBehaviour
         slimeCount = count;
         // Điều chỉnh kích thước dựa vào số slime
         //transform.localScale = Vector3.one * (1f + (slimeCount / 32f));
+    }
+
+    public void SaveClone()
+    {
+        isSaved = true;
+        checkpointPosition = transform.position;
+    }
+    public void KillClone()
+    {
+        Destroy(gameObject);
     }
 }

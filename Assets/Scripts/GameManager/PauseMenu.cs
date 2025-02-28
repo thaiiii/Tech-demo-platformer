@@ -18,6 +18,7 @@ public class PauseMenu : MonoBehaviour
     private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
     public List<ItemBase> items;
+    public List<SlimeClone> allSlimeClone;
 
     #region Stage
     private void Awake()
@@ -27,19 +28,16 @@ public class PauseMenu : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
     }
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeUIReferences(); // Cập nhật tham chiếu khi scene mới được tải
         InitializeGameObjectReferences(); //Cập nhật tham chiếu các game object khác
         //RestartStage();
     }
-
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded; // Hủy đăng ký sự kiện
     }
-
     private void InitializeUIReferences()
     {
         GameObject UI = GameObject.Find("UI");
@@ -70,13 +68,12 @@ public class PauseMenu : MonoBehaviour
             menuButton.onClick.AddListener(LoadMenu);
         }
     }
-
     private void InitializeGameObjectReferences()
     {
         player = FindAnyObjectByType<Player>();
 
         //Lấy vị trí các item trong map
-        List<ConsumableItem> consumableItems = new List<ConsumableItem>( FindObjectsOfType<ConsumableItem>());
+        List<ConsumableItem> consumableItems = new List<ConsumableItem>(FindObjectsOfType<ConsumableItem>());
         List<StorableItem> storableItems = new List<StorableItem>(FindObjectsOfType<StorableItem>());
         foreach (ConsumableItem item in consumableItems)
         {
@@ -120,7 +117,6 @@ public class PauseMenu : MonoBehaviour
         gameTimer.PauseTimer();
 
     }
-
     public void ResumeStage()
     {
         pauseMenuUI.SetActive(false);
@@ -131,30 +127,29 @@ public class PauseMenu : MonoBehaviour
         gameTimer.ResumeTimer();
 
     }
-
     public void LoadMenu()
     {
         Time.timeScale = 1; //Khoi phuc toc do game
         SceneManager.LoadScene("MainMenu"); //Tai lai menu
     }
-
     public void RestartStage()
     {
         Time.timeScale = 1f;
         pauseMenuUI.SetActive(false);
         //Reset objects method here
-
         gameTimer.StartTimer();
 
+        //ResetPlayer
         player.ResetPosition();
+        player.GetComponent<HealthComponent>().Heal(player.GetComponent<HealthComponent>().GetHealthSystem().maxHealth);
 
         //Reset objects position
         ResetTeleportTower();   //Teleport towers
         SwitchCannonActivation(); //Clear all missiles
         ResetFan(); //Reset all fans
         ResetItem();
+        ResetSlimeBody();
     }
-
     private void ResetTeleportTower()
     {
         // Reset vị trí tất cả các TeleportTower
@@ -164,7 +159,6 @@ public class PauseMenu : MonoBehaviour
             tower.ResetTower();
         }
     }
-
     private void SwitchCannonActivation()
     {
         // bật/tắt tất cả Cannon
@@ -174,7 +168,6 @@ public class PauseMenu : MonoBehaviour
             cannon.ClearAllMissiles();
         }
     }
-
     private void ResetFan()
     {
         Fan[] fans = FindObjectsOfType<Fan>();
@@ -183,16 +176,28 @@ public class PauseMenu : MonoBehaviour
             fan.ResetFan();
         }
     }
-
     private void ResetItem()
     {
         foreach (ItemBase item in items)
         {
-            item.ActiveItem();
+            if (!item.isCheckpointPicked)
+                item.ActiveItem();
         }
         FindObjectOfType<InventoryManager>().LoadSavedInventory();
     }
-
+    private void ResetSlimeBody()
+    {
+        allSlimeClone = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
+        foreach (SlimeClone clone in allSlimeClone)
+        {
+            if (clone.isSaved)
+                clone.transform.position = clone.checkpointPosition;
+            else
+            {
+                clone.KillClone();
+            }
+        }
+    }
 
 
 

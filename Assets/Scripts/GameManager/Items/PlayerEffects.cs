@@ -8,7 +8,6 @@ public class PlayerEffects : MonoBehaviour
 
     public float speedRate = 1f;
     public float speedEffectDuration = 0f;
-
     public float sizeUpValue = 0;
 
     private void Awake()
@@ -37,20 +36,17 @@ public class PlayerEffects : MonoBehaviour
                 break;
         }
     }
-
     public IEnumerator SpeedBoostEffect(float speedRate, float speedEffectDuration)
     {
         FindAnyObjectByType<Player>().speed *= speedRate;
         yield return new WaitForSeconds(speedEffectDuration);
         FindAnyObjectByType<Player>().speed /= speedRate;
     }
-
     public void SizeBoostEffect(float sizeUpValue)
     {
         StartCoroutine(SmoothSizeChange(FindFirstObjectByType<Player>(), sizeUpValue, 1f));
         StartCoroutine(SmoothZoom(sizeUpValue, 1.5f));
     }
-
     private IEnumerator SmoothSizeChange(Player player, float sizeUpValue, float duration)
     {
         Vector3 playerScale = FindFirstObjectByType<Player>().transform.localScale;
@@ -73,8 +69,7 @@ public class PlayerEffects : MonoBehaviour
         //Thay doi radius check wall
         FindFirstObjectByType<Player>().checkWallRadius *= FindFirstObjectByType<Player>().transform.localScale.y;
     }
-
-    private IEnumerator SmoothZoom(float targetSize, float duration) 
+    private IEnumerator SmoothZoom(float targetSize, float duration)
     {
         float startSize = Camera.main.orthographicSize;
         float elapsedTime = 0f;
@@ -86,6 +81,8 @@ public class PlayerEffects : MonoBehaviour
             yield return null;
         }
 
-        Camera.main.orthographicSize  = startSize * sizeUpValue;
+        Camera.main.orthographicSize = startSize * sizeUpValue;
     }
+   
+
 }

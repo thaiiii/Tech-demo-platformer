@@ -7,6 +7,7 @@ public abstract class ItemBase : MonoBehaviour
     public string itemName;
     public bool isCounted;
     private Vector3 itemPosition;
+    public bool isCheckpointPicked = false; //Vật phẩm đã được nhặt khi checkpoint thì sau khi restart sẽ mất
 
     //Tùy biến
     public int quantity;
@@ -58,5 +59,10 @@ public abstract class ItemBase : MonoBehaviour
                 Debug.Log("bbb");
             }
         }
+    }
+
+    public void PickToSaveInventory()
+    {
+        isCheckpointPicked = true;
     }
 }

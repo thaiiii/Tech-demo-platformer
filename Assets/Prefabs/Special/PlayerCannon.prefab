@@ -33,7 +33,7 @@ RectTransform:
   m_Father: {fileID: 6725645861443169569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -108,7 +108,7 @@ RectTransform:
   m_Father: {fileID: 3594063236704706626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -251,8 +251,8 @@ RectTransform:
   m_GameObject: {fileID: 2198551912260614326}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1808389737445902641}
   - {fileID: 3594063236704706626}
@@ -261,7 +261,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -200}
+  m_AnchoredPosition: {x: 0, y: -7}
   m_SizeDelta: {x: 150, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3061102071508991212
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3562950599756307419}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 50
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -327,7 +327,6 @@ GameObject:
   - component: {fileID: 6372046498725693618}
   - component: {fileID: 5642533068794824450}
   - component: {fileID: 1646958940471632543}
-  - component: {fileID: 1326938471437041626}
   m_Layer: 0
   m_Name: PlayerCannon
   m_TagString: Untagged
@@ -461,26 +460,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9aaded1040ffb54cb3da61fa5997c56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  powerSlider: {fileID: 3061102071508991212}
+  cannonCanvas: {fileID: 6732009103549892553}
   cannonMuzzle: {fileID: 9203986974501974625}
   cannonPivot: {fileID: 7706382943059582129}
   minForce: 5
   maxForce: 50
   force: 0
   isPlayerInside: 0
---- !u!114 &1326938471437041626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2968499815757138530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8192a14481a142c4a96080d6bd03f26b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cannonUICanvas: {fileID: 6732009103549892553}
-  powerSlider: {fileID: 3061102071508991212}
 --- !u!1 &3150856664409619267
 GameObject:
   m_ObjectHideFlags: 0
@@ -619,7 +606,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5720839466294351959
 RectTransform:
   m_ObjectHideFlags: 0
@@ -627,10 +614,10 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6931626547196404675}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.10000001, y: 0.10000001, z: 0.10000001}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3947289197905930051}
   m_Father: {fileID: 7706382943059582129}
@@ -638,8 +625,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6732009103549892553
 Canvas:
   m_ObjectHideFlags: 0
@@ -647,9 +634,9 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6931626547196404675}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -685,7 +672,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4743486556630032344
 MonoBehaviour:
   m_ObjectHideFlags: 0

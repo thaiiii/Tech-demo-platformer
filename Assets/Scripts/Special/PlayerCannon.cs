@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCannon : MonoBehaviour
 {
+     public Slider powerSlider;
+    public Canvas cannonCanvas;
     [HideInInspector]public Transform cannonMuzzle; //Điểm bắn ra
     [HideInInspector]public Transform cannonPivot; //Phần xoay được của pháo
    
@@ -52,7 +55,7 @@ public class PlayerCannon : MonoBehaviour
         isPlayerInside = true;
         playerAbilities.EnterCannon(transform.position);
         playerAbilities.gameObject.transform.SetParent(transform); //Thành cha của player
-
+        
     }
     private void RotateCannon()
     {
@@ -68,7 +71,11 @@ public class PlayerCannon : MonoBehaviour
             currentChargeTime += Time.deltaTime;
             currentChargeTime = Mathf.Clamp(currentChargeTime, 0.5f, chargeTime);
             force = Mathf.Lerp(minForce, maxForce, currentChargeTime / chargeTime);
-            gameObject.GetComponent<PlayerCannonUI>().ShowUI();
+            if (isPlayerInside == true)
+            {
+                cannonCanvas.enabled = true;
+                powerSlider.value = force / maxForce;
+            }
         }
     }
     private void FirePlayer()
@@ -76,9 +83,10 @@ public class PlayerCannon : MonoBehaviour
         // Hướng bắn theo nòng pháo
         
         playerAbilities.ExitCannon(direction, force);
+        playerAbilities.gameObject.transform.SetParent(null);
         isPlayerInside = false;
         currentChargeTime = 0f;
-        gameObject.GetComponent<PlayerCannonUI>().HideUI();
+        cannonCanvas.enabled = false;
     }
 
     

@@ -17,13 +17,13 @@ public class PlayerAbilities : MonoBehaviour
     public float teleportRadius = 10f;
     public LayerMask towerLayer;
     public bool isHidden = false;
-    public TeleportTower currentTower;
-    public Collider2D[] towersInRange;
-    public float teleportDelay = 0.5f;
-    public Vector2 storedVelocity;
+    [HideInInspector] public TeleportTower currentTower;
+    [HideInInspector] public Collider2D[] towersInRange;
+    [HideInInspector] public float teleportDelay = 0.5f;
+    [HideInInspector] public Vector2 storedVelocity;
 
     [Header("Shooting")]
-    public GameObject playerBulletPrefab;
+    [HideInInspector] public GameObject playerBulletPrefab;
 
     [Header("Cannon")]
     [HideInInspector] public bool isInCannon;
@@ -33,8 +33,6 @@ public class PlayerAbilities : MonoBehaviour
     [HideInInspector] public float swapControlRadius = 10f;
     [HideInInspector] public float absorbRadius = 5f;
     private InventoryManager inventoryManager;
-    public SlimeClone closestClone;
-    public SlimeClone[] clones;
 
     private void Awake()
     {
@@ -302,7 +300,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     private void AbsorbClone()
     {
-        closestClone = FindClosestClone(absorbRadius);
+        SlimeClone closestClone = FindClosestClone(absorbRadius);
         if (closestClone == null)
             return;
         int cloneSlime = closestClone.slimeCount;
@@ -329,8 +327,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     private SlimeClone FindClosestClone(float maxDistance)
     {
-        //SlimeClone[]
-            clones = FindObjectsOfType<SlimeClone>();
+        SlimeClone[] clones = FindObjectsOfType<SlimeClone>();
         SlimeClone closestClone = null;
         float closestDistance = maxDistance;
 
