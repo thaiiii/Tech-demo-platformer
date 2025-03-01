@@ -86,7 +86,7 @@ public class NPCDialogue : MonoBehaviour
     {
         isInConversation = false;
         dialogueBox.SetActive(false);
-        playerController.UnlockMove(); // Kích hoạt lại di chuyển
+        playerController.UnlockMove(true); // Kích hoạt lại di chuyển
     }
 
     private void ShowDialogue()

@@ -189,7 +189,7 @@ public class PlayerAbilities : MonoBehaviour
             rb.gravityScale = 5f;
 
             // Bật lại sprite, tắt isTrigger, cho phép di chuyển
-            gameObject.GetComponent<Player>().UnlockMove();
+            gameObject.GetComponent<Player>().UnlockMove(true);
             playerCollider.isTrigger = false;
             spriteRenderer.enabled = true;
 
@@ -358,7 +358,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         rb.velocity = shootDirection * shootForce; //Bắn theo hướng vào lực truyền vào
-        gameObject.GetComponent<Player>().UnlockMove();
+        gameObject.GetComponent<Player>().UnlockMove(true);
         StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
     public bool CanGetInsideCannon()

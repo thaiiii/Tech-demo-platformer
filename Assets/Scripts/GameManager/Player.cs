@@ -11,32 +11,47 @@ public class Player : MonoBehaviour
     public Vector3 startPosition;
 
     [Header("Movement")]
-    private float horizontalValue;
-    public float speed = 4f;
     private bool hasMoved = false; //Kiem tra xem da di chuyen chua
     private bool isMoveable = true;
     public bool isShotHorizontally = false; //Kiểm tra xem có tác động lực phương ngang không, nếu có sẽ ngưng update vận tốc phương ngang ở Move();
-    public float evironmentGravityScale = 5f;
+    public bool allowKeepVelocity = true;
+    public bool isSliding = false;
+    public float slipperyValue;
+    private float horizontalValue;
+    public float speed = 4f;
+    public float environmentGravityScale = 5f;
+    public float lastDirection = 0f; //-1: trái, 0: đứng im, 1: phải
 
     [Header("Wall")]
     private float wallSlideSpeed = 1f;
-    public LayerMask normalWallLayer; //normal wall block
-    public LayerMask glassWallLayer; //glass wall block
+    [SerializeField] public float checkWallRadius = 0.6f;
+    [SerializeField] public LayerMask normalWallLayer; //normal wall block
+    [SerializeField] public LayerMask glassWallLayer; //glass wall block
     private bool isTouchingNormalWall = false;
     private bool isTouchingGlassWall = false;
-    public float checkWallRadius = 0.6f;
+
 
     [Header("Ground")]
-    public Transform groundCheckCollider;
-    public bool isGrounded;
+    [SerializeField] public Transform groundCheckCollider;
+    [SerializeField] public LayerMask groundLayer;
     private float groundCheckRadius = 0.01f;
-    public LayerMask groundLayer;
+    private float jumpPower = 20f;
     private bool isJumped;
     private bool coyoteJump;
-    private float jumpPower = 20f;
-
-
-
+    private bool _isGrounded;
+    public bool isGrounded
+    {
+        get => _isGrounded;
+        set
+        {
+            if (_isGrounded != value) // Chỉ gọi sự kiện nếu trạng thái thực sự thay đổi
+            {
+                _isGrounded = value;
+                OnGroundedChanged?.Invoke(this, _isGrounded);
+            }
+        }
+    }
+    public event Action<Player, bool> OnGroundedChanged;
 
     #region Default
     void Awake()
@@ -45,20 +60,15 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         gameTimer = FindAnyObjectByType<GameTimer>();
     }
-
-    // Start is called before the first frame update
     void Start()
     {
         startPosition = transform.position;
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (isMoveable)
             HandlePCInput();
     }
-
     private void FixedUpdate()
     {
         GroundCheck();
@@ -66,8 +76,9 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    #region Movement
 
+
+    #region Movement
     private void HandlePCInput()
     {
         horizontalValue = Input.GetAxisRaw("Horizontal");
@@ -118,10 +129,10 @@ public class Player : MonoBehaviour
             }
 
         }
-        else //if (!Input.GetButton("Jump"))
+        else
         {
             // Bật lại trọng lực khi không giữ Space (hoặc không chạm vào tường)
-            rb.gravityScale = evironmentGravityScale;  // Trọng lực được áp dụng lại
+            rb.gravityScale = environmentGravityScale;  // Trọng lực được áp dụng lại
         }
         animator.SetBool("isClinging", !isGrounded && (isTouchingGlassWall || isTouchingNormalWall));
         // Nếu bấm nút nhảy
@@ -134,18 +145,21 @@ public class Player : MonoBehaviour
                 coyoteJump = false; // Tắt coyote jump ngay lập tức
 
                 // Thêm lực nhảy
-                rb.velocity = Vector2.up * jumpPower;
+                rb.velocity = new Vector2(rb.velocity.x, jumpPower);
             }
         }
     }
-
     private void Move()
     {
-        if (isShotHorizontally) //Ngưng cập nhật vận tốc chiều ngang
+        if (!CanInputControl()) //Ngưng cập nhật vận tốc chiều ngang nếu ko thể di chuyển hoặc bị pháo đẩy đi
             return;
-        Vector2 targetVelocity = new Vector2(horizontalValue * speed * 100 * Time.fixedDeltaTime, rb.velocity.y);
-        rb.velocity = targetVelocity;
-
+        if (isSliding) //Đổi kiểu di chuyển là trượt
+            Slide(slipperyValue);
+        else
+        {
+            Vector2 targetVelocity = new Vector2(horizontalValue * speed * 100 * Time.fixedDeltaTime, rb.velocity.y);
+            rb.velocity = targetVelocity;
+        }
         //Current scale
         Vector3 currentScale = transform.localScale;
         //Facing direction
@@ -156,12 +170,24 @@ public class Player : MonoBehaviour
         //0 for idle, 6 for walk, 12 for run => Setting xVelocity in Player animator
         animator.SetFloat("xVelocity", Mathf.Abs(rb.velocity.x));
     }
-
+    private void Slide(float slipperyValue)
+    {
+        if (!CanInputControl()) //Ngưng cập nhật vận tốc chiều ngang nếu ko thể di chuyển hoặc bị pháo đẩy đi
+            return;
+        rb.AddForce(horizontalValue * speed * slipperyValue * Vector2.right);
+    }
     public void SwitchUpdateHorizontalVelocity(bool value)
     {
         isShotHorizontally = value;
     }
-
+    private bool CanInputControl()
+    {
+        if (isShotHorizontally)
+            return false;
+        if (!isMoveable)
+            return false;
+        return true;
+    }
     private void GroundCheck()
     {
         // Kiểm tra nếu người chơi đang đứng trên mặt đất
@@ -171,6 +197,7 @@ public class Player : MonoBehaviour
             if (!isGrounded) // Nếu mới chạm đất
             {
                 isGrounded = true;
+                //OnGroundedChanged?.Invoke(this, _isGrounded);                   //Event
                 isJumped = false; // Cho phép nhảy lại
             }
 
@@ -182,21 +209,24 @@ public class Player : MonoBehaviour
             if (isGrounded) // Nếu rời khỏi mặt đất
             {
                 isGrounded = false; // Đánh dấu không còn chạm đất
+                //OnGroundedChanged?.Invoke(this, _isGrounded);                   //Event
                 StartCoroutine(CoyoteJumpDelay()); // Kích hoạt coyote jump
             }
         }
 
         animator.SetBool("Jump", !isGrounded);
     }
-
     IEnumerator CoyoteJumpDelay()
     {
         yield return new WaitForSeconds(0.3f);
         coyoteJump = false;
     }
+    
 
 
     #endregion
+
+
 
     #region Stage
     public void ResetPosition() // Trạng thái về vị trí spawn, chưa từng di chuyển
@@ -206,28 +236,29 @@ public class Player : MonoBehaviour
         hasMoved = false;
         isMoveable = true;
         rb.gravityScale = 5f;
-        UnlockMove();
+        UnlockMove(false);
     }
-
     public void LockMove() // Không cho phép di chuyển
     {
         if (isMoveable)
         {
-            //Debug.Log("lockmove: Gravity = 0");
             rb.gravityScale = 0;
             isMoveable = false;
             horizontalValue = 0;
-            rb.velocity = Vector3.zero;
+            if (!allowKeepVelocity)
+            {
+                Debug.Log("zero");
+                rb.velocity = Vector3.zero;
+            }
         }
     }
-
-    public void UnlockMove() // Cho phép di chuyển
+    public void UnlockMove(bool isAllowed) // Cho phép di chuyển
     {
         //Debug.Log("Unlockmove: Gravity = 5");
         rb.gravityScale = 5f;
         isMoveable = true;
+        allowKeepVelocity = isAllowed; //tắt lưu vận tốc
     }
-
     public void Death() //Chết = không cho phép di chuyển + về vị trí spawn, chưa từng di chuyển
     {
         ResetPosition();
@@ -236,6 +267,7 @@ public class Player : MonoBehaviour
     }
 
     #endregion
+
 
 
     private void OnDrawGizmosSelected()

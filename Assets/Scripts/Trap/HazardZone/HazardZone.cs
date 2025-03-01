@@ -16,7 +16,10 @@ public class HazardZone : MonoBehaviour
     protected HazardType hazardType;
     public float effectValue; //Lửa và khí độc
     public float effectDuration; //Băng và ko tluc
+
+    [Header("Low Gravity")]
     private Dictionary<Collider2D, Coroutine> activeEffects = new Dictionary<Collider2D, Coroutine>();
+    private Dictionary<GameObject, float> originalGravityScales = new Dictionary<GameObject, float>();
 
 
 
@@ -26,6 +29,7 @@ public class HazardZone : MonoBehaviour
         if (health == null) return;
         Coroutine effectCoroutine = null;
 
+        //Debug.Log("smt");
         switch (hazardType)
         {
             case HazardType.Fire:
@@ -40,11 +44,11 @@ public class HazardZone : MonoBehaviour
                 break;
             case HazardType.Ice:
                 //Giảm ma sát
-                effectCoroutine = StartCoroutine(ApplySlipperyEffect(collision.gameObject));
+                ApplyIceEffect(collision.gameObject);
                 break;
             case HazardType.LowGravity:
                 //Set gravity = 0, không thể di chuyển, tiếp tục di chuyển với vận tốc cũ
-                effectCoroutine = StartCoroutine(SetLowGravity(collision.gameObject));
+                SetLowGravity(collision.gameObject);
                 break;
             default:
                 break;
@@ -59,18 +63,16 @@ public class HazardZone : MonoBehaviour
             StopCoroutine(activeEffects[collision]);
             activeEffects.Remove(collision);
         }
-
         // Khôi phục trạng thái ban đầu nếu cần
         if (hazardType == HazardType.Ice)
         {
-            //ResetFriction(collision);
+            ResetIceEffect(collision.gameObject);
         }
         else if (hazardType == HazardType.LowGravity)
         {
-            //ResetGravity(collision);
+            ResetGravity(collision.gameObject);
         }
     }
-
     private IEnumerator ApplyDamageOverTime(HealthComponent health)
     {
         //Mất 1 lượng máu mỗi giây cho đến khi rời khỏi
@@ -88,21 +90,90 @@ public class HazardZone : MonoBehaviour
             yield return new WaitForSeconds(effectDuration);
         }
     }
-    private IEnumerator ApplySlipperyEffect(GameObject gameObject)
+    private void ApplyIceEffect(GameObject gameObject)
     {
-        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
-        float originalFriction = rb.sharedMaterial.friction;
-        rb.sharedMaterial.friction = 0f; //Giảm ma sát để trượt
-        yield return new WaitForSeconds(1f);
-        rb.sharedMaterial.friction = originalFriction;
+        if (gameObject.CompareTag("Player"))
+        {
+            gameObject.GetComponent<Player>().isSliding = true;
+            gameObject.GetComponent<Player>().slipperyValue = effectValue;
+        }
     }
-    private IEnumerator SetLowGravity(GameObject gameObject)
+    private void ResetIceEffect(GameObject gameObject)
     {
-        Debug.Log("set ");
-        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
-        float originalGravityScale = rb.gravityScale;
-        gameObject.GetComponent<Player>().evironmentGravityScale = effectValue;
-        yield return new WaitForSeconds(1f);
-        gameObject.GetComponent<Player>().evironmentGravityScale = originalGravityScale;
+        if (gameObject.CompareTag("Player"))
+            gameObject.GetComponent<Player>().isSliding = false;
+    }
+    private void SetLowGravity(GameObject gameObject)
+    {
+        if (gameObject.CompareTag("Player"))
+        {
+            Player player = gameObject.GetComponent<Player>();
+            if (!originalGravityScales.ContainsKey(gameObject))
+                originalGravityScales[gameObject] = player.environmentGravityScale;
+            player.environmentGravityScale = effectValue;
+            if (player.isGrounded)
+            {
+                //Cho phép di chuyển trên mặt đất
+                player.UnlockMove(true);                
+            }
+            else 
+            {
+                player.allowKeepVelocity = true;
+                player.LockMove();
+            }
+            // Lắng nghe sự kiện khi trạng thái grounded thay đổi
+            player.OnGroundedChanged += OnPlayerGroundedChanged;
+        }
+        else
+        {
+            Debug.Log("Applying low gravity to object: " + gameObject.name);
+            Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                if (!originalGravityScales.ContainsKey(gameObject))
+                    originalGravityScales[gameObject] = rb.gravityScale;
+                rb.gravityScale = effectValue;
+                //Di chuyển với vận tốc cuối cùng, khóa chuyển động
+            }
+        }
+    }
+    private void ResetGravity(GameObject gameObject)
+    {
+        if (originalGravityScales.ContainsKey(gameObject))
+        {
+            if (gameObject.CompareTag("Player"))
+            {
+                Player player = gameObject.GetComponent<Player>();
+                gameObject.GetComponent<Player>().environmentGravityScale = originalGravityScales[gameObject];
+                gameObject.GetComponent<Player>().UnlockMove(false);
+                player.OnGroundedChanged -= OnPlayerGroundedChanged; // Ngừng lắng nghe sự kiện grounded
+            }
+            else
+            {
+                Debug.Log("Resetting gravity for object: " + gameObject.name);
+                Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.gravityScale = originalGravityScales[gameObject];
+                    //Mở khóa di chuyển
+                }
+            }
+
+            originalGravityScales.Remove(gameObject);
+        }
+    }
+    private void OnPlayerGroundedChanged(Player player, bool isGrounded)
+    {
+        if (isGrounded)
+        {
+            // Nếu người chơi chạm đất khi đang trong zone
+            player.UnlockMove(true); // Cho phép di chuyển bình thường
+            player.allowKeepVelocity = true;
+        }
+        else
+        {
+            // Nếu người chơi rời khỏi mặt đất trong zone
+            player.LockMove(); // Khóa di chuyển
+        }
     }
 }
