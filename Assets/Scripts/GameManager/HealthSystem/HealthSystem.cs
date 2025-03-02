@@ -57,15 +57,9 @@ public class HealthSystem
         shield += amount;
         OnHealthChanged?.Invoke();
     }
-    public void SetInvincible(float duration, HealthComponent owner)
+    public void SetInvincible(bool value, HealthComponent owner)
     {
-        owner.StartCoroutine(InvincibilityCoroutine(duration));
-    }
-    private IEnumerator InvincibilityCoroutine(float duration)
-    {
-        isInvincible = true;
-        yield return new WaitForSeconds(duration);
-        isInvincible = false;
+        isInvincible = value;
     }
     public void ApplyDamageOverTime(float amountPerSecond, float duration, HealthComponent owner)
     {
@@ -76,10 +70,13 @@ public class HealthSystem
         float elapsed = 0;
         while (elapsed < duration)
         {
+            if (IsDead())
+                break;
             TakeDamage(amountPerSecond);
-            yield return new WaitForSeconds(1f);
             elapsed += 1f;
+            yield return new WaitForSeconds(1f);
         }
+        yield return null;
     }
     public void ApplyRegeneration(float amountPerSecond, float duration, HealthComponent owner)
     {

@@ -33,7 +33,6 @@ public class HazardZone : MonoBehaviour
         switch (hazardType)
         {
             case HazardType.Fire:
-                Debug.Log("on fire");
                 effectCoroutine = StartCoroutine(ApplyDamageOverTime(health));
                 break;
             case HazardType.ToxicGas:
@@ -83,7 +82,7 @@ public class HazardZone : MonoBehaviour
         }
     }
     private IEnumerator ApplyPoisonEffect(HealthComponent health)
-    {   //Mất tổng (value) máu mỗi (duration) giây, reset nếu vẫn trong tầm ảnh hưởng
+    {   //Mất tổng (value) máu trong vòng (duration) giây, reset nếu vẫn trong tầm ảnh hưởng
         while (health.GetHealthSystem().currentHealth > 0 && health != null)
         {
             health.ApplyDamageOverTime(effectValue / effectDuration, effectDuration);
@@ -114,13 +113,11 @@ public class HazardZone : MonoBehaviour
             if (player.isGrounded)
             {
                 //Cho phép di chuyển trên mặt đất
-                player.UnlockMove(true);                
+                player.UnlockMove(true);
             }
-            else 
-            {
-                player.allowKeepVelocity = true;
-                player.LockMove();
-            }
+            else
+                player.LockMove(true);
+
             // Lắng nghe sự kiện khi trạng thái grounded thay đổi
             player.OnGroundedChanged += OnPlayerGroundedChanged;
         }
@@ -173,7 +170,7 @@ public class HazardZone : MonoBehaviour
         else
         {
             // Nếu người chơi rời khỏi mặt đất trong zone
-            player.LockMove(); // Khóa di chuyển
+            player.LockMove(true); // Khóa di chuyển
         }
     }
 }

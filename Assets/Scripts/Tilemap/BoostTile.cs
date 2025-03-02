@@ -14,19 +14,22 @@ public class BoostTilemap : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (playerRb != null)
         {
-            if (boostDirection == Vector2.up)
+            if (collision.CompareTag("Player"))
             {
-                Vector2 boostvelocity = boostDirection * boostForce;
-                playerRb.velocity = boostvelocity;
-            }
-            else if (boostDirection == Vector2.right || boostDirection == Vector2.left)
-            {
-                Vector2 boostvelocity = boostDirection * boostForce;
-                playerRb.velocity = boostvelocity;
-            }
+                if (boostDirection == Vector2.up)
+                {
+                    Vector2 boostvelocity = boostDirection * boostForce;
+                    playerRb.velocity = boostvelocity;
+                }
+                else if (boostDirection == Vector2.right || boostDirection == Vector2.left)
+                {
+                    Vector2 boostvelocity = boostDirection * boostForce;
+                    playerRb.velocity = boostvelocity;
+                }
 
+            }
         }
     }
 }

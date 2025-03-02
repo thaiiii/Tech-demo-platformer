@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    private Transform target;
+    public Transform target;
     private Vector3 offset = new Vector3(0, 3, -10);
 
     [HideInInspector] public bool isFollowing = true;
@@ -35,5 +35,9 @@ public class CameraFollow : MonoBehaviour
                 Mathf.Clamp(targetPosition.z, minValues.z, maxValues.z));
         Vector3 smoothPosition = Vector3.Lerp(transform.position, boundPosition, smoothFactor * Time.fixedDeltaTime);
         transform.position = smoothPosition;
+    }
+    public void SetFollowTarget(GameObject newTarget)
+    {
+        target = newTarget.transform;
     }
 }

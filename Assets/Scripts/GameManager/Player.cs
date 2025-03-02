@@ -231,17 +231,18 @@ public class Player : MonoBehaviour
     #region Stage
     public void ResetPosition() // Trạng thái về vị trí spawn, chưa từng di chuyển
     {
-        LockMove();
+        LockMove(false);
         transform.position = startPosition;
         hasMoved = false;
         isMoveable = true;
         rb.gravityScale = 5f;
         UnlockMove(false);
     }
-    public void LockMove() // Không cho phép di chuyển
+    public void LockMove(bool isAllowed) // Không cho phép di chuyển
     {
         if (isMoveable)
         {
+            allowKeepVelocity = isAllowed; //set lưu vận tốc
             rb.gravityScale = 0;
             isMoveable = false;
             horizontalValue = 0;
@@ -257,12 +258,12 @@ public class Player : MonoBehaviour
         //Debug.Log("Unlockmove: Gravity = 5");
         rb.gravityScale = 5f;
         isMoveable = true;
-        allowKeepVelocity = isAllowed; //tắt lưu vận tốc
+        allowKeepVelocity = isAllowed; //set lưu vận tốc
     }
     public void Death() //Chết = không cho phép di chuyển + về vị trí spawn, chưa từng di chuyển
     {
         ResetPosition();
-        LockMove();
+        LockMove(false);
 
     }
 

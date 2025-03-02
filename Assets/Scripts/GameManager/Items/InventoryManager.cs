@@ -85,9 +85,9 @@ public class InventoryManager : MonoBehaviour
                 return;
             }
             InventorySlot selectedItem = inventorySlots[selectedSlotIndex];
-            if (isSkillAvailable())
+            if (player.GetComponent<PlayerAbilities>().isNormalStatus())
             {
-                FindObjectOfType<PlayerAbilities>().UseItem(selectedItem); //Su dung item de dung skill
+                player.GetComponent<PlayerAbilities>().UseItem(selectedItem); //Su dung item de dung skill
                 RemoveItem(selectedItem);
                 UpdateUI();
             }
@@ -170,12 +170,6 @@ public class InventoryManager : MonoBehaviour
             inventorySlots.Add(new InventorySlot(slot.itemSprite, slot.itemName, slot.itemCount, slot.isCounted));
         }
         UpdateUI();
-    }
-    public bool isSkillAvailable()
-    {
-        if (player.GetComponent<PlayerAbilities>().isInCannon)
-            return false;
-        return true;
     }
 
 

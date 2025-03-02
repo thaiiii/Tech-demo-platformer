@@ -12,6 +12,7 @@ public class PlayerAbilities : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D playerCollider;
     private SpriteRenderer spriteRenderer;
+    private HealthComponent healthComponent;
 
     [Header("Teleport")]
     public float teleportRadius = 10f;
@@ -34,11 +35,18 @@ public class PlayerAbilities : MonoBehaviour
     [HideInInspector] public float absorbRadius = 5f;
     private InventoryManager inventoryManager;
 
+    [Header("Robot")]
+    public bool isInRobot = false;
+    [SerializeField] private Robot currentRobot;
+
+
+    // //////////////////////////////////////////////////////////////////////////////////
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        healthComponent = GetComponent<HealthComponent>();
     }
     private void Start()
     {
@@ -47,10 +55,15 @@ public class PlayerAbilities : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleTeleport();
-        HandleSlime();
+        if (isNormalStatus())
+        {
+            HandleTeleport();
+            HandleSlime();
+        }
 
     }
+
+
 
     #region Teleport
     private void HandleTeleport()
@@ -93,8 +106,11 @@ public class PlayerAbilities : MonoBehaviour
         }
         if (isHidden)//trc day ở Update
         {
-            transform.position = currentTower.transform.position;
-            gameObject.GetComponent<Player>().LockMove();
+            if (currentTower != null)
+            {
+                transform.position = currentTower.transform.position;
+                gameObject.GetComponent<Player>().LockMove(true);
+            }
         }
     }
     private TeleportTower GetClosestTower(Collider2D[] towersInRange)
@@ -216,7 +232,14 @@ public class PlayerAbilities : MonoBehaviour
                 break;
         }
     }
-
+    public bool isNormalStatus()
+    {
+        if (isInRobot)
+            return false;
+        if (isInCannon)
+            return false;
+        return true;
+    }
     #region Shooting
     private void PlayerShoot()
     {
@@ -234,7 +257,6 @@ public class PlayerAbilities : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
             AbsorbClone();
     }
-
     public void SplitBody()
     {
         //Kiểm tra số lượng slime
@@ -305,7 +327,7 @@ public class PlayerAbilities : MonoBehaviour
             return;
         int cloneSlime = closestClone.slimeCount;
         transform.position = closestClone.transform.position;
-        
+
         //Kiem tra inventory
         foreach (InventorySlot slot in inventoryManager.inventorySlots)
         {
@@ -351,12 +373,14 @@ public class PlayerAbilities : MonoBehaviour
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        gameObject.GetComponent<Player>().LockMove();
+        isHidden = true;
+        gameObject.GetComponent<Player>().LockMove(false);
         isInCannon = true;
     }
     public void ExitCannon(Vector2 shootDirection, float shootForce)
     {
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        isHidden = false;
         rb.velocity = shootDirection * shootForce; //Bắn theo hướng vào lực truyền vào
         gameObject.GetComponent<Player>().UnlockMove(true);
         StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
@@ -384,5 +408,74 @@ public class PlayerAbilities : MonoBehaviour
             StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
 
+    #endregion
+
+    #region Robot
+    public void EnterRobot(Robot robot) => StartCoroutine(BootRobot(robot));
+
+    public void ExitRobot()
+    {
+        if (currentRobot == null)
+            return;
+        // Tắt điều khiển robot
+        currentRobot.SetControlled(false);
+        currentRobot.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+        currentRobot.GetComponent<Rigidbody2D>().isKinematic = true;
+        currentRobot.GetComponent<Collider2D>().isTrigger = true;
+
+        // Khôi phục người chơi
+        isInRobot = false;
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        rb.isKinematic = false;
+        Physics2D.IgnoreCollision(playerCollider, currentRobot.GetComponent<Collider2D>(), false);
+        GetComponent<Player>().UnlockMove(true);
+        healthComponent.SetInvincible(false);
+        Camera.main.GetComponent<CameraFollow>().SetFollowTarget(gameObject);
+
+        // Đưa người chơi ra khỏi vị trí của robot (xa hơn để tránh va chạm)
+        Vector3 exitPosition = currentRobot.transform.position + Vector3.up * 2f;
+        gameObject.transform.position = exitPosition;
+
+        // Xóa tham chiếu đến robot
+        currentRobot.playerAbilities = null;
+        currentRobot = null;
+
+        //UI máu
+    }
+    public bool CanEnterRobot(Robot robot)
+    {
+        if (robot == null)
+            return false;
+        if (robot.isControlled)
+            return false;
+        if (robot.isDestroyed)
+            return false;
+        if (!robot.isPlayerInRange)
+            return false;
+        return true;
+    }
+    private IEnumerator BootRobot(Robot robot)
+    {
+        //setting người chơi
+        GetComponent<Player>().LockMove(false);
+        currentRobot = robot;
+        isInRobot = true;
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        rb.isKinematic = true;
+        Physics2D.IgnoreCollision(playerCollider, currentRobot.GetComponent<Collider2D>(), true);
+        healthComponent.SetInvincible(true);
+        yield return new WaitForSeconds(1f);
+        
+        
+        //Setting của robot
+        currentRobot.SetControlled(true);
+        currentRobot.GetComponent<Rigidbody2D>().isKinematic = false;
+        currentRobot.GetComponent<Collider2D>().isTrigger = false;
+        Camera.main.GetComponent<CameraFollow>().SetFollowTarget(currentRobot.gameObject);
+
+
+        //UI máu
+        //healthComponent 
+    }
     #endregion
 }

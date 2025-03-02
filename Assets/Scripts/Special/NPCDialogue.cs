@@ -66,7 +66,7 @@ public class NPCDialogue : MonoBehaviour
         interactionMark.SetActive(false);
         currentDialogueIndex = 0;
         ShowDialogue();
-        playerController.LockMove(); // Vô hiệu hóa di chuyển của người chơi
+        playerController.LockMove(false); // Vô hiệu hóa di chuyển của người chơi
     }
 
     private void NextDialogue()

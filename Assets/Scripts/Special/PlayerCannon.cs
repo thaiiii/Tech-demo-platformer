@@ -26,28 +26,29 @@ public class PlayerCannon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (playerAbilities != null)
         {
-            if (playerAbilities == null)
-                return;
-            if (isPlayerInRange && playerAbilities.CanGetInsideCannon())
-                EnterCannon();
-        }
-
-        if (isPlayerInside)
-        {
-            RotateCannon(); //Xoay nòng pháo
-            ChargeShot(); //Nạp lực bắn
-
-            if (Input.GetKeyUp(KeyCode.Space))
-                FirePlayer();
-            if (Input.GetKeyDown(KeyCode.Q))        //Thoát khỏi cannon
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                playerAbilities.ExitCannon(Vector2.up, 10f);
-                isPlayerInside = false;
-                playerAbilities.gameObject.transform.parent = null;
+                if (isPlayerInRange && playerAbilities.CanGetInsideCannon())
+                    EnterCannon();
             }
 
+            if (isPlayerInside)
+            {
+                RotateCannon(); //Xoay nòng pháo
+                ChargeShot(); //Nạp lực bắn
+
+                if (Input.GetKeyUp(KeyCode.Space))
+                    FirePlayer();
+                if (Input.GetKeyDown(KeyCode.Q))        //Thoát khỏi cannon
+                {
+                    playerAbilities.ExitCannon(Vector2.up, 10f);
+                    isPlayerInside = false;
+                    playerAbilities.gameObject.transform.parent = null;
+                }
+
+            }
         }
     }
     public void EnterCannon()

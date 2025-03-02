@@ -30,38 +30,41 @@ public class BreakableTileManager : MonoBehaviour
     private void DetectPlayerCollisionWithTiles()
     {
         Player player = FindAnyObjectByType<Player>();
-        Vector3 playerPosition = player.transform.position; // Vị trí của người chơi
-        float rayLength = 0.7f; // Độ dài của tia Raycast
-
-        // Phóng một tia xuống dưới từ vị trí người chơi (hoặc bạn có thể phóng theo hướng khác)
-        RaycastHit2D hitDownward = Physics2D.Raycast(playerPosition, Vector3.down, rayLength, tileLayer);
-        RaycastHit2D hitForward = Physics2D.Raycast(playerPosition, Vector3.right * player.transform.localScale.x, rayLength, tileLayer);
-        //Debug.DrawLine(playerPosition, playerPosition + Vector3.down * rayLength);
-        //Debug.DrawLine(playerPosition, playerPosition + Vector3.right * player.transform.localScale.x * rayLength);
-
-        if (hitDownward.collider != null)
+        if (player != null)
         {
-            // Tính toán vị trí tile trong tilemap
-            Vector3Int tilePos = tilemap.WorldToCell(hitDownward.point);
-            
-            // Kiểm tra tile và chưa xử lý, bắt đầu phá hủy tile
-            if (tilemap.HasTile(tilePos) && !activeBreakTimers.ContainsKey(tilePos))
+            Vector3 playerPosition = player.transform.position; // Vị trí của người chơi
+            float rayLength = 0.7f; // Độ dài của tia Raycast
+
+            // Phóng một tia xuống dưới từ vị trí người chơi (hoặc bạn có thể phóng theo hướng khác)
+            RaycastHit2D hitDownward = Physics2D.Raycast(playerPosition, Vector3.down, rayLength, tileLayer);
+            RaycastHit2D hitForward = Physics2D.Raycast(playerPosition, Vector3.right * player.transform.localScale.x, rayLength, tileLayer);
+            //Debug.DrawLine(playerPosition, playerPosition + Vector3.down * rayLength);
+            //Debug.DrawLine(playerPosition, playerPosition + Vector3.right * player.transform.localScale.x * rayLength);
+
+            if (hitDownward.collider != null)
             {
-                Coroutine breakCoroutine = StartCoroutine(BreakTileAfterDelay(tilePos));
-                activeBreakTimers[tilePos] = breakCoroutine;
+                // Tính toán vị trí tile trong tilemap
+                Vector3Int tilePos = tilemap.WorldToCell(hitDownward.point);
+
+                // Kiểm tra tile và chưa xử lý, bắt đầu phá hủy tile
+                if (tilemap.HasTile(tilePos) && !activeBreakTimers.ContainsKey(tilePos))
+                {
+                    Coroutine breakCoroutine = StartCoroutine(BreakTileAfterDelay(tilePos));
+                    activeBreakTimers[tilePos] = breakCoroutine;
+                }
             }
-        }
 
-        if (hitForward.collider != null)
-        {
-            // Tính toán vị trí tile trong tilemap
-            Vector3Int tilePos = tilemap.WorldToCell(hitForward.point);
-
-            // Kiểm tra tile và chưa xử lý, bắt đầu phá hủy tile
-            if (tilemap.HasTile(tilePos) && !activeBreakTimers.ContainsKey(tilePos))
+            if (hitForward.collider != null)
             {
-                Coroutine breakCoroutine = StartCoroutine(BreakTileAfterDelay(tilePos));
-                activeBreakTimers[tilePos] = breakCoroutine;
+                // Tính toán vị trí tile trong tilemap
+                Vector3Int tilePos = tilemap.WorldToCell(hitForward.point);
+
+                // Kiểm tra tile và chưa xử lý, bắt đầu phá hủy tile
+                if (tilemap.HasTile(tilePos) && !activeBreakTimers.ContainsKey(tilePos))
+                {
+                    Coroutine breakCoroutine = StartCoroutine(BreakTileAfterDelay(tilePos));
+                    activeBreakTimers[tilePos] = breakCoroutine;
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ TagManager:
   - BreakableTile
   - MassObject
   - Enemy
+  - Robot
   layers:
   - Default
   - TransparentFX
