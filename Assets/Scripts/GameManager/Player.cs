@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
             horizontalValue = 0;
             if (!allowKeepVelocity)
             {
-                Debug.Log("zero");
+                //Debug.Log("zero");
                 rb.velocity = Vector3.zero;
             }
         }

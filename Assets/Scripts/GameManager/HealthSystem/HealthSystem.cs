@@ -6,7 +6,7 @@ using UnityEngine;
 public class HealthSystem
 {
     public float maxHealth { get; private set; }
-    public float currentHealth { get; private set; }
+    public float currentHealth { get; set; }
     public float shield { get; set; } //Giap de chan damage
     public bool isInvincible { get; set; } // Bat tu
 

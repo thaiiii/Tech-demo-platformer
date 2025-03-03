@@ -9,13 +9,14 @@ public class HealthComponent : MonoBehaviour
     public Slider healthSlider;
     public float maxHealth = 100f;
     private HealthSystem healthSystem;
-    public float currentHP;
+    public float currentHealth;
     // Start is called before the first frame update
     void Awake()
     {
         healthSystem = new HealthSystem(maxHealth);
         healthSystem.OnDeath += OnDeath;
         healthSystem.OnHealthChanged += UpdateHealthUI; //Lắng ngh sự kiện thay đổi máu
+        currentHealth = healthSystem.currentHealth;
         UpdateHealthUI();
     }
 
@@ -28,7 +29,11 @@ public class HealthComponent : MonoBehaviour
         return healthSystem;
     }
 
-
+    public void SetCurrentHealth(float value)
+    {
+        healthSystem.currentHealth = value;
+        UpdateHealthUI();
+    }
     public void TakeDamage(float amount) => healthSystem.TakeDamage(amount);
     private void OnDeath()
     {
@@ -49,7 +54,7 @@ public class HealthComponent : MonoBehaviour
     {
         if (healthSystem == null) return;
         healthSlider.value = healthSystem.currentHealth / healthSystem.maxHealth;
-        currentHP = healthSlider.value;
+        currentHealth = healthSystem.currentHealth;
     }
     public bool isDead()
     {

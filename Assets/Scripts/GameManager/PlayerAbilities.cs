@@ -420,14 +420,12 @@ public class PlayerAbilities : MonoBehaviour
         // Tắt điều khiển robot
         currentRobot.SetControlled(false);
         currentRobot.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-        currentRobot.GetComponent<Rigidbody2D>().isKinematic = true;
-        currentRobot.GetComponent<Collider2D>().isTrigger = true;
-
+        currentRobot.isPlayerInRange = false;
+        
         // Khôi phục người chơi
         isInRobot = false;
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         rb.isKinematic = false;
-        Physics2D.IgnoreCollision(playerCollider, currentRobot.GetComponent<Collider2D>(), false);
         GetComponent<Player>().UnlockMove(true);
         healthComponent.SetInvincible(false);
         Camera.main.GetComponent<CameraFollow>().SetFollowTarget(gameObject);
@@ -437,7 +435,7 @@ public class PlayerAbilities : MonoBehaviour
         gameObject.transform.position = exitPosition;
 
         // Xóa tham chiếu đến robot
-        currentRobot.playerAbilities = null;
+        //currentRobot.playerAbilities = null; //Xoa khi robot cham dat
         currentRobot = null;
 
         //UI máu
@@ -462,17 +460,14 @@ public class PlayerAbilities : MonoBehaviour
         isInRobot = true;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         rb.isKinematic = true;
-        Physics2D.IgnoreCollision(playerCollider, currentRobot.GetComponent<Collider2D>(), true);
         healthComponent.SetInvincible(true);
         yield return new WaitForSeconds(1f);
         
         
         //Setting của robot
         currentRobot.SetControlled(true);
-        currentRobot.GetComponent<Rigidbody2D>().isKinematic = false;
-        currentRobot.GetComponent<Collider2D>().isTrigger = false;
+        currentRobot.ToggleRobotPhysics(false);
         Camera.main.GetComponent<CameraFollow>().SetFollowTarget(currentRobot.gameObject);
-
 
         //UI máu
         //healthComponent 

@@ -8,7 +8,8 @@ public class Checkpoint : MonoBehaviour
 {
     public bool isActivated = false;
     Animator animator;
-    public List<ItemBase> allItems;
+    private List<ItemBase> allItems;
+    [SerializeField] private List<Robot> allRobots;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -28,6 +29,8 @@ public class Checkpoint : MonoBehaviour
             FindAnyObjectByType<InventoryManager>().SaveInventory();
             //Save các clone hiện tại
             SaveAllClones();
+            //Save cac robot hiện tại
+            SaveAllRobots();
         }
     }
 
@@ -45,6 +48,14 @@ public class Checkpoint : MonoBehaviour
         {
             if (!item.gameObject.activeSelf)
                 item.PickToSaveInventory();
+        }
+    }
+    private void SaveAllRobots()
+    {
+        List<Robot> allRobots = new List<Robot>(FindObjectsOfType<Robot>());
+        foreach (Robot robot in allRobots)
+        {
+            robot.SaveRobotStatus();
         }
     }
 }
