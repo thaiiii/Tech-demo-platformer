@@ -70,6 +70,7 @@ public class PlayerDeath : MonoBehaviour
 
     public void KillPlayer()
     {
+        Debug.Log("chet");
         // Xử lý cái chết của người chơi, ví dụ: hiển thị hiệu ứng, tải lại màn chơi
         m_camera.GetComponent<CameraFollow>().isFollowing = false;
         

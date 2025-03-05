@@ -11,6 +11,7 @@ public class MovingTrap : MonoBehaviour
         public int toWaypointIndex;
         public float speed;
         public float delay; // Thời gian chờ
+
     }
 
     public float disableDuration = 3f;
@@ -24,7 +25,8 @@ public class MovingTrap : MonoBehaviour
     public int currentWaypointIndex = 0;
     public int nextWaypointIndex;
     public float moveSpeed;
-    
+    public bool savedActivatonStatus = true;
+    public Vector3 savedPosition;
 
     private Transform targetWaypoint;
     private Coroutine countdownCoroutine;
@@ -34,6 +36,7 @@ public class MovingTrap : MonoBehaviour
         targetWaypoint = waypoints[currentWaypointIndex];
         nextWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length; // Điểm tiếp theo mặc định
         moveSpeed = GetCurrentSegmentSpeed();
+        savedPosition = transform.position;
     }
 
     void Update()
@@ -119,12 +122,15 @@ public class MovingTrap : MonoBehaviour
 
     public void DisableMovingWithoutCountdown()
     {
-        isMovingActivated = false;
+        isMovingActivated = !isMovingActivated;
+
         // Nếu có một countdown đang chạy, hủy nó
         if (countdownCoroutine != null)
         {
             StopCoroutine(countdownCoroutine);
         }
+
+
     }
 
     public void StartCountdownForMoving()
@@ -142,4 +148,14 @@ public class MovingTrap : MonoBehaviour
         isMovingActivated = true;
     }
 
+    public void LoadSavedMovingTrapStatus()
+    {
+        gameObject.transform.position = savedPosition;
+        if (!savedActivatonStatus && disablePermanently)
+        {
+            isMovingActivated = false;
+        }
+        else if (savedActivatonStatus)
+            isMovingActivated = true;
+    }
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerCannon : MonoBehaviour
 {
-     public Slider powerSlider;
+    public Slider powerSlider;
     public Canvas cannonCanvas;
     [HideInInspector]public Transform cannonMuzzle; //Điểm bắn ra
     [HideInInspector]public Transform cannonPivot; //Phần xoay được của pháo

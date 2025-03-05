@@ -1,34 +1,50 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class Robot : MonoBehaviour
 {
+    [Header("UI")]
+    public Canvas healthUI;
+    public Canvas jumpUI;
+    public Slider jumpForceSlider;
+
+    [Header("Jump")]
+    public float robotSpeed = 10f;
     private float chargeTime = 0f;
     public float maxChargeTime = 2f;
     public float minJumpForce = 20f;
     public float maxJumpForce = 20f;
-    public float robotSpeed = 10f;
+
+    [Header("Robot status")]
     public bool isDestroyed = false;
     public bool isPlayerInRange = false;
     public bool isControlled = false;
-    private bool canMove = true;    //Mở khóa điều khiển
-
+    [SerializeField] private bool canMove = true;    //Mở khóa điều khiển
     private Rigidbody2D rb;
     private HealthComponent health;
     public PlayerAbilities playerAbilities;
     public LayerMask groundLayer;
+    private CameraFollow cameraFollow;
 
-    //Saved info
+    [Header("Save info")]//Saved info
     [SerializeField] private bool savedDestroyStatus;
     [SerializeField] private Vector2 restartPosition;
     [SerializeField] private float savedHealth;
+
+    [Header("Dash")]//Dash
+    public float dashSpeed = 20f; // Tốc độ Dash
+    public float dashDuration = 0.3f; // Thời gian Dash
+    public float dashCooldown = 5f; // Hồi chiêu Dash
+    [SerializeField] private bool isDashing = false;
+    [SerializeField] private float lastDashTime = 0;
     //=================================================================================
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         health = GetComponent<HealthComponent>();
         health.GetHealthSystem();
+        cameraFollow = Camera.main.GetComponent<CameraFollow>();
 
         //First save info
         restartPosition = transform.position;
@@ -40,15 +56,15 @@ public class Robot : MonoBehaviour
         if (playerAbilities != null)
         {
             if (Input.GetKeyDown(KeyCode.E) && playerAbilities.CanEnterRobot(this))
-                playerAbilities.EnterRobot(this);
+                EnterThisRobot();
 
             if (isControlled)
             {
                 if (!CheckRobotOnGround())
-                    SetCanMove(false);
+                    canMove = false;
                 RobotMove();
                 if (Input.GetKeyDown(KeyCode.Q))
-                    playerAbilities.ExitRobot();
+                    ExitThisRobot();
             }
             else
             {
@@ -72,17 +88,36 @@ public class Robot : MonoBehaviour
     {
         float moveInput = Input.GetAxisRaw("Horizontal");
 
-        if (canMove)
+        if (canMove && !isDashing)
+        {
             rb.velocity = new Vector2(moveInput * 10f, rb.velocity.y);
+            if (moveInput > 0)
+            {
+                transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
+                jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            }
+            else if (moveInput < 0)
+            {
+                transform.localScale = new Vector3(-2.5f, 2.5f, 2.5f);
+                jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+            }
+        }
 
         if (CheckRobotOnGround())
         {
+            #region Jump
             Vector2 jumpDir = Vector2.up;
             if (Input.GetKey(KeyCode.Space))
             {
-                SetCanMove(false);
+                rb.velocity = Vector2.zero;
+                canMove = false;
                 chargeTime += Time.deltaTime;
                 chargeTime = Mathf.Clamp(chargeTime, 0, maxChargeTime);
+
+                if (!jumpUI.enabled) 
+                    jumpUI.enabled = true;
+                jumpForceSlider.value = chargeTime / maxChargeTime;
+                                
                 if (Input.GetKey(KeyCode.A))
                     jumpDir = new Vector2(-1, 1);
                 else if (Input.GetKey(KeyCode.D))
@@ -91,28 +126,28 @@ public class Robot : MonoBehaviour
                     jumpDir = Vector2.up;
             }
             else
-                SetCanMove(true);
+                canMove = true;
 
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, chargeTime / maxChargeTime);
-
                 rb.velocity = jumpDir.normalized * jumpForce;
+                
                 chargeTime = 0f;
+                jumpUI.enabled = false;
             }
+            #endregion
         }
+        #region Dash
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
+            StartCoroutine(Dash());
+        #endregion
 
-        if (playerAbilities != null && playerAbilities.transform.position != (Vector3)rb.position) //Update vị trí player nếu khác robot
+        //Update vị trí player nếu khác robot
+        if (playerAbilities != null && playerAbilities.transform.position != (Vector3)rb.position)
             playerAbilities.transform.position = rb.position;
     }
-    public void SetControlled(bool controlled)
-    {
-        isControlled = controlled;
-    }
-    private void SetCanMove(bool value)
-    {
-        canMove = value;
-    }
+    public void SetControlled(bool controlled) => isControlled = controlled;
     public void OnRobotDestroyed()
     {
         isDestroyed = true;
@@ -158,6 +193,47 @@ public class Robot : MonoBehaviour
         savedDestroyStatus = isDestroyed;
         savedHealth = health.GetHealthSystem().currentHealth;
     }
+    private IEnumerator Dash()
+    {
+        float originalSmoothFactor = cameraFollow.smoothFactor;
+
+        if (Time.time - lastDashTime < dashCooldown) yield break; // Chặn nếu chưa hồi chiêu
+
+        //Khóa input
+        isDashing = true;
+        canMove = false;
+        lastDashTime = Time.time;
+
+        cameraFollow.SetSmoothFactor(dashSpeed / robotSpeed * originalSmoothFactor);
+        float originalGravity = rb.gravityScale; // Lưu trọng lực cũ
+        rb.gravityScale = 0; // Tắt trọng lực để không bị rơi
+        rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0); // Dash theo hướng hiện tại
+
+
+        yield return new WaitForSeconds(dashDuration); // Đợi Dash kết thúc
+
+        cameraFollow.SetSmoothFactor(originalSmoothFactor);
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = originalGravity; // Khôi phục trọng lực
+
+        //Mở khóa input
+        isDashing = false;
+        canMove = true;
+    }
+    private void EnterThisRobot()
+    {
+        playerAbilities.EnterRobot(this);
+        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize + 1);
+        healthUI.enabled = true;
+    }
+    private void ExitThisRobot()
+    {
+        playerAbilities.ExitRobot();
+        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize -1);
+        healthUI.enabled = false;
+    }
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

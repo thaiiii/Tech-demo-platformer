@@ -11,6 +11,7 @@ public class LaserEmitter : MonoBehaviour
     public float laserAngle;
     public bool isLaserActivate = true;
     public bool disablePermanently = false;
+    public bool savedActivationStatus = true;
 
     public LineRenderer laserBeam;
     public LayerMask obstacleLayers;
@@ -29,8 +30,10 @@ public class LaserEmitter : MonoBehaviour
     void Update()
     {
         transform.rotation = Quaternion.Euler(0f, 0f, laserAngle);
-        if (isLaserActivate)   
+        if (isLaserActivate)
+        {
             UpdateLaserBeam();
+        }
          
     }
 
@@ -52,6 +55,8 @@ public class LaserEmitter : MonoBehaviour
             endPoint = transform.position + transform.up * maxLaserLength;
         }
 
+        if (laserBeam.enabled == false)
+            laserBeam.enabled = isLaserActivate;
         laserBeam.SetPosition(0, transform.position);
         laserBeam.SetPosition(1, endPoint);
     
@@ -90,5 +95,10 @@ public class LaserEmitter : MonoBehaviour
         isLaserActivate = true;
         laserBeam.enabled = true;
 
+    }
+
+    public void LoadSavedEmitterStatus()
+    {
+        isLaserActivate = true ? savedActivationStatus : false;
     }
 }

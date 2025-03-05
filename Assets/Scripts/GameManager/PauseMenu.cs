@@ -144,13 +144,18 @@ public class PauseMenu : MonoBehaviour
         player.ResetPosition();
         player.GetComponent<HealthComponent>().Heal(player.GetComponent<HealthComponent>().GetHealthSystem().maxHealth);
 
-        //Reset objects position
-        ResetTeleportTower();   //Teleport towers
-        SwitchCannonActivation(); //Clear all missiles
-        ResetFan(); //Reset all fans
+        //Reset objects position and status
+        ResetTeleportTower();   
+        ResetCannon(); 
+        ResetFan(); 
         ResetItem();
         ResetSlimeBody();
         ResetRobot();
+        ResetBlock();
+        ResetLaser();
+        ResetMovingTrap();
+        ResetEnemy();
+        ResetConveyorBelt();
     }
     private void ResetTeleportTower()
     {
@@ -161,13 +166,14 @@ public class PauseMenu : MonoBehaviour
             tower.ResetTower();
         }
     }
-    private void SwitchCannonActivation()
+    private void ResetCannon()
     {
         // bật/tắt tất cả Cannon
         Cannon[] cannons = FindObjectsOfType<Cannon>();
         foreach (Cannon cannon in cannons)
         {
             cannon.ClearAllMissiles();
+            cannon.ResetCannon();
         }
     }
     private void ResetFan()
@@ -208,8 +214,47 @@ public class PauseMenu : MonoBehaviour
             robot.LoadSavedRobotStatus();
         }
     }
-
-
+    private void ResetBlock()
+    {
+        List<UnblockSwitch> allBlocks = new List<UnblockSwitch>(FindObjectsOfType<UnblockSwitch>());
+        foreach (UnblockSwitch block in allBlocks)
+        {
+            block.LoadSavedBlockStatus();
+        }
+    }
+    private void ResetLaser()
+    {
+        List<LaserEmitter> allLaserEmitters = new List<LaserEmitter>(FindObjectsOfType<LaserEmitter>());
+        foreach (LaserEmitter emitter in allLaserEmitters)
+        {
+            emitter.LoadSavedEmitterStatus();
+        }
+    }
+    private void ResetMovingTrap()
+    {
+        List<MovingTrap> allTraps = new List<MovingTrap>(FindObjectsOfType<MovingTrap>());
+        foreach (MovingTrap trap in allTraps)
+        {
+            trap.LoadSavedMovingTrapStatus();
+        }
+    }
+    private void ResetEnemy()
+    {
+        List<Enemy> allEnemies = new List<Enemy>(FindObjectsOfType<Enemy>());
+        foreach (Enemy enemy in allEnemies)
+        {
+            enemy.LoadSavedEnemyStatus();
+        }
+    }
+    private void ResetConveyorBelt()
+    {
+        List<ConveyorBelt> allConveyorBelts = new List<ConveyorBelt>(FindObjectsOfType<ConveyorBelt>());
+        foreach (ConveyorBelt belt in allConveyorBelts)
+        {
+            belt.LoadSavedConveyorBeltStatus();
+        }
+    }
+    
     #endregion
 
 

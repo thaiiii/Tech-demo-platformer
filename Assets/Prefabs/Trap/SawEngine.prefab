@@ -300,6 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bbab04eb0aeff4c8ee7425255a453b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableDuration: 3
   waypoints:
   - {fileID: 1597700079564807099}
   - {fileID: 2956672552010121116}
@@ -325,13 +326,15 @@ MonoBehaviour:
     toWaypointIndex: 0
     speed: 30
     delay: 0.5
-  isActivated: 1
+  isMovingActivated: 1
+  disablePermanently: 1
   loop: 0
   movingForward: 1
   isWaiting: 0
   currentWaypointIndex: 0
   nextWaypointIndex: 0
   moveSpeed: 2
+  savedActivatonStatus: 1
 --- !u!1 &8869139042510816887
 GameObject:
   m_ObjectHideFlags: 0

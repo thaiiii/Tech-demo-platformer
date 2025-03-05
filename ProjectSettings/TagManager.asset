@@ -11,6 +11,7 @@ TagManager:
   - MassObject
   - Enemy
   - Robot
+  - SlimeClone
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - BreakableTile
   - Tower
   - Enemy
-  - 
+  - SlimeClone
   - 
   - 
   - 

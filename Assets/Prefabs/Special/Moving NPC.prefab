@@ -406,6 +406,8 @@ MonoBehaviour:
   currentWaypointIndex: 0
   nextWaypointIndex: 0
   moveSpeed: 0
+  savedActivatonStatus: 1
+  savedPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &5883308259358096149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,10 +421,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogues:
-  - 1 asdjkhdh asd hkasd jkhsdkj kasd kj
-  - 2 asdhjsjkd udos asidu osiauasdfo a
-  - 3 asdhasjl kdouwd iufdh sdui fisda h
-  - '4 djkas hfyasd asd jkhfh aiousdhfjkl '
+  - 1111
+  - 2222
+  - 333
+  - 4444
   dialogueBox: {fileID: 0}
   dialogueText: {fileID: 0}
   dialogueAnchor: {fileID: 3294889257974803299}

@@ -49,7 +49,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5645917871594440658
 RectTransform:
   m_ObjectHideFlags: 0
@@ -369,7 +369,7 @@ MonoBehaviour:
   groundCheckCollider: {fileID: 4332633839407706824}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 13888
+    m_Bits: 46656
 --- !u!114 &5613869237819076943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,7 +425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 70518471448035527}
   maxHealth: 100
-  currentHP: 0
+  currentHealth: 0
 --- !u!1001 &8398671184666149266
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -444,7 +444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1926263316430614011, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1926263316430614011, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMin.x
@@ -536,7 +536,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8099015069844537902, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8391502279065616725, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_Value

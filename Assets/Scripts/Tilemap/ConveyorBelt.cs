@@ -4,40 +4,63 @@ using UnityEngine;
 
 public class ConveyorBelt : MonoBehaviour
 {
-    public float conveyorSpeed = 5f; // Tốc độ di chuyển của băng chuyền
-    public bool moveRight = true; // Chiều của băng chuyền, true = sang phải, false = sang trái
+    private GameObject conveyorPlatform;
+    
+    public float conveyorSpeed = 3f; // Tốc độ băng chuyền
+    public bool moveRight = true; // Hướng băng chuyền
+    public bool isActive = true;
 
-    private void OnCollisionStay2D(Collision2D collision)
+    //Save info
+    public bool savedActivationStatus;
+    public bool savedDirection = true;
+
+
+    private void Start()
     {
+        // Tạo một object vô hình để giữ các vật thể trên băng chuyền
+        conveyorPlatform = new GameObject("PushingObject");
+        conveyorPlatform.transform.position = transform.position;
 
-        if (collision.gameObject.CompareTag("Player"))
+        //First save
+        savedDirection = moveRight;
+        savedActivationStatus = isActive;
+    }
+
+    private void Update()
+    {
+        if (isActive)
         {
-            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            if (playerRb != null)
-            {
-                // Tính toán hướng và tốc độ dựa trên chiều của băng chuyền
-                float direction = moveRight ? 1 : -1;
-                Vector2 conveyorForce = new Vector2(conveyorSpeed * direction, 0);
-
-                // Kiểm tra hướng di chuyển của người chơi để tăng/giảm tốc độ
-                float playerDirection = Mathf.Sign(playerRb.velocity.x);
-
-                if (playerDirection == direction)
-                {
-                    // Người chơi đi cùng chiều với băng chuyền -> tăng tốc
-                    playerRb.velocity = new Vector2(playerRb.velocity.x + conveyorSpeed * Time.deltaTime, playerRb.velocity.y);
-                }
-                else if (playerDirection != 0)
-                {
-                    // Người chơi đi ngược chiều với băng chuyền -> giảm tốc
-                    playerRb.velocity = new Vector2(playerRb.velocity.x - conveyorSpeed * Time.deltaTime, playerRb.velocity.y);
-                }
-                else
-                {
-                    // Nếu người chơi không di chuyển, chỉ thêm lực của băng chuyền
-                    playerRb.AddForce(conveyorForce);
-                }
-            }
+            // Di chuyển nền tảng vô hình theo hướng băng chuyền
+            float direction = moveRight ? 1 : -1;
+            conveyorPlatform.transform.position += new Vector3(conveyorSpeed * Time.deltaTime * direction, 0, 0);
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isActive)
+        {
+            // Khi vật thể chạm vào băng chuyền, đặt nó làm con của ConveyorPlatform
+            collision.transform.SetParent(conveyorPlatform.transform);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (isActive)
+        {
+            // Khi rời băng chuyền, gỡ khỏi ConveyorPlatform
+            collision.transform.SetParent(null);
+        }
+    }
+
+    public void LoadSavedConveyorBeltStatus()
+    {
+        isActive = savedActivationStatus;
+        moveRight = savedDirection;
+    }
+    public void SwitchDirection()
+    {
+        moveRight = !moveRight;
     }
 }

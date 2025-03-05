@@ -11,11 +11,11 @@ public class Fan : MonoBehaviour
     private Vector2 boxSize = new Vector2(1f, 1f); // Kích thước vùng tác động (hình hộp chữ nhật)
     private Vector3 startPosition;
 
-    //public GameObject windZone;
     public bool isFanActivated = true;
     public bool disablePermanently = false;
     public float disableDuration = 3f;
     public float baseForce = 5f; // Lực tác động
+    public bool savedActivationStatus = true;
 
     private Coroutine countdownCoroutine;
     private Animator animator;
@@ -59,7 +59,7 @@ public class Fan : MonoBehaviour
     {
         if (!disablePermanently)
         {
-            // Bắt đầu đếm ngược để bật lại laser sau khi rời khỏi switch
+            // Bắt đầu đếm ngược để bật lại fan sau khi rời khỏi switch
             countdownCoroutine = StartCoroutine(TemporaryDisable());
         }
     }
@@ -97,6 +97,8 @@ public class Fan : MonoBehaviour
     public void ResetFan()
     {
         transform.position = startPosition;
-        isFanActivated = true;
+        if (savedActivationStatus)
+            StartCoroutine(TemporaryDisable());
+
     }
 }

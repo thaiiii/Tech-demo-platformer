@@ -12,7 +12,7 @@ public class CannonSwitch : MonoBehaviour
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             // Tắt laser nhưng không bắt đầu đếm ngược ngay
-            cannon.DisableLaserWithoutCountdown();
+            cannon.DisableCannonWithoutCountdown();
         }
     }
 
@@ -21,7 +21,7 @@ public class CannonSwitch : MonoBehaviour
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
-            cannon.StartCountdownForLaser();
+            cannon.StartCountdownForCannon();
         }
     }
 }

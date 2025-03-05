@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +6,8 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     public Transform target;
-    private Vector3 offset = new Vector3(0, 3, -10);
+    public Vector3 offset = new Vector3(0, 3, -10);
+    private Camera mainCamera;
 
     [HideInInspector] public bool isFollowing = true;
     [Range(1, 10)]
@@ -16,15 +17,14 @@ public class CameraFollow : MonoBehaviour
     private void Awake()
     {
         target = FindObjectOfType<Player>().gameObject.transform;
+        mainCamera = GetComponent<Camera>();
     }
 
     private void FixedUpdate()
     {
         if (isFollowing)
             Follow();
-        
     }
-
     private void Follow()
     {
         Vector3 targetPosition = target.position + offset;
@@ -36,8 +36,25 @@ public class CameraFollow : MonoBehaviour
         Vector3 smoothPosition = Vector3.Lerp(transform.position, boundPosition, smoothFactor * Time.fixedDeltaTime);
         transform.position = smoothPosition;
     }
-    public void SetFollowTarget(GameObject newTarget)
+    public void SetFollowTarget(GameObject newTarget) => target = newTarget.transform;
+    public void SetSmoothFactor(float value) => smoothFactor = value;
+    public void SetCameraOffset(Vector3 newOffsetvalue) => offset = newOffsetvalue;
+    public void SetCameraSize(float value) => StartCoroutine(SmoothZoom(value));
+    
+    private IEnumerator SmoothZoom(float targetSize)
     {
-        target = newTarget.transform;
+        float startSize = mainCamera.orthographicSize;
+        float elapsedTime = 0f;
+        float duration = Mathf.Abs(startSize - targetSize) / 0.7f; // Điều chỉnh tốc độ
+
+        while (elapsedTime < duration)
+        {
+            mainCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        mainCamera.orthographicSize = targetSize; // Đảm bảo kích thước đúng sau khi hoàn tất
     }
+
 }

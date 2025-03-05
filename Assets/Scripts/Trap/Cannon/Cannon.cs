@@ -12,7 +12,9 @@ public class Cannon : MonoBehaviour
     public LayerMask obstacleLayer;
     private Coroutine countdownCoroutine;
     public bool isCannonActivated = true;
+    
     public bool disablePermanently = false;
+    public bool savedActivationStatus = true;
 
     private Transform player;
 
@@ -67,8 +69,15 @@ public class Cannon : MonoBehaviour
             Destroy(m.gameObject);
         }
     }
+    public void ResetCannon()
+    {
+        if (savedActivationStatus)
+            isCannonActivated = true;
+        else
+            isCannonActivated = false;
+    }
 
-    public void DisableLaserWithoutCountdown()
+    public void DisableCannonWithoutCountdown()
     {
         isCannonActivated = false;
         // Nếu có một countdown đang chạy, hủy nó
@@ -78,7 +87,7 @@ public class Cannon : MonoBehaviour
         }
     }
 
-    public void StartCountdownForLaser()
+    public void StartCountdownForCannon()
     {
         if (!disablePermanently)
         {

@@ -19,7 +19,11 @@ public class Enemy : MonoBehaviour
     public float attackDelay = 1f; // Thời gian dừng trước khi tấn công
     
     private bool isAttacking = false;
-    
+
+    //Checkpoint info
+    public Vector3 savedPosition;
+
+    //============================================================================
     private void Awake()
     {
         movingEnemy = GetComponent<MovingEnemy>();    
@@ -87,5 +91,10 @@ public class Enemy : MonoBehaviour
         Vector3 currentVelocity = (transform.position - previousPosition) / Time.deltaTime;
         previousPosition = transform.position;
         animator.SetFloat("xVelocity", Mathf.Abs( currentVelocity.x));
+    }
+
+    public void LoadSavedEnemyStatus()
+    {
+
     }
 }
