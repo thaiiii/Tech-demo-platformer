@@ -412,7 +412,6 @@ public class PlayerAbilities : MonoBehaviour
 
     #region Robot
     public void EnterRobot(Robot robot) => StartCoroutine(BootRobot(robot));
-
     public void ExitRobot()
     {
         if (currentRobot == null)
