@@ -41,7 +41,7 @@ public class PauseMenu : MonoBehaviour
     }
     private void InitializeUIReferences()
     {
-        GameObject UI = GameObject.Find("UI");
+        GameObject UI = GameObject.Find("General UI");
         if (UI == null)
         {
             return;
@@ -102,7 +102,13 @@ public class PauseMenu : MonoBehaviour
             if (isPaused)
                 ResumeStage();
             else
+            {
+                //Các trường hợp ko thể pause
+                //1: đã chết
+                if (player.GetComponent<PlayerDeath>().isDead)
+                    return;
                 PauseStage();
+            }
         }
     }
     #endregion
@@ -146,17 +152,23 @@ public class PauseMenu : MonoBehaviour
 
         //Reset objects position and status
         ResetTeleportTower();   
-        ResetCannon(); 
         ResetFan(); 
         ResetItem();
         ResetSlimeBody();
         ResetRobot();
+        ResetConveyorBelt();
+        
+        //Reset trap position and status
+        ResetCannon(); 
         ResetBlock();
         ResetLaser();
         ResetMovingTrap();
         ResetEnemy();
-        ResetConveyorBelt();
+        ResetGun();
+        
     }
+    
+    //Reset environment
     private void ResetTeleportTower()
     {
         // Reset vị trí tất cả các TeleportTower
@@ -164,16 +176,6 @@ public class PauseMenu : MonoBehaviour
         foreach (TeleportTower tower in teleportTowers)
         {
             tower.ResetTower();
-        }
-    }
-    private void ResetCannon()
-    {
-        // bật/tắt tất cả Cannon
-        Cannon[] cannons = FindObjectsOfType<Cannon>();
-        foreach (Cannon cannon in cannons)
-        {
-            cannon.ClearAllMissiles();
-            cannon.ResetCannon();
         }
     }
     private void ResetFan()
@@ -214,6 +216,26 @@ public class PauseMenu : MonoBehaviour
             robot.LoadSavedRobotStatus();
         }
     }
+    private void ResetConveyorBelt()
+    {
+        List<ConveyorBelt> allConveyorBelts = new List<ConveyorBelt>(FindObjectsOfType<ConveyorBelt>());
+        foreach (ConveyorBelt belt in allConveyorBelts)
+        {
+            belt.LoadSavedConveyorBeltStatus();
+        }
+    }
+
+    //Reset trap
+    private void ResetCannon()
+    {
+        // bật/tắt tất cả Cannon
+        Cannon[] cannons = FindObjectsOfType<Cannon>();
+        foreach (Cannon cannon in cannons)
+        {
+            cannon.ClearAllMissiles();
+            cannon.ResetCannon();
+        }
+    }
     private void ResetBlock()
     {
         List<UnblockSwitch> allBlocks = new List<UnblockSwitch>(FindObjectsOfType<UnblockSwitch>());
@@ -246,13 +268,11 @@ public class PauseMenu : MonoBehaviour
             enemy.LoadSavedEnemyStatus();
         }
     }
-    private void ResetConveyorBelt()
+    private void ResetGun()
     {
-        List<ConveyorBelt> allConveyorBelts = new List<ConveyorBelt>(FindObjectsOfType<ConveyorBelt>());
-        foreach (ConveyorBelt belt in allConveyorBelts)
-        {
-            belt.LoadSavedConveyorBeltStatus();
-        }
+        List<Bullet> allBullets = new List<Bullet>(FindObjectsOfType<Bullet>());
+        foreach (Bullet bullet in allBullets) 
+            Destroy(bullet.gameObject);
     }
     
     #endregion

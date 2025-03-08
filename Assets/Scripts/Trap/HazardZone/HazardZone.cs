@@ -142,7 +142,8 @@ public class HazardZone : MonoBehaviour
             {
                 Player player = gameObject.GetComponent<Player>();
                 gameObject.GetComponent<Player>().environmentGravityScale = originalGravityScales[gameObject];
-                gameObject.GetComponent<Player>().UnlockMove(false);
+                if (!player.GetComponent<PlayerDeath>().isDead) //Trường hợp chết trong zone
+                    gameObject.GetComponent<Player>().UnlockMove(false);
                 player.OnGroundedChanged -= OnPlayerGroundedChanged; // Ngừng lắng nghe sự kiện grounded
             }
             else

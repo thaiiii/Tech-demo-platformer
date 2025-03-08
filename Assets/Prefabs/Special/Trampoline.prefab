@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6595987054462314782}
   - component: {fileID: 5091248560528774156}
   - component: {fileID: 3921153217955909043}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trampoline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,3 +196,8 @@ MonoBehaviour:
   isActivated: 0
   bounceForce: 30
   bounceDelay: 0.5
+  applicableTags:
+  - Player
+  - Enemy
+  - SlimeClone
+  - MassObject

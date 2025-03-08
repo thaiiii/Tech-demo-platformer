@@ -35,7 +35,7 @@ public class GameTimer : MonoBehaviour
 
     private void InitializeUIReferences()
     {
-        GameObject UI = GameObject.Find("UI");
+        GameObject UI = GameObject.Find("General UI");
         if (UI == null)
         {
             return;

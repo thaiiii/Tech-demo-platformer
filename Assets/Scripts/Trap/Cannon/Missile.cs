@@ -35,7 +35,7 @@ public class Missile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.name);
+        //Debug.Log(collision.name);
         // Kiểm tra va chạm với vật cản
         if (!collision.CompareTag("Player"))
         {

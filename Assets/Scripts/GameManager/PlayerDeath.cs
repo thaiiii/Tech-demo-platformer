@@ -16,16 +16,18 @@ public class PlayerDeath : MonoBehaviour
     private GameObject UI;
     private GameObject deathUI;
     private Button restartButton;
-    
+    private PlayerAbilities playerAbilities;
+
     public bool isDead = false;
 
     private void Awake()
     {
         m_camera = FindObjectOfType<Camera>();
         gameManager = FindObjectOfType<PauseMenu>().gameObject;
+        playerAbilities = gameObject.GetComponent<PlayerAbilities>();   
 
         // Tìm trong Scene các thành phần UI
-        UI = GameObject.Find("UI");
+        UI = GameObject.Find("General UI");
         deathUI = UI.transform.Find("DeathUI")?.gameObject;
         restartButton = deathUI.transform.Find("RestartButton")?.GetComponent<Button>();
         if (restartButton != null)
@@ -44,8 +46,11 @@ public class PlayerDeath : MonoBehaviour
         }
         else if(collision.gameObject.CompareTag("Trap") && HiddenStatus())
         {
-            if(collision.GetComponent<Bullet>().type == BulletType.SPECIAL)
-                KillPlayer();
+            if (collision.GetComponent<Bullet>() != null)
+            {
+                if (collision.GetComponent<Bullet>().type == BulletType.SPECIAL)
+                    KillPlayer();
+            }
         }
 
         if (collision.gameObject.CompareTag("Enemy"))
@@ -78,8 +83,11 @@ public class PlayerDeath : MonoBehaviour
         if (!isDead)
         {
             //Nếu isHidden = true, gọi ExitTower, bỏ hết Parent
-            if(GetComponent<PlayerAbilities>().isHidden)
-                GetComponent<PlayerAbilities>().ExitTower();
+            if(playerAbilities.isHidden)
+                playerAbilities.ExitTower();
+            if(playerAbilities.isInCannon)
+                playerAbilities.ExitCannon(Vector2.zero, 0f);
+
             isDead = true;  
             GameStats.Instance.AddDeath();
 

@@ -156,7 +156,7 @@ public class Robot : MonoBehaviour
         HealthComponent playerHealthComponent = playerAbilities.gameObject.GetComponent<HealthComponent>();
         if (playerAbilities.isInRobot)
         {
-            playerAbilities.ExitRobot();
+            ExitThisRobot();
             playerHealthComponent.TakeDamage(playerHealthComponent.maxHealth); // Chết theo robot
         }
     }
@@ -221,16 +221,21 @@ public class Robot : MonoBehaviour
         canMove = true;
     }
     private void EnterThisRobot()
-    {
-        playerAbilities.EnterRobot(this);
+    {   
         cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize + 1);
         healthUI.enabled = true;
+        playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = false;
+        playerAbilities.EnterRobot(this);
+        
     }
     private void ExitThisRobot()
     {
-        playerAbilities.ExitRobot();
-        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize -1);
+        playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = true;
         healthUI.enabled = false;
+        jumpUI.enabled = false;
+        chargeTime = 0f;
+        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize -1);
+        playerAbilities.ExitRobot();
     }
 
 

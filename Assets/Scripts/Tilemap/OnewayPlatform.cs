@@ -19,7 +19,7 @@ public class OnewayPlatform : MonoBehaviour
 
     private void HandlePlatformInteraction()
     {
-        if (Input.GetKeyDown(KeyCode.S) && IsPlayerAbovePlatform())
+        if (Input.GetKeyDown(KeyCode.LeftShift) && IsPlayerAbovePlatform())
         {
             playerCollider = FindPlayerAbovePlatform();
             if (playerCollider != null)

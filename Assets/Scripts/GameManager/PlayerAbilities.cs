@@ -34,6 +34,8 @@ public class PlayerAbilities : MonoBehaviour
     [HideInInspector] public float swapControlRadius = 10f;
     [HideInInspector] public float absorbRadius = 5f;
     private InventoryManager inventoryManager;
+    //public SlimeClone[] clones;
+    //public SlimeClone closestClone;
 
     [Header("Robot")]
     public bool isInRobot = false;
@@ -234,6 +236,8 @@ public class PlayerAbilities : MonoBehaviour
     }
     public bool isNormalStatus()
     {
+        if (GetComponent<PlayerDeath>().isDead)
+            return false;
         if (isInRobot)
             return false;
         if (isInCannon)
@@ -271,7 +275,7 @@ public class PlayerAbilities : MonoBehaviour
         inventoryManager.UpdateUI();
 
         // Tạo và cấu hình bản sao của người chơi
-        GameObject clone = Instantiate(slimeClonePrefab, transform.position - new Vector3(1f, 0, 0), Quaternion.identity);
+        GameObject clone = Instantiate(slimeClonePrefab, transform.position - new Vector3(0, 0.5f, 0), Quaternion.identity);
         SlimeClone cloneScript = clone.GetComponent<SlimeClone>();
         if (cloneScript != null)
         {
@@ -319,6 +323,7 @@ public class PlayerAbilities : MonoBehaviour
         int tempSlime = playerSlimeCount;
         slimeSlot.itemCount = closestClone.slimeCount;
         closestClone.slimeCount = tempSlime;
+        inventoryManager.UpdateUI();
     }
     private void AbsorbClone()
     {
@@ -349,7 +354,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     private SlimeClone FindClosestClone(float maxDistance)
     {
-        SlimeClone[] clones = FindObjectsOfType<SlimeClone>();
+        List<SlimeClone> clones = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
         SlimeClone closestClone = null;
         float closestDistance = maxDistance;
 
@@ -359,6 +364,7 @@ public class PlayerAbilities : MonoBehaviour
             if (distance < closestDistance)
             {
                 closestClone = clone;
+                closestDistance = distance;
             }
         }
         return closestClone;

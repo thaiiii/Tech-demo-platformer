@@ -9,6 +9,9 @@ public class Bullet : MonoBehaviour
         SPECIAL
     }
 
+    [Header("Chỉ định Layer để hủy đạn")]
+    public LayerMask destroyableLayers;  // Các layer mà đạn sẽ bị hủy khi va chạm
+
     public Sprite normalSprite;
     public Sprite specialSprite;
     private SpriteRenderer spriteRenderer;
@@ -26,7 +29,7 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag != "Player")
+        if (((1 << collision.gameObject.layer) & destroyableLayers) != 0)
             Destroy(gameObject);
     }
 

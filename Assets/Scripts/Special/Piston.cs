@@ -26,6 +26,8 @@ public class Piston : MonoBehaviour
 
     private void Update()
     {
+        //transform.localPosition = new Vector3(transform.localPosition.x, 0, 0);
+
         // Di chuyển pít tông tùy thuộc vào trạng thái
         if (isExtending)
         {
@@ -70,7 +72,6 @@ public class Piston : MonoBehaviour
         {
             // Vô hiệu hóa va chạm với các tag không hợp lệ
             Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>(), true);
-            Debug.Log($"Collision ignored with: {collision.collider.name}");
             return;
         }
     }

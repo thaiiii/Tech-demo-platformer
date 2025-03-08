@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 7493056250497987023}
   - component: {fileID: 2477975289287470115}
   m_Layer: 7
-  m_Name: Canvas
+  m_Name: HealthUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -423,6 +423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 511985dcfdb8b8543b6f6b01c36b9323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthUI: {fileID: 4054586933523328150}
   healthSlider: {fileID: 70518471448035527}
   maxHealth: 100
   currentHealth: 0

@@ -9,6 +9,7 @@ public class PlayerBullet : MonoBehaviour
     public float maxDistance = 10f;
     private Vector3 startPosition;
     private float startDirection; // Lưu hướng bắn
+    public LayerMask destroyableLayer; //Các layer chặn đc đạn
 
     // Start is called before the first frame update
     void Start()
@@ -32,17 +33,18 @@ public class PlayerBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player")) 
+        if (collision.CompareTag("Player"))
         {
         }
         else if (collision.CompareTag("Enemy"))
         {
-            Destroy(collision.gameObject); //Tieu diet ke thu
+            //Trừ máu ke thu
             Destroy(gameObject);
         }
-        else
+        else if (((1 << collision.gameObject.layer) & destroyableLayer) != 0)
         {
             Destroy(gameObject); //Huy dan sau khi va cham
         }
     }
+
 }

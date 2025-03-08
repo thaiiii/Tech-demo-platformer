@@ -242,6 +242,7 @@ public class Player : MonoBehaviour
     {
         if (isMoveable)
         {
+            
             allowKeepVelocity = isAllowed; //set lưu vận tốc
             rb.gravityScale = 0;
             isMoveable = false;
@@ -251,14 +252,16 @@ public class Player : MonoBehaviour
                 //Debug.Log("zero");
                 rb.velocity = Vector3.zero;
             }
+            //Debug.Log($"Lockmove: Gravity = {rb.gravityScale}");
         }
     }
     public void UnlockMove(bool isAllowed) // Cho phép di chuyển
     {
-        //Debug.Log("Unlockmove: Gravity = 5");
+        
         rb.gravityScale = 5f;
         isMoveable = true;
         allowKeepVelocity = isAllowed; //set lưu vận tốc
+        //Debug.Log($"Unlockmove: Gravity = {rb.gravityScale}");
     }
     public void Death() //Chết = không cho phép di chuyển + về vị trí spawn, chưa từng di chuyển
     {

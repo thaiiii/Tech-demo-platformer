@@ -103,6 +103,7 @@ MonoBehaviour:
   - Player
   - MassObject
   - Enemy
+  - SlimeClone
 --- !u!61 &6551820883459610659
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -323,6 +324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bbab04eb0aeff4c8ee7425255a453b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableDuration: 3
   waypoints:
   - {fileID: 1017443378091519611}
   - {fileID: 8147841755529842311}
@@ -335,13 +337,16 @@ MonoBehaviour:
     toWaypointIndex: 0
     speed: 5
     delay: 0
-  isActivated: 1
+  isMovingActivated: 1
+  disablePermanently: 0
   loop: 1
   movingForward: 1
   isWaiting: 0
   currentWaypointIndex: 0
   nextWaypointIndex: 0
   moveSpeed: 2
+  savedActivatonStatus: 1
+  savedPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &4023379092095137286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,6 +363,7 @@ MonoBehaviour:
   - Player
   - MassObject
   - Enemy
+  - SlimeClone
 --- !u!1 &6189101376112285882
 GameObject:
   m_ObjectHideFlags: 0

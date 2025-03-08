@@ -328,9 +328,10 @@ MonoBehaviour:
   - Player
   - MassObject
   - Enemy
+  - SlimeClone
   forceDirection: {x: 0, y: 1, z: 0}
   isFanActivated: 1
-  disablePermanently: 1
+  disablePermanently: 0
   disableDuration: 3
   baseForce: 5
   savedActivationStatus: 1

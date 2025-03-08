@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class HealthComponent : MonoBehaviour
 {
+    public Canvas healthUI;
     public Slider healthSlider;
     public float maxHealth = 100f;
     private HealthSystem healthSystem;
@@ -28,7 +29,6 @@ public class HealthComponent : MonoBehaviour
         }
         return healthSystem;
     }
-
     public void SetCurrentHealth(float value)
     {
         healthSystem.currentHealth = value;
@@ -37,7 +37,7 @@ public class HealthComponent : MonoBehaviour
     public void TakeDamage(float amount) => healthSystem.TakeDamage(amount);
     private void OnDeath()
     {
-        Debug.Log($"{gameObject.name} has died!");
+        //Debug.Log($"{gameObject.name} has died!");
         if (gameObject.CompareTag("Player"))
             gameObject.GetComponent<PlayerDeath>().KillPlayer();
         else if (gameObject.CompareTag("Robot"))

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 159489582289212261}
   - component: {fileID: 4038967660385100105}
   - component: {fileID: 2773175415513878921}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SpeedBoost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,6 +145,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: SpeedBoost
   isCounted: 0
+  isCheckpointPicked: 0
+  quantity: 0
+  isManualPicked: 0
   speedRate: 1.5
   speedEffectDuration: 3
   sizeUpValue: 0
@@ -160,7 +163,7 @@ GameObject:
   - component: {fileID: 3833542796147036047}
   - component: {fileID: 3305741508266523807}
   - component: {fileID: 3582050786927155192}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Gem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,6 +296,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: PlayerBullet
   isCounted: 0
+  isCheckpointPicked: 0
+  quantity: 0
+  isManualPicked: 0
 --- !u!1 &2222212463335545221
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,7 +308,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9009016691566351763}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Items
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +344,7 @@ GameObject:
   - component: {fileID: 7959493463084624646}
   - component: {fileID: 9098707455709202094}
   - component: {fileID: 1468751573080190871}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SizeBoost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -471,6 +477,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: SizeBoost
   isCounted: 0
+  isCheckpointPicked: 0
+  quantity: 0
+  isManualPicked: 0
   speedRate: 0
   speedEffectDuration: 0
   sizeUpValue: 3
@@ -483,7 +492,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5472049588095707387}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: ConsumableItems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,7 +525,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5827365231328897366}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: StorableItems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -552,7 +561,7 @@ GameObject:
   - component: {fileID: 4971962322853705899}
   - component: {fileID: 8488445262163699883}
   - component: {fileID: 4175630111177843075}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Gem (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -685,3 +694,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: mud
   isCounted: 1
+  isCheckpointPicked: 0
+  quantity: 0
+  isManualPicked: 0

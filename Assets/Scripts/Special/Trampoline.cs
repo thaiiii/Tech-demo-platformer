@@ -8,6 +8,7 @@ public class Trampoline : MonoBehaviour
     public float bounceForce = 20f; //Lưc bat cho nguoi choi
     public float bounceDelay = 1f;
     private Animator animator;
+    public List<string> applicableTags;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +18,7 @@ public class Trampoline : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (!isActivated && (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("MassObject"))) 
+        if (!isActivated && applicableTags.Contains(collision.gameObject.tag)) 
         {
             // Kích hoạt animation nhún xuống
             animator.SetTrigger("Bounce");

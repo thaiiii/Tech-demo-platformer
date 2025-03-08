@@ -35,7 +35,7 @@ public class LevelCompleteMenu : MonoBehaviour
     private void InitializeUIReferences()
     {
         //Tìm các UI tong scene
-        GameObject UI = GameObject.Find("UI");
+        GameObject UI = GameObject.Find("General UI");
         if (UI == null)
         {
             return;
