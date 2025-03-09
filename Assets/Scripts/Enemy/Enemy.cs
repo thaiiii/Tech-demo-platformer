@@ -22,6 +22,8 @@ public class Enemy : MonoBehaviour
 
     //Checkpoint info
     public Vector3 savedPosition;
+    //Hệ thống máu
+    public bool isEnemyDead = false;
 
     //============================================================================
     private void Awake()
@@ -30,6 +32,7 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         previousPosition = transform.position;
+        savedPosition = transform.position;
     }
 
     private void Update()

@@ -147,8 +147,8 @@ public class PauseMenu : MonoBehaviour
         gameTimer.StartTimer();
 
         //ResetPlayer
-        player.ResetPosition();
-        player.GetComponent<HealthComponent>().Heal(player.GetComponent<HealthComponent>().GetHealthSystem().maxHealth);
+        ResetPlayer();
+        ResetAllHealthObject();
 
         //Reset objects position and status
         ResetTeleportTower();   
@@ -167,7 +167,25 @@ public class PauseMenu : MonoBehaviour
         ResetGun();
         
     }
-    
+    //Reset player and all health object
+    private void ResetPlayer()
+    {
+        player.ResetPosition();
+        player.GetComponent<PlayerAbilities>().isHidden = false;
+        player.GetComponent<PlayerAbilities>().isInCannon = false;
+        player.GetComponent<PlayerAbilities>().isInRobot = false;
+        player.transform.parent = null;
+
+    }
+    private void ResetAllHealthObject()
+    {
+        List<HealthComponent> healthComponents = new List<HealthComponent>(FindObjectsOfType<HealthComponent>());
+        foreach (HealthComponent healthComponent in healthComponents)
+        {
+            healthComponent.SetCurrentHealth(healthComponent.savedCurrentHealth);
+        }
+    }
+
     //Reset environment
     private void ResetTeleportTower()
     {
@@ -273,6 +291,11 @@ public class PauseMenu : MonoBehaviour
         List<Bullet> allBullets = new List<Bullet>(FindObjectsOfType<Bullet>());
         foreach (Bullet bullet in allBullets) 
             Destroy(bullet.gameObject);
+        List<GunTrap> gunTraps = new List<GunTrap>(FindObjectsOfType<GunTrap>());
+        foreach (GunTrap gun in gunTraps)
+        {
+            gun.LoadSavedGunStatus();
+        }
     }
     
     #endregion

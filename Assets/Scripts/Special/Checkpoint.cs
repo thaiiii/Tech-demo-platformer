@@ -19,10 +19,10 @@ public class Checkpoint : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            collision.gameObject.GetComponent<Player>().startPosition = transform.position + Vector3.up * 3f + Vector3.right * 1.5f;
             isActivated = true;
             animator.SetBool("isActivated", isActivated);
-
+            //Save info player
+            SavePlayer(collision.gameObject);
             //Tất cả các item đã bị ăn (inactive) sẽ được set isCheckpointPicked = true;
             SaveAllItems();
             //Save inventory hien tai
@@ -43,9 +43,20 @@ public class Checkpoint : MonoBehaviour
             SaveAllMovingTraps();
             //Save trạng thái ConveyorBelt
             SaveAllConveyorBelts();
+            //Save trạng thái Gun
+            SaveAllGun();
         }
     }
 
+    private void SavePlayer(GameObject player)
+    {
+        player.GetComponent<Player>().startPosition = transform.position + Vector3.up * 3f + Vector3.right * 1.5f;
+        List<HealthComponent> healthComponents = new List<HealthComponent>(FindObjectsOfType<HealthComponent>());
+        foreach (HealthComponent health in healthComponents)
+        {
+            health.savedCurrentHealth = health.currentHealth;
+        }
+    }
     private void SaveAllClones()
     {
         List<SlimeClone> allClones = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
@@ -92,6 +103,15 @@ public class Checkpoint : MonoBehaviour
             }
         }
     }
+    private void SaveAllConveyorBelts()
+    {
+        List<ConveyorBelt> allConveyorBelts = new List<ConveyorBelt>(FindObjectsOfType<ConveyorBelt>());
+        foreach (ConveyorBelt belt in allConveyorBelts)
+        {
+            belt.savedActivationStatus = belt.isActive;
+            belt.savedDirection = belt.moveRight;
+        }
+    }
     private void SaveAllCannons()
     {
         List<Cannon> allCannons = new List<Cannon>(FindObjectsOfType<Cannon>());
@@ -108,6 +128,7 @@ public class Checkpoint : MonoBehaviour
         {
             if (emitter.disablePermanently && !emitter.isLaserActivate) 
                 emitter.savedActivationStatus = false;
+            emitter.savedLaserAngle = emitter.laserAngle;
         }
     }
     private void SaveAllMovingTraps()
@@ -122,13 +143,13 @@ public class Checkpoint : MonoBehaviour
                 trap.savedActivatonStatus = true;
         }
     }
-    private void SaveAllConveyorBelts()
+    private void SaveAllGun()
     {
-        List<ConveyorBelt> allConveyorBelts = new List<ConveyorBelt>(FindObjectsOfType<ConveyorBelt>());
-        foreach (ConveyorBelt belt in allConveyorBelts)
+        List<GunTrap> gunTraps = new List<GunTrap>(FindObjectsOfType<GunTrap>());
+        foreach (GunTrap gun in gunTraps)
         {
-            belt.savedActivationStatus = belt.isActive;
-            belt.savedDirection = belt.moveRight;
+            gun.savedBulletAngle = gun.bulletAngle;
         }
     }
+    
 }

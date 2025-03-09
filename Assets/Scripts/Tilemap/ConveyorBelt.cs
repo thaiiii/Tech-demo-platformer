@@ -69,6 +69,8 @@ public class ConveyorBelt : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
+        if (!gameObject.activeInHierarchy) return; // Nếu băng chuyền bị vô hiệu hóa, không làm gì cả.
+
         if (objectsOnBelt.Contains(collision.transform) && collision.transform.parent != null)
         {
             // Khi rời băng chuyền, gỡ khỏi ConveyorPlatform

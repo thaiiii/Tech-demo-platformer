@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6314780240697437041}
   - component: {fileID: 6878179348244186143}
   - component: {fileID: 2401598513780749707}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: PlayerBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,4 +175,4 @@ MonoBehaviour:
   maxDistance: 15
   destroyableLayer:
     serializedVersion: 2
-    m_Bits: 40513
+    m_Bits: 327233

@@ -10,9 +10,12 @@ public class GunTrap : MonoBehaviour
     public float bulletSpeed = 5.0f;     // Tốc độ bay của đạn
     [Range(0f, 360f)]public float bulletAngle = 0.0f;     // Góc bắn (độ)
 
+    //Checkpoint
+    public float savedBulletAngle;
     private void Start()
     {
         StartCoroutine(FireBullets());
+        savedBulletAngle = bulletAngle;
     }
 
     void Update()
@@ -41,5 +44,9 @@ public class GunTrap : MonoBehaviour
 
         // Hủy đạn sau một thời gian (tránh tiêu tốn tài nguyên)
         Destroy(bullet, 5f);
+    }
+    public void LoadSavedGunStatus()
+    {
+        bulletAngle = savedBulletAngle;
     }
 }

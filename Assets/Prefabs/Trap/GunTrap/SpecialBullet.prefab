@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7422434105292071712}
   - component: {fileID: -1318404835524675975}
   - component: {fileID: 8088390302161498075}
-  m_Layer: 11
+  m_Layer: 18
   m_Name: SpecialBullet
-  m_TagString: Trap
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: b1dc74289ad89b048a2bfcbad01514a0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyableLayers:
     serializedVersion: 2
-    m_Bits: 40513
+    m_Bits: 319169
   normalSprite: {fileID: 21300000, guid: f7ae3f0e2e68c7f46aa55f4da534ab75, type: 3}
   specialSprite: {fileID: 21300000, guid: b1dc74289ad89b048a2bfcbad01514a0, type: 3}
   type: 1

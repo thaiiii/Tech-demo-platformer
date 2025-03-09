@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1349861669044576055}
   - component: {fileID: 8511267480158221857}
   - component: {fileID: -5174872495448805223}
-  m_Layer: 11
+  m_Layer: 18
   m_Name: Missile
   m_TagString: Trap
   m_Icon: {fileID: 0}
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: -998895785, guid: 341ac4dc5d577473f8f960b1ee778803, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -170,7 +170,7 @@ MonoBehaviour:
   turnSpeed: 2
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 3777
+    m_Bits: 327361
   target: {fileID: 0}
 --- !u!50 &-5174872495448805223
 Rigidbody2D:

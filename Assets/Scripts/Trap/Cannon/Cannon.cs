@@ -14,7 +14,7 @@ public class Cannon : MonoBehaviour
     public bool isCannonActivated = true;
     
     public bool disablePermanently = false;
-    public bool savedActivationStatus = true;
+    public bool savedActivationStatus;
 
     private Transform player;
 
@@ -22,12 +22,14 @@ public class Cannon : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         nextFireTime = Time.time;
+        savedActivationStatus = isCannonActivated;
     }
 
     void Update()
     {
         if (isCannonActivated)
         {
+            
             AimAtPlayer();
             CheckAndFire();
         }

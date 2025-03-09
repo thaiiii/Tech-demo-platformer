@@ -32,6 +32,8 @@ public class Fan : MonoBehaviour
         // Kiểm tra nếu đối tượng có tag hợp lệ
         if (isFanActivated && affectedTags.Contains(collision.tag))
         {
+            if (collision.tag == "Player" && collision.GetComponent<PlayerAbilities>().isHidden)
+                return;
             Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -78,11 +80,13 @@ public class Fan : MonoBehaviour
     {
         // Lấy danh sách tất cả các vật thể trong vùng tác động
         Collider2D[] objectsInZone = Physics2D.OverlapBoxAll(transform.position + Vector3.up * boxSize.y / 2, boxSize, 0);
-
+        
         foreach (Collider2D obj in objectsInZone)
         {
             if (affectedTags.Contains(obj.tag))
             {
+                if (obj.tag == "Player" && obj.GetComponent<PlayerAbilities>().isHidden)
+                    continue;
                 Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {

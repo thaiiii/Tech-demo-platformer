@@ -36,6 +36,7 @@ public class PlayerCannon : MonoBehaviour
 
             if (isPlayerInside)
             {
+                playerAbilities.transform.position = transform.position;
                 RotateCannon(); //Xoay nòng pháo
                 ChargeShot(); //Nạp lực bắn
 

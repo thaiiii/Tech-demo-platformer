@@ -4,7 +4,7 @@ public class Missile : MonoBehaviour
 {
     public float speed = 10f;
     public float turnSpeed = 5f; // tốc độ bẻ hướng, có thể điều chỉnh được
-    public LayerMask obstacleLayer;
+    
 
     public Transform target;
 
@@ -35,12 +35,18 @@ public class Missile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Debug.Log(collision.name);
         // Kiểm tra va chạm với vật cản
-        if (!collision.CompareTag("Player"))
+        if (collision.CompareTag("Ignore") || collision.CompareTag("HazardZone"))
         {
-            Destroy(gameObject); // Tên lửa biến mất khi va chạm vật cản
+            return;
         }
-
+        else if (collision.CompareTag("Enemy"))
+        {
+            Debug.Log("Kill enemy");
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

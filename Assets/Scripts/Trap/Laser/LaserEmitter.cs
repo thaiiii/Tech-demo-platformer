@@ -9,9 +9,10 @@ public class LaserEmitter : MonoBehaviour
     public float disableDuration = 5f;
     [Range(0f, 360f)]
     public float laserAngle;
-    public bool isLaserActivate = true;
+    public bool isLaserActivate;
     public bool disablePermanently = false;
-    public bool savedActivationStatus = true;
+    public bool savedActivationStatus;
+    public float savedLaserAngle;
 
     public LineRenderer laserBeam;
     public LayerMask obstacleLayers;
@@ -24,6 +25,8 @@ public class LaserEmitter : MonoBehaviour
     {
         laserBeam.enabled = isLaserActivate;
         playerDeath = FindObjectOfType<PlayerDeath>();
+        savedActivationStatus = isLaserActivate;
+        savedLaserAngle = laserAngle;
     }
 
     // Update is called once per frame
@@ -47,7 +50,12 @@ public class LaserEmitter : MonoBehaviour
             if (hit.collider.CompareTag("Player") && !hit.collider.GetComponent<PlayerDeath>().HiddenStatus())
             {
                 playerDeath.KillPlayer();
-                hit.collider.gameObject.GetComponent<PlayerDeath>().KillPlayer();
+            }
+
+            // Kiểm tra nếu trúng đạn (dựa vào layer)
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
+            {
+                Destroy(hit.collider.gameObject);
             }
         }
         else
@@ -55,7 +63,7 @@ public class LaserEmitter : MonoBehaviour
             endPoint = transform.position + transform.up * maxLaserLength;
         }
 
-        if (laserBeam.enabled == false)
+        if (!laserBeam.enabled)
             laserBeam.enabled = isLaserActivate;
         laserBeam.SetPosition(0, transform.position);
         laserBeam.SetPosition(1, endPoint);
@@ -100,5 +108,6 @@ public class LaserEmitter : MonoBehaviour
     public void LoadSavedEmitterStatus()
     {
         isLaserActivate = true ? savedActivationStatus : false;
+        laserAngle = savedLaserAngle;
     }
 }

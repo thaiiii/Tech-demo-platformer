@@ -57,6 +57,8 @@ public class PlayerDeath : MonoBehaviour
         {
             if (collision.GetComponent<Enemy>().type == EnemyType.Pointy) 
                 KillPlayer();
+            if (collision.GetComponent<Enemy>().type == EnemyType.Normal && !HiddenStatus())
+                KillPlayer();
         }
     }
 

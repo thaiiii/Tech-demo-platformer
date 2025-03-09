@@ -11,14 +11,16 @@ public class HealthComponent : MonoBehaviour
     public float maxHealth = 100f;
     private HealthSystem healthSystem;
     public float currentHealth;
+    public float savedCurrentHealth;
     // Start is called before the first frame update
     void Awake()
     {
         healthSystem = new HealthSystem(maxHealth);
         healthSystem.OnDeath += OnDeath;
-        healthSystem.OnHealthChanged += UpdateHealthUI; //Lắng ngh sự kiện thay đổi máu
+        healthSystem.OnHealthChanged += UpdateHealthUI; //Lắng nghe sự kiện thay đổi máu
         currentHealth = healthSystem.currentHealth;
         UpdateHealthUI();
+        savedCurrentHealth = currentHealth;
     }
 
     public HealthSystem GetHealthSystem()

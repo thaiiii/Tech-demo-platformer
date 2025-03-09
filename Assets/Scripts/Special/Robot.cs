@@ -30,7 +30,6 @@ public class Robot : MonoBehaviour
     [Header("Save info")]//Saved info
     [SerializeField] private bool savedDestroyStatus;
     [SerializeField] private Vector2 restartPosition;
-    [SerializeField] private float savedHealth;
 
     [Header("Dash")]//Dash
     public float dashSpeed = 20f; // Tốc độ Dash
@@ -49,7 +48,6 @@ public class Robot : MonoBehaviour
         //First save info
         restartPosition = transform.position;
         savedDestroyStatus = isDestroyed;
-        savedHealth = health.maxHealth;
     }
     private void Update()
     {
@@ -171,9 +169,8 @@ public class Robot : MonoBehaviour
     }
     public void LoadSavedRobotStatus()
     {
-        transform.position = restartPosition + Vector2.right * 3f;
+        transform.position = restartPosition;
         isDestroyed = savedDestroyStatus;
-        health.SetCurrentHealth(savedHealth);
         isControlled = false;
         canMove = true;
         isPlayerInRange = false;
@@ -191,7 +188,6 @@ public class Robot : MonoBehaviour
     {
         restartPosition = transform.position;
         savedDestroyStatus = isDestroyed;
-        savedHealth = health.GetHealthSystem().currentHealth;
     }
     private IEnumerator Dash()
     {

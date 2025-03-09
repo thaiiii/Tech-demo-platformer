@@ -12,6 +12,9 @@ TagManager:
   - Enemy
   - Robot
   - SlimeClone
+  - Bullet
+  - Ignore
+  - HazardZone
   layers:
   - Default
   - TransparentFX
@@ -31,7 +34,7 @@ TagManager:
   - SlimeClone
   - Item
   - HazardZone
-  - 
+  - Bullet
   - 
   - 
   - 

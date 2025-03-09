@@ -34,7 +34,6 @@ public class Player : MonoBehaviour
     [Header("Ground")]
     [SerializeField] public Transform groundCheckCollider;
     [SerializeField] public LayerMask groundLayer;
-    private float groundCheckRadius = 0.01f;
     private float jumpPower = 20f;
     private bool isJumped;
     private bool coyoteJump;
@@ -190,17 +189,19 @@ public class Player : MonoBehaviour
     }
     private void GroundCheck()
     {
+        //Kích thước ground check box
+        //Chiều dài gàn bằng chiều dài collider của player
+        Vector2 boxSize = new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f);
+
         // Kiểm tra nếu người chơi đang đứng trên mặt đất
-        Collider2D[] collider = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayer);
+        Collider2D[] collider = Physics2D.OverlapBoxAll(groundCheckCollider.position, boxSize, 0f, groundLayer);
         if (collider.Length > 0)
         {
             if (!isGrounded) // Nếu mới chạm đất
             {
                 isGrounded = true;
-                //OnGroundedChanged?.Invoke(this, _isGrounded);                   //Event
                 isJumped = false; // Cho phép nhảy lại
             }
-
             coyoteJump = true; // Coyote jump được kích hoạt lại
 
         }
@@ -209,7 +210,6 @@ public class Player : MonoBehaviour
             if (isGrounded) // Nếu rời khỏi mặt đất
             {
                 isGrounded = false; // Đánh dấu không còn chạm đất
-                //OnGroundedChanged?.Invoke(this, _isGrounded);                   //Event
                 StartCoroutine(CoyoteJumpDelay()); // Kích hoạt coyote jump
             }
         }
@@ -221,7 +221,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         coyoteJump = false;
     }
-    
+
 
 
     #endregion
@@ -242,7 +242,7 @@ public class Player : MonoBehaviour
     {
         if (isMoveable)
         {
-            
+
             allowKeepVelocity = isAllowed; //set lưu vận tốc
             rb.gravityScale = 0;
             isMoveable = false;
@@ -257,7 +257,7 @@ public class Player : MonoBehaviour
     }
     public void UnlockMove(bool isAllowed) // Cho phép di chuyển
     {
-        
+
         rb.gravityScale = 5f;
         isMoveable = true;
         allowKeepVelocity = isAllowed; //set lưu vận tốc
@@ -276,8 +276,11 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position, checkWallRadius);
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawSphere(transform.position, checkWallRadius);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawCube(groundCheckCollider.position, new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f));
     }
 
 }
