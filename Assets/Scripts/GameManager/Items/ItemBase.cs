@@ -35,7 +35,7 @@ public abstract class ItemBase : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") || collision.CompareTag("Robot"))
         {
             if (!isManualPicked)
                 OnPickUp();
@@ -51,7 +51,7 @@ public abstract class ItemBase : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Player"))
+        if (collision.collider.CompareTag("Player") || collision.collider.CompareTag("Robot"))
         {
             if (!isManualPicked || isManualPicked && Input.GetKeyDown(KeyCode.E))
             {

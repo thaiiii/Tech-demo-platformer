@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1742299840785211806}
   - component: {fileID: 692944809240939187}
   - component: {fileID: 340292930819703686}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: WindZone
-  m_TagString: Untagged
+  m_TagString: Ignore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 7963472121173044663}
   m_Layer: 6
   m_Name: Fan
-  m_TagString: Untagged
+  m_TagString: MassObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -160,7 +160,7 @@ Transform:
   m_GameObject: {fileID: 3216449257973750242}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalPosition: {x: 2.53, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children:

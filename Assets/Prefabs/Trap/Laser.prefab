@@ -252,11 +252,12 @@ MonoBehaviour:
   laserAngle: 0
   isLaserActivate: 1
   disablePermanently: 0
-  savedActivationStatus: 1
+  savedActivationStatus: 0
+  savedLaserAngle: 0
   laserBeam: {fileID: 6619787400444135872}
   obstacleLayers:
     serializedVersion: 2
-    m_Bits: 11969
+    m_Bits: 274113
 --- !u!120 &6619787400444135872
 LineRenderer:
   serializedVersion: 2

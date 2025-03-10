@@ -38,9 +38,18 @@ public class PlayerEffects : MonoBehaviour
     }
     public IEnumerator SpeedBoostEffect(float speedRate, float speedEffectDuration)
     {
-        FindAnyObjectByType<Player>().speed *= speedRate;
-        yield return new WaitForSeconds(speedEffectDuration);
-        FindAnyObjectByType<Player>().speed /= speedRate;
+        if (!FindAnyObjectByType<PlayerAbilities>().isInRobot)
+        {
+            FindAnyObjectByType<Player>().speed *= speedRate;
+            yield return new WaitForSeconds(speedEffectDuration);
+            FindAnyObjectByType<Player>().speed /= speedRate;
+        }
+        else
+        {
+            FindAnyObjectByType<PlayerAbilities>().currentRobot.robotSpeed *= speedRate;
+            yield return new WaitForSeconds(speedEffectDuration);
+            FindAnyObjectByType<PlayerAbilities>().currentRobot.robotSpeed /= speedRate;
+        }
     }
     public void SizeBoostEffect(float sizeUpValue)
     {

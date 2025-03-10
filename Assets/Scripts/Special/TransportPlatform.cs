@@ -8,7 +8,9 @@ public class TransportPlatform : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
+        {
             collision.transform.SetParent(transform, true);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -18,6 +20,9 @@ public class TransportPlatform : MonoBehaviour
             collision.transform != null &&
             gameObject.activeInHierarchy &&
             collision.gameObject.activeInHierarchy)
+        {
+
             collision.transform.SetParent(null);
+        }
     }
 }

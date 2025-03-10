@@ -45,6 +45,8 @@ public class Checkpoint : MonoBehaviour
             SaveAllConveyorBelts();
             //Save trạng thái Gun
             SaveAllGun();
+            //Save trạng thái Ênmy
+            SaveAllEnemy();
         }
     }
 
@@ -97,9 +99,9 @@ public class Checkpoint : MonoBehaviour
         List<UnblockSwitch> allBlocks = new List<UnblockSwitch>(FindObjectsOfType<UnblockSwitch>());
         foreach (UnblockSwitch block in allBlocks)
         {
-            if (block.blocker.activeSelf == false && block.isPermanent)
+            if (block.isPermanent)
             {
-                block.savedBlockStatus = false;
+                block.savedBlockStatus = block.blocker.activeSelf;
             }
         }
     }
@@ -151,5 +153,8 @@ public class Checkpoint : MonoBehaviour
             gun.savedBulletAngle = gun.bulletAngle;
         }
     }
-    
+    private void SaveAllEnemy()
+    {
+        //chua co gi
+    }
 }

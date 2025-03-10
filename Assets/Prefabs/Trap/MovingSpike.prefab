@@ -350,7 +350,7 @@ MonoBehaviour:
     toWaypointIndex: 0
     speed: 10
     delay: 0.5
-  isMovingActivated: 0
+  isMovingActivated: 1
   disablePermanently: 0
   loop: 1
   movingForward: 1

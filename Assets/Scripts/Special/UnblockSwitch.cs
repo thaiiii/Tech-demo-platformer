@@ -17,7 +17,8 @@ public class UnblockSwitch : MonoBehaviour
         {
             if (blocker != null)
             {
-                blocker.SetActive(false);
+                blocker.SetActive(!blocker.activeSelf);
+                StopAllCoroutines();
             }
         }
     }

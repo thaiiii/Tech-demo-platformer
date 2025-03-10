@@ -39,7 +39,7 @@ public class PlayerAbilities : MonoBehaviour
 
     [Header("Robot")]
     public bool isInRobot = false;
-    [SerializeField] private Robot currentRobot;
+    [SerializeField] public Robot currentRobot;
 
 
     // //////////////////////////////////////////////////////////////////////////////////
@@ -376,6 +376,8 @@ public class PlayerAbilities : MonoBehaviour
     #region Cannon
     public void EnterCannon(Vector3 cannonPosition)
     {
+        if (!isNormalStatus())
+            return;
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -429,6 +431,7 @@ public class PlayerAbilities : MonoBehaviour
         
         // Khôi phục người chơi
         isInRobot = false;
+        isHidden = false;
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         rb.isKinematic = false;
         GetComponent<Player>().UnlockMove(true);
@@ -459,23 +462,24 @@ public class PlayerAbilities : MonoBehaviour
     }
     private IEnumerator BootRobot(Robot robot)
     {
-        //setting người chơi
-        GetComponent<Player>().LockMove(false);
-        currentRobot = robot;
-        isInRobot = true;
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        rb.isKinematic = true;
-        healthComponent.SetInvincible(true);
-        yield return new WaitForSeconds(1f);
-        
-        
-        //Setting của robot
-        currentRobot.SetControlled(true);
-        currentRobot.ToggleRobotPhysics(false);
-        Camera.main.GetComponent<CameraFollow>().SetFollowTarget(currentRobot.gameObject);
+        if (isNormalStatus())
+        {
+            //setting người chơi
+            GetComponent<Player>().LockMove(false);
+            currentRobot = robot;
+            isInRobot = true;
+            isHidden = true;
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            rb.isKinematic = true;
+            healthComponent.SetInvincible(true);
+            yield return new WaitForSeconds(1f);
 
-        //UI máu
-        //healthComponent 
+
+            //Setting của robot
+            currentRobot.SetControlled(true);
+            currentRobot.ToggleRobotPhysics(false);
+            Camera.main.GetComponent<CameraFollow>().SetFollowTarget(currentRobot.gameObject);
+        }
     }
     #endregion
 }

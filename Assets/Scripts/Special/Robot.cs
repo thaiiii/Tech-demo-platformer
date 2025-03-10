@@ -88,15 +88,17 @@ public class Robot : MonoBehaviour
 
         if (canMove && !isDashing)
         {
-            rb.velocity = new Vector2(moveInput * 10f, rb.velocity.y);
+            rb.velocity = new Vector2(moveInput * robotSpeed, rb.velocity.y);
             if (moveInput > 0)
             {
-                transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
+                if (transform.localScale.x < 0)
+                    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
                 jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(0.1f, 0.1f, 0.1f);
             }
             else if (moveInput < 0)
             {
-                transform.localScale = new Vector3(-2.5f, 2.5f, 2.5f);
+                if (transform.localScale.x > 0)
+                    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
                 jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(-0.1f, 0.1f, 0.1f);
             }
         }
@@ -107,7 +109,7 @@ public class Robot : MonoBehaviour
             Vector2 jumpDir = Vector2.up;
             if (Input.GetKey(KeyCode.Space))
             {
-                rb.velocity = Vector2.zero;
+                rb.velocity = new Vector2(0, rb.velocity.y);
                 canMove = false;
                 chargeTime += Time.deltaTime;
                 chargeTime = Mathf.Clamp(chargeTime, 0, maxChargeTime);
@@ -120,21 +122,27 @@ public class Robot : MonoBehaviour
                     jumpDir = new Vector2(-1, 1);
                 else if (Input.GetKey(KeyCode.D))
                     jumpDir = new Vector2(1, 1);
-                else if (Input.GetKey(KeyCode.W))
-                    jumpDir = Vector2.up;
             }
             else
                 canMove = true;
 
             if (Input.GetKeyUp(KeyCode.Space))
             {
+                jumpUI.enabled = false;
                 float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, chargeTime / maxChargeTime);
                 rb.velocity = jumpDir.normalized * jumpForce;
                 
                 chargeTime = 0f;
-                jumpUI.enabled = false;
             }
             #endregion
+        }
+        else
+        {
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                jumpUI.enabled = false;
+                chargeTime = 0f;
+            }
         }
         #region Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
@@ -217,7 +225,9 @@ public class Robot : MonoBehaviour
         canMove = true;
     }
     private void EnterThisRobot()
-    {   
+    {
+        if (!playerAbilities.isNormalStatus())
+            return;
         cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize + 1);
         healthUI.enabled = true;
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = false;

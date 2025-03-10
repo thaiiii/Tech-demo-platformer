@@ -98,6 +98,6 @@ public class Enemy : MonoBehaviour
 
     public void LoadSavedEnemyStatus()
     {
-
+        //chua co gi
     }
 }

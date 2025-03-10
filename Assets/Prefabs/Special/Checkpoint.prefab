@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5460845131664385531}
   - component: {fileID: 4123890903448503052}
   - component: {fileID: 3733214531241058980}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Checkpoint
-  m_TagString: Untagged
+  m_TagString: Ignore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -166,3 +166,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActivated: 0
+  allRobots: []

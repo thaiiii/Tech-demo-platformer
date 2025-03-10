@@ -33,7 +33,7 @@ public class BreakableTileManager : MonoBehaviour
         if (player != null)
         {
             Vector3 playerPosition = player.transform.position; // Vị trí của người chơi
-            float rayLength = 0.7f; // Độ dài của tia Raycast
+            float rayLength = player.GetComponent<Collider2D>().bounds.size.y / 2f + 0.2f; // Độ dài của tia Raycast
 
             // Phóng một tia xuống dưới từ vị trí người chơi (hoặc bạn có thể phóng theo hướng khác)
             RaycastHit2D hitDownward = Physics2D.Raycast(playerPosition, Vector3.down, rayLength, tileLayer);
