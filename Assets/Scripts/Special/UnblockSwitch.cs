@@ -10,6 +10,7 @@ public class UnblockSwitch : MonoBehaviour
     public bool savedBlockStatus = true;
     public float reappearDelay = 0f;
     public List<string> applicableTags; // Các tag được phép di chuyển
+    public Collider2D[] objectInside;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -17,7 +18,8 @@ public class UnblockSwitch : MonoBehaviour
         {
             if (blocker != null)
             {
-                blocker.SetActive(!blocker.activeSelf);
+                blocker.GetComponent<SpriteRenderer>().enabled = !blocker.GetComponent<SpriteRenderer>().enabled;
+                blocker.GetComponent<Collider2D>().isTrigger = !blocker.GetComponent<Collider2D>().isTrigger;
                 StopAllCoroutines();
             }
         }
@@ -34,18 +36,41 @@ public class UnblockSwitch : MonoBehaviour
     private IEnumerator ReappearBlocker()
     {
         yield return new WaitForSeconds(reappearDelay);
-        if (blocker != null)
+
+        //Kiểm tra va chạm trước khi bật lại
+        Collider2D blockerCollider = blocker.GetComponent<Collider2D>();
+        objectInside = Physics2D.OverlapBoxAll(
+            blockerCollider.bounds.center,
+            blockerCollider.bounds.size,
+            0f);
+        foreach (Collider2D obj in objectInside)
         {
-            blocker.SetActive(true);
+            if (obj.CompareTag("Player"))
+                obj.GetComponent<PlayerDeath>()?.KillPlayer();
+            else if (obj.CompareTag("Enemy"))
+                obj.GetComponent<Enemy>()?.KillEnemy();
+            else if (obj.CompareTag("Robot"))
+                obj.GetComponent<Robot>()?.OnRobotDestroyed();
+            else if (obj.CompareTag("SlimeClone"))
+                obj.GetComponent<SlimeClone>().KillClone();
         }
+
+        blocker.GetComponent<SpriteRenderer>().enabled = true;
+        blocker.GetComponent<Collider2D>().isTrigger = false;
     }
 
     public void LoadSavedBlockStatus()
     {
         if (savedBlockStatus)
-            blocker.SetActive(true);
+        {
+            blocker.GetComponent<SpriteRenderer>().enabled = true;
+            blocker.GetComponent<Collider2D>().isTrigger = false;
+        }
         else
-            blocker.SetActive(false);
+        {
+            blocker.GetComponent<SpriteRenderer>().enabled = false;
+            blocker.GetComponent<Collider2D>().isTrigger = true;
+        }
     }
 }
 

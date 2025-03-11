@@ -12,8 +12,8 @@ public class GameTimer : MonoBehaviour
     private TextMeshProUGUI timerText; // UI Text hiển thị thời gian chơi
     private TextMeshProUGUI pausedTimerText; // UI Text hiển thị thời gian lúc tạm dừng
     public float elapsedTime = 0f; //Tổng thời gian để trôi qua
-    private bool isTiming = false;
-    private bool hasStarted = false; //Kiểm tra xem người chơi đã di chuyển chưa
+    [SerializeField] private bool isTiming = false;
+    [SerializeField] public bool hasStarted = false; //Kiểm tra xem người chơi đã di chuyển chưa
 
     private void Awake()
     {
@@ -58,22 +58,28 @@ public class GameTimer : MonoBehaviour
             UpdateTimeDisplay();
         }
     }
-    //Hàm bắt đầu khi gười chơi di chuyển lần đầu
+    //Hàm bắt đầu khi người chơi di chuyển lần đầu
     public void StartTimer()
     {
-        if (hasStarted == false)
         {
             hasStarted = true;
             isTiming = true;
-        }
-        else
-        {
-            hasStarted = false;
-            elapsedTime = 0f;
             UpdateTimeDisplay();
         }
-
     }
+
+    //Reset đồng hồ
+    public void ResetTimer()
+    {
+        hasStarted = false;
+        isTiming = false;
+        elapsedTime = 0f;
+        UpdateTimeDisplay();
+    }
+    //public void ContinueTimer()
+    //{
+
+    //}
     //Hàm tạm dừng bộ đến
     public void PauseTimer()
     {

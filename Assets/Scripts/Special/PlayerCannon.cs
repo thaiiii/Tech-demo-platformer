@@ -36,15 +36,17 @@ public class PlayerCannon : MonoBehaviour
 
             if (isPlayerInside)
             {
+                if (FindObjectOfType<PauseMenu>().isPaused || FindObjectOfType<LevelCompleteMenu>().isComplete)
+                    return;
                 playerAbilities.transform.position = transform.position;
                 RotateCannon(); //Xoay nòng pháo
                 ChargeShot(); //Nạp lực bắn
 
                 if (Input.GetKeyUp(KeyCode.Space))
-                    FirePlayer();
+                    FirePlayer(direction, force);
                 if (Input.GetKeyDown(KeyCode.Q))        //Thoát khỏi cannon
                 {
-                    playerAbilities.ExitCannon(Vector2.up, 10f);
+                    FirePlayer(Vector2.up, 10f);
                     isPlayerInside = false;
                     playerAbilities.gameObject.transform.parent = null;
                 }
@@ -82,10 +84,12 @@ public class PlayerCannon : MonoBehaviour
             }
         }
     }
-    private void FirePlayer()
+    public void FirePlayer(Vector2 direction, float force)
     {
+        if (playerAbilities == null)
+            return;
+
         // Hướng bắn theo nòng pháo
-        
         playerAbilities.ExitCannon(direction, force);
         playerAbilities.gameObject.transform.SetParent(null);
         isPlayerInside = false;

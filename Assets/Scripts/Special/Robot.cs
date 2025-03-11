@@ -9,12 +9,15 @@ public class Robot : MonoBehaviour
     public Canvas jumpUI;
     public Slider jumpForceSlider;
 
-    [Header("Jump")]
+    [Header("Move")]
+    private float horizontalValue;
     public float robotSpeed = 10f;
     private float chargeTime = 0f;
     public float maxChargeTime = 2f;
     public float minJumpForce = 20f;
     public float maxJumpForce = 20f;
+    public bool isSliding = false;
+    public float slipperyValue;
 
     [Header("Robot status")]
     public bool isDestroyed = false;
@@ -84,28 +87,42 @@ public class Robot : MonoBehaviour
 
     private void RobotMove()
     {
-        float moveInput = Input.GetAxisRaw("Horizontal");
-
+        #region Normal move
         if (canMove && !isDashing)
         {
-            rb.velocity = new Vector2(moveInput * robotSpeed, rb.velocity.y);
-            if (moveInput > 0)
+            horizontalValue = Input.GetAxisRaw("Horizontal");
+            if (horizontalValue > 0)
             {
                 if (transform.localScale.x < 0)
                     transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-                jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                if (jumpUI.gameObject.GetComponent<RectTransform>().localScale.x < 0)
+                    jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(
+                        -jumpUI.gameObject.GetComponent<RectTransform>().localScale.x,
+                        jumpUI.gameObject.GetComponent<RectTransform>().localScale.y,
+                        jumpUI.gameObject.GetComponent<RectTransform>().localScale.z);
             }
-            else if (moveInput < 0)
+            else if (horizontalValue < 0)
             {
                 if (transform.localScale.x > 0)
                     transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-                jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(-0.1f, 0.1f, 0.1f);
+                if (jumpUI.gameObject.GetComponent<RectTransform>().localScale.x > 0)
+                    jumpUI.gameObject.GetComponent<RectTransform>().localScale = new Vector3(
+                        -jumpUI.gameObject.GetComponent<RectTransform>().localScale.x,
+                        jumpUI.gameObject.GetComponent<RectTransform>().localScale.y,
+                        jumpUI.gameObject.GetComponent<RectTransform>().localScale.z);
             }
+            if (isSliding)
+                RobotSlide(slipperyValue);
+            else
+                rb.velocity = new Vector2(horizontalValue * robotSpeed, rb.velocity.y);
+                
         }
+        #endregion
 
+        #region Jump
         if (CheckRobotOnGround())
         {
-            #region Jump
+
             Vector2 jumpDir = Vector2.up;
             if (Input.GetKey(KeyCode.Space))
             {
@@ -114,10 +131,10 @@ public class Robot : MonoBehaviour
                 chargeTime += Time.deltaTime;
                 chargeTime = Mathf.Clamp(chargeTime, 0, maxChargeTime);
 
-                if (!jumpUI.enabled) 
+                if (!jumpUI.enabled)
                     jumpUI.enabled = true;
                 jumpForceSlider.value = chargeTime / maxChargeTime;
-                                
+
                 if (Input.GetKey(KeyCode.A))
                     jumpDir = new Vector2(-1, 1);
                 else if (Input.GetKey(KeyCode.D))
@@ -131,10 +148,10 @@ public class Robot : MonoBehaviour
                 jumpUI.enabled = false;
                 float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, chargeTime / maxChargeTime);
                 rb.velocity = jumpDir.normalized * jumpForce;
-                
+
                 chargeTime = 0f;
             }
-            #endregion
+
         }
         else
         {
@@ -144,6 +161,8 @@ public class Robot : MonoBehaviour
                 chargeTime = 0f;
             }
         }
+        #endregion
+
         #region Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
             StartCoroutine(Dash());
@@ -152,6 +171,11 @@ public class Robot : MonoBehaviour
         //Update vị trí player nếu khác robot
         if (playerAbilities != null && playerAbilities.transform.position != (Vector3)rb.position)
             playerAbilities.transform.position = rb.position;
+    }
+    private void RobotSlide(float slipperyValue)
+    {
+        
+        rb.AddForce(horizontalValue * robotSpeed * slipperyValue * Vector2.right);
     }
     public void SetControlled(bool controlled) => isControlled = controlled;
     public void OnRobotDestroyed()
@@ -177,12 +201,11 @@ public class Robot : MonoBehaviour
     }
     public void LoadSavedRobotStatus()
     {
+        ExitThisRobot();
         transform.position = restartPosition;
         isDestroyed = savedDestroyStatus;
-        isControlled = false;
         canMove = true;
         isPlayerInRange = false;
-        chargeTime = 0f;
 
         // Đợi 0.1 giây rồi mới bật vật lý
         StartCoroutine(EnablePhysicsAfterDelay(0.02f));
@@ -232,15 +255,20 @@ public class Robot : MonoBehaviour
         healthUI.enabled = true;
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = false;
         playerAbilities.EnterRobot(this);
-        
+
     }
     private void ExitThisRobot()
     {
+        if (playerAbilities == null)
+            return;
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = true;
         healthUI.enabled = false;
         jumpUI.enabled = false;
+        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize - 1);
+        
         chargeTime = 0f;
-        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize -1);
+        isControlled = false;
+
         playerAbilities.ExitRobot();
     }
 

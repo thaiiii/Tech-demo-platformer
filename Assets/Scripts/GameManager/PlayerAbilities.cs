@@ -13,6 +13,7 @@ public class PlayerAbilities : MonoBehaviour
     private Collider2D playerCollider;
     private SpriteRenderer spriteRenderer;
     private HealthComponent healthComponent;
+    private GameTimer gameTimer;
 
     [Header("Teleport")]
     public float teleportRadius = 10f;
@@ -49,6 +50,7 @@ public class PlayerAbilities : MonoBehaviour
         playerCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         healthComponent = GetComponent<HealthComponent>();
+        gameTimer = FindObjectOfType<GameTimer>();
     }
     private void Start()
     {
@@ -62,7 +64,6 @@ public class PlayerAbilities : MonoBehaviour
             HandleTeleport();
             HandleSlime();
         }
-
     }
 
 
@@ -87,7 +88,6 @@ public class PlayerAbilities : MonoBehaviour
             }
             else
             {
-
                 if (targetTower == null)
                 {
                     //Nếu dang ẩn, ko có trụ khác xung quanh = thoát ra
@@ -157,6 +157,7 @@ public class PlayerAbilities : MonoBehaviour
 
         if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_TELEPORT) //Kiểm tra nếu tower teleport khả dụng
         {
+            gameTimer.StartTimer();
             //Lưu lại vận tốc trước khi teleport
             storedVelocity = rb.velocity;
 
@@ -179,6 +180,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_SWAP) //Kiểm tra nếu tower swap khả dụng
         {
+            gameTimer.StartTimer();
             if (!isHidden)
             {
                 Vector3 tempPos = transform.position;
@@ -224,6 +226,7 @@ public class PlayerAbilities : MonoBehaviour
     #region Player skills
     public void UseItem(InventoryManager.InventorySlot selectedSlot)
     {
+        gameTimer.StartTimer();
         switch (selectedSlot.itemName)
         {
             case "PlayerBullet":
@@ -236,6 +239,10 @@ public class PlayerAbilities : MonoBehaviour
     }
     public bool isNormalStatus()
     {
+        if (FindObjectOfType<PauseMenu>().isPaused)
+            return false;
+        if (FindObjectOfType<LevelCompleteMenu>().isComplete)
+            return false;
         if (GetComponent<PlayerDeath>().isDead)
             return false;
         if (isInRobot)
@@ -251,15 +258,24 @@ public class PlayerAbilities : MonoBehaviour
     }
     #endregion
 
+    #endregion
+
     #region SplitBody
     public void HandleSlime()
     {
+
         if (Input.GetKeyDown(KeyCode.S))
+        {
             SplitBody();
+        }
         if (Input.GetKeyDown(KeyCode.R))
+        {
             SwapControl();
+        }
         if (Input.GetKeyDown(KeyCode.E))
+        {
             AbsorbClone();
+        }
     }
     public void SplitBody()
     {
@@ -269,6 +285,7 @@ public class PlayerAbilities : MonoBehaviour
         if (slimeSlot == null || slimeCount < 8)
             return; // Không đủ slime để chia đôi
 
+        gameTimer.StartTimer();
         // Trừ số slime đã chia khỏi người chơi
         int splitedSlime = slimeCount / 2;
         slimeSlot.itemCount -= splitedSlime;
@@ -315,6 +332,7 @@ public class PlayerAbilities : MonoBehaviour
         if (slimeSlot == null || playerSlimeCount < 4)
             return;
 
+        gameTimer.StartTimer();
         //Doi vi tri
         Vector3 tempPosision = transform.position;
         transform.position = closestClone.transform.position;
@@ -338,6 +356,7 @@ public class PlayerAbilities : MonoBehaviour
         {
             if (slot.itemName == "Slime")
             {
+                gameTimer.StartTimer();
                 inventoryManager.AddItem(slot.itemSprite, slot.itemName, cloneSlime, slot.isCounted);
                 Destroy(closestClone.gameObject);
                 return;
@@ -348,6 +367,7 @@ public class PlayerAbilities : MonoBehaviour
             Debug.Log("Da full inven");
             return;
         }
+        gameTimer.StartTimer();
         inventoryManager.AddItem(closestClone.slimeSprite, "Slime", cloneSlime, true);
         Destroy(closestClone.gameObject);
 
@@ -371,11 +391,10 @@ public class PlayerAbilities : MonoBehaviour
     }
     #endregion
 
-    #endregion
-
     #region Cannon
     public void EnterCannon(Vector3 cannonPosition)
     {
+        gameTimer.StartTimer();
         if (!isNormalStatus())
             return;
         rb.velocity = Vector2.zero;
@@ -428,12 +447,13 @@ public class PlayerAbilities : MonoBehaviour
         currentRobot.SetControlled(false);
         currentRobot.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
         currentRobot.isPlayerInRange = false;
-        
+
         // Khôi phục người chơi
         isInRobot = false;
         isHidden = false;
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         rb.isKinematic = false;
+        playerCollider.enabled = true;                                     //Bat collider
         GetComponent<Player>().UnlockMove(true);
         healthComponent.SetInvincible(false);
         Camera.main.GetComponent<CameraFollow>().SetFollowTarget(gameObject);
@@ -464,12 +484,16 @@ public class PlayerAbilities : MonoBehaviour
     {
         if (isNormalStatus())
         {
+            gameTimer.StartTimer();
+
             //setting người chơi
             GetComponent<Player>().LockMove(false);
             currentRobot = robot;
             isInRobot = true;
             isHidden = true;
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            playerCollider.enabled = false;                                     //Tat collider
+
             rb.isKinematic = true;
             healthComponent.SetInvincible(true);
             yield return new WaitForSeconds(1f);

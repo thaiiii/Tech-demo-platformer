@@ -95,12 +95,18 @@ public class HazardZone : MonoBehaviour
         {
             gameObject.GetComponent<Player>().isSliding = true;
             gameObject.GetComponent<Player>().slipperyValue = effectValue;
+        } 
+        else if (gameObject.CompareTag("Robot")) {
+            gameObject.GetComponent<Robot>().isSliding = true;
+            gameObject.GetComponent<Robot>().slipperyValue = effectValue;
         }
     }
     private void ResetIceEffect(GameObject gameObject)
     {
         if (gameObject.CompareTag("Player"))
             gameObject.GetComponent<Player>().isSliding = false;
+        else if(gameObject.CompareTag("Robot"))
+            gameObject.GetComponent<Robot>().isSliding= false;
     }
     private void SetLowGravity(GameObject gameObject)
     {

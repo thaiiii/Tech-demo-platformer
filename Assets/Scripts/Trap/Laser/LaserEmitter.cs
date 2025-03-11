@@ -53,10 +53,16 @@ public class LaserEmitter : MonoBehaviour
             }
 
             // Kiểm tra nếu trúng đạn (dựa vào layer)
-            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
+            else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
             {
                 Destroy(hit.collider.gameObject);
             }
+            //Kiểm tra trúng clone
+            else if (hit.collider.gameObject.CompareTag("SlimeClone"))
+            {
+                hit.collider.gameObject.GetComponent<SlimeClone>().KillClone();
+            }
+
         }
         else
         {

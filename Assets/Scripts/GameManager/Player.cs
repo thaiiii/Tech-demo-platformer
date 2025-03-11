@@ -65,7 +65,6 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-        if (isMoveable)
             HandlePCInput();
     }
     private void FixedUpdate()
@@ -80,6 +79,9 @@ public class Player : MonoBehaviour
     #region Movement
     private void HandlePCInput()
     {
+        if (!CanInputControl())
+            return;
+
         horizontalValue = Input.GetAxisRaw("Horizontal");
 
         //if move first time, hasMoved = true
@@ -145,6 +147,7 @@ public class Player : MonoBehaviour
 
                 // Thêm lực nhảy
                 rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+                gameTimer.StartTimer();
             }
         }
     }
@@ -181,6 +184,10 @@ public class Player : MonoBehaviour
     }
     private bool CanInputControl()
     {
+        if (FindObjectOfType<PauseMenu>().isPaused)
+            return false;
+        if (FindObjectOfType<LevelCompleteMenu>().isComplete)
+            return false;
         if (isShotHorizontally)
             return false;
         if (!isMoveable)

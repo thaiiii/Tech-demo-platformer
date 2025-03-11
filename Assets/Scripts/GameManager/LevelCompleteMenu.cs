@@ -15,6 +15,7 @@ public class LevelCompleteMenu : MonoBehaviour
     private Button nextLevelButton; // Nút qua màn
     private Button restartLevelButton;   // Nút restart
     private Button mainMenuButton;  // Nút về menu chính
+    public bool isComplete = false;
 
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
     private PauseMenu pauseMenu; // Tham chiếu PauseMenu
@@ -26,12 +27,6 @@ public class LevelCompleteMenu : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
     }
-
-    private void Start()
-    {
-
-    }
-
     private void InitializeUIReferences()
     {
         //Tìm các UI tong scene
@@ -79,6 +74,8 @@ public class LevelCompleteMenu : MonoBehaviour
     #region Level Complete
     public void CompleteLevel()
     {
+        isComplete = true;
+
         // Gọi kết thúc thời gian chơi
         gameTimer.StopTimer();
         GameStats.Instance.CalculateEndLevel();
@@ -90,8 +87,6 @@ public class LevelCompleteMenu : MonoBehaviour
         // Hiển thị số lần chết và thời gian
         deathsText.text = $"Deaths: {GameStats.Instance.levelDeaths}";
         timeText.text = $"Time: {GameStats.Instance.levelTime:F2}";
-
-
     }
 
     public void LoadNextLevel()

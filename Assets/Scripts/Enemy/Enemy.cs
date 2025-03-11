@@ -100,4 +100,10 @@ public class Enemy : MonoBehaviour
     {
         //chua co gi
     }
+
+    public void KillEnemy()
+    {
+        //giet enemy
+        Debug.Log("enemy dead");
+    }
 }

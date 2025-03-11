@@ -173,7 +173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyableLayers:
     serializedVersion: 2
-    m_Bits: 319041
+    m_Bits: 286273
+  bulletDamage: 10
   normalSprite: {fileID: 21300000, guid: f7ae3f0e2e68c7f46aa55f4da534ab75, type: 3}
   specialSprite: {fileID: 21300000, guid: b1dc74289ad89b048a2bfcbad01514a0, type: 3}
   type: 0

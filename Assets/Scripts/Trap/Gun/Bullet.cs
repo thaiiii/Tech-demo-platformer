@@ -5,15 +5,14 @@ public class Bullet : MonoBehaviour
 {
     public enum BulletType
     {
-        NORMAL, 
+        NORMAL,
         SPECIAL
     }
 
-    [Header("Chỉ định Layer để hủy đạn")]
     public LayerMask destroyableLayers;  // Các layer mà đạn sẽ bị hủy khi va chạm
-
-    public Sprite normalSprite;
-    public Sprite specialSprite;
+    public float bulletDamage = 10f;
+    [HideInInspector] public Sprite normalSprite;
+    [HideInInspector] public Sprite specialSprite;
     private SpriteRenderer spriteRenderer;
     public BulletType type;
 
@@ -29,10 +28,29 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (((1 << collision.gameObject.layer) & destroyableLayers) != 0)
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            HealthComponent healthComponent = collision.gameObject.GetComponent<HealthComponent>();
+            healthComponent.TakeDamage(bulletDamage);
             Destroy(gameObject);
+        }
+        else if (collision.gameObject.CompareTag("Robot"))
+        {
+            HealthComponent healthComponent = collision.gameObject.GetComponent<HealthComponent>();
+            healthComponent.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+        }
+        else if(collision.gameObject.CompareTag("SlimeClone"))
+        {
+            collision.GetComponent<SlimeClone>().KillClone();
+            Destroy(gameObject);
+        }
+
+        else if (((1 << collision.gameObject.layer) & destroyableLayers) != 0)
+            Destroy(gameObject);
+
     }
 
-    
+
 
 }

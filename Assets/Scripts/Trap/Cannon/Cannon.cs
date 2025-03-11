@@ -12,7 +12,7 @@ public class Cannon : MonoBehaviour
     public LayerMask obstacleLayer;
     private Coroutine countdownCoroutine;
     public bool isCannonActivated = true;
-    
+
     public bool disablePermanently = false;
     public bool savedActivationStatus;
 
@@ -29,7 +29,7 @@ public class Cannon : MonoBehaviour
     {
         if (isCannonActivated)
         {
-            
+
             AimAtPlayer();
             CheckAndFire();
         }
@@ -48,11 +48,20 @@ public class Cannon : MonoBehaviour
     {
         // Kiểm tra xem có vật cản nào giữa khẩu pháo và người chơi không
         RaycastHit2D hit = Physics2D.Raycast(firePoint.position, player.position - firePoint.position, 500f, obstacleLayer);
-        if (hit.collider != null && hit.collider.CompareTag("Player") && Time.time >= nextFireTime)
+        if (Time.time >= nextFireTime && hit.collider != null)
         {
-            FireMissile();
-            nextFireTime = Time.time + fireRate;
+            if (hit.collider.CompareTag("Player"))
+            {
+                FireMissile();
+                nextFireTime = Time.time + fireRate;
+            }
+            else if (hit.collider.CompareTag("Robot") && hit.collider.GetComponent<Robot>().isControlled)
+            {
+                FireMissile();
+                nextFireTime = Time.time + fireRate;
+            }
         }
+
     }
 
     void FireMissile()

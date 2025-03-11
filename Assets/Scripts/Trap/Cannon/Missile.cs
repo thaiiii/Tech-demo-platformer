@@ -42,7 +42,13 @@ public class Missile : MonoBehaviour
         }
         else if (collision.CompareTag("Enemy"))
         {
-            Debug.Log("Kill enemy");
+            collision.gameObject.GetComponent<Enemy>().KillEnemy();
+            Destroy(gameObject);
+        }
+        else if (collision.CompareTag("SlimeClone"))
+        {
+            collision.gameObject.GetComponent<SlimeClone>().KillClone();
+            Destroy(gameObject);
         }
         else
         {

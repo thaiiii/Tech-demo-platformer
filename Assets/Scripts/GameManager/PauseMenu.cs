@@ -12,14 +12,14 @@ public class PauseMenu : MonoBehaviour
 {
     [Header("In Game")]
     private GameObject pauseMenuUI;
-    private bool isPaused = false;
+    public bool isPaused = false;
     private Player player;
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
     private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
     public List<ItemBase> items;
     public List<SlimeClone> allSlimeClones;
-    public List<Robot> allRobots;  
+    public List<Robot> allRobots;
 
     #region Stage
     private void Awake()
@@ -116,23 +116,31 @@ public class PauseMenu : MonoBehaviour
     #region In Game
     public void PauseStage()
     {
-        pauseMenuUI.SetActive(true);
-        Time.timeScale = 0; //Tam dung game
-        isPaused = true;
+        if (FindObjectOfType<LevelCompleteMenu>().isComplete)
+            return;
+        if (!isPaused)
+        {
+            pauseMenuUI.SetActive(true);
+            Time.timeScale = 0; //Tam dung game
+            isPaused = true;
 
-        //Timer tam dung
-        gameTimer.PauseTimer();
-
+            //Timer tam dung
+            gameTimer.PauseTimer();
+        }
     }
     public void ResumeStage()
     {
-        pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f; //Tiep tuc game
-        isPaused = false;
+        if (FindObjectOfType<LevelCompleteMenu>().isComplete)
+            return;
+        if (isPaused)
+        {
+            pauseMenuUI.SetActive(false);
+            Time.timeScale = 1f; //Tiep tuc game
+            isPaused = false;
 
-        //Timer tiep tuc
-        gameTimer.ResumeTimer();
-
+            //Timer tiep tuc
+            gameTimer.ResumeTimer();
+        }
     }
     public void LoadMenu()
     {
@@ -141,40 +149,44 @@ public class PauseMenu : MonoBehaviour
     }
     public void RestartStage()
     {
+        FindObjectOfType<LevelCompleteMenu>().isComplete = false;
+        isPaused = false;
+
         Time.timeScale = 1f;
         pauseMenuUI.SetActive(false);
         //Reset objects method here
-        gameTimer.StartTimer();
-
-        //ResetPlayer
-        ResetPlayer();
-        ResetAllHealthObject();
+        gameTimer.ResetTimer();
 
         //Reset objects position and status
-        ResetTeleportTower();   
-        ResetFan(); 
+        ResetTeleportTower();
+        ResetFan();
         ResetItem();
         ResetSlimeBody();
         ResetRobot();
+        ResetPlayerCannon();
         ResetConveyorBelt();
-        
+
         //Reset trap position and status
-        ResetCannon(); 
+        ResetCannon();
         ResetBlock();
         ResetLaser();
         ResetMovingTrap();
         ResetEnemy();
         ResetGun();
-        
+
+        //ResetPlayer
+        ResetPlayer();
+        ResetAllHealthObject();
+
     }
     //Reset player and all health object
     private void ResetPlayer()
     {
-        player.ResetPosition();
-        player.GetComponent<PlayerAbilities>().isHidden = false;
-        player.GetComponent<PlayerAbilities>().isInCannon = false;
-        player.GetComponent<PlayerAbilities>().isInRobot = false;
+        player.GetComponent<PlayerAbilities>().ExitTower();
+        player.GetComponent<PlayerAbilities>().ExitCannon(Vector2.up , 0f);
+        player.GetComponent<PlayerAbilities>().ExitRobot();
         player.transform.parent = null;
+        player.ResetPosition();
 
     }
     private void ResetAllHealthObject()
@@ -242,6 +254,15 @@ public class PauseMenu : MonoBehaviour
             belt.LoadSavedConveyorBeltStatus();
         }
     }
+    private void ResetPlayerCannon()
+    {
+        List<PlayerCannon> playerCannons = new List<PlayerCannon>(FindObjectsOfType<PlayerCannon>());
+        foreach(PlayerCannon playerCannon in playerCannons)
+        {
+            playerCannon.FirePlayer(Vector2.up, 0f);
+        }
+    }
+
 
     //Reset trap
     private void ResetCannon()
@@ -289,7 +310,7 @@ public class PauseMenu : MonoBehaviour
     private void ResetGun()
     {
         List<Bullet> allBullets = new List<Bullet>(FindObjectsOfType<Bullet>());
-        foreach (Bullet bullet in allBullets) 
+        foreach (Bullet bullet in allBullets)
             Destroy(bullet.gameObject);
         List<GunTrap> gunTraps = new List<GunTrap>(FindObjectsOfType<GunTrap>());
         foreach (GunTrap gun in gunTraps)
@@ -297,7 +318,7 @@ public class PauseMenu : MonoBehaviour
             gun.LoadSavedGunStatus();
         }
     }
-    
+
     #endregion
 
 

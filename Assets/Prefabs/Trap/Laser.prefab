@@ -257,7 +257,7 @@ MonoBehaviour:
   laserBeam: {fileID: 6619787400444135872}
   obstacleLayers:
     serializedVersion: 2
-    m_Bits: 274113
+    m_Bits: 306881
 --- !u!120 &6619787400444135872
 LineRenderer:
   serializedVersion: 2

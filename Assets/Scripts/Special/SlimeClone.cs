@@ -15,14 +15,12 @@ public class SlimeClone : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
     public void SetSlimeCount(int count)
     {
         slimeCount = count;
         // Điều chỉnh kích thước dựa vào số slime
         //transform.localScale = Vector3.one * (1f + (slimeCount / 32f));
     }
-
     public void SaveClone()
     {
         isSaved = true;
@@ -31,5 +29,12 @@ public class SlimeClone : MonoBehaviour
     public void KillClone()
     {
         Destroy(gameObject);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Trap"))
+        {
+            KillClone();
+        }
     }
 }
