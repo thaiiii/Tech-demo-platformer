@@ -7,13 +7,13 @@ public class PlayerCannon : MonoBehaviour
 {
     public Slider powerSlider;
     public Canvas cannonCanvas;
-    [HideInInspector]public Transform cannonMuzzle; //Điểm bắn ra
-    [HideInInspector]public Transform cannonPivot; //Phần xoay được của pháo
-   
+    [HideInInspector] public Transform cannonMuzzle; //Điểm bắn ra
+    [HideInInspector] public Transform cannonPivot; //Phần xoay được của pháo
+
     public float minForce = 5f; //Lực bắn tối thiểu
     public float maxForce = 20f;
     public float force = 0f;
-   
+
     private float chargeTime = 3f; //Thời gian nạp tối đa
     private float rotationSpeed = 100f; //Tốc độ xoay góc
     private float currentChargeTime = 0f;
@@ -42,8 +42,8 @@ public class PlayerCannon : MonoBehaviour
                 RotateCannon(); //Xoay nòng pháo
                 ChargeShot(); //Nạp lực bắn
 
-                if (Input.GetKeyUp(KeyCode.Space))
-                    FirePlayer(direction, force);
+                //if (Input.GetKeyUp(KeyCode.Space))
+                //    FirePlayer(direction, force);
                 if (Input.GetKeyDown(KeyCode.Q))        //Thoát khỏi cannon
                 {
                     FirePlayer(Vector2.up, 10f);
@@ -61,7 +61,7 @@ public class PlayerCannon : MonoBehaviour
         isPlayerInside = true;
         playerAbilities.EnterCannon(transform.position);
         playerAbilities.gameObject.transform.SetParent(transform); //Thành cha của player
-        
+
     }
     private void RotateCannon()
     {
@@ -72,7 +72,11 @@ public class PlayerCannon : MonoBehaviour
     }
     private void ChargeShot()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            currentChargeTime = 0f;
+        }
+        else if (Input.GetKey(KeyCode.Space))
         {
             currentChargeTime += Time.deltaTime;
             currentChargeTime = Mathf.Clamp(currentChargeTime, 0.5f, chargeTime);
@@ -83,6 +87,12 @@ public class PlayerCannon : MonoBehaviour
                 powerSlider.value = force / maxForce;
             }
         }
+        else if (!Input.GetKey(KeyCode.Space))
+        {
+            cannonCanvas.enabled = false;
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+            FirePlayer(direction, force);
     }
     public void FirePlayer(Vector2 direction, float force)
     {
@@ -97,7 +107,7 @@ public class PlayerCannon : MonoBehaviour
         cannonCanvas.enabled = false;
     }
 
-    
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {

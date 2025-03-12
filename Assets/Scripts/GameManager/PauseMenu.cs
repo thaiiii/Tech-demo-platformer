@@ -18,8 +18,6 @@ public class PauseMenu : MonoBehaviour
     private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
     public List<ItemBase> items;
-    public List<SlimeClone> allSlimeClones;
-    public List<Robot> allRobots;
 
     #region Stage
     private void Awake()
@@ -227,7 +225,7 @@ public class PauseMenu : MonoBehaviour
     }
     private void ResetSlimeBody()
     {
-        allSlimeClones = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
+        List<SlimeClone> allSlimeClones = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
         foreach (SlimeClone clone in allSlimeClones)
         {
             if (clone.isSaved)
@@ -240,7 +238,7 @@ public class PauseMenu : MonoBehaviour
     }
     private void ResetRobot()
     {
-        allRobots = new List<Robot>(FindObjectsOfType<Robot>());
+        List<Robot> allRobots = new List<Robot>(FindObjectsOfType<Robot>());
         foreach (Robot robot in allRobots)
         {
             robot.LoadSavedRobotStatus();

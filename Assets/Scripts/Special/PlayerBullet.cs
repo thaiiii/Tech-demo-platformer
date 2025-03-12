@@ -7,6 +7,7 @@ public class PlayerBullet : MonoBehaviour
 {
     public float speed = 10f;
     public float maxDistance = 10f;
+    public float bulletDamage = 20f;
     private Vector3 startPosition;
     private float startDirection; // Lưu hướng bắn
     public LayerMask destroyableLayer; //Các layer chặn đc đạn
@@ -39,6 +40,7 @@ public class PlayerBullet : MonoBehaviour
         else if (collision.CompareTag("Enemy"))
         {
             //Trừ máu ke thu
+            collision.GetComponent<Enemy>().healthComponent.TakeDamage(bulletDamage);
             Destroy(gameObject);
         }
         else if (((1 << collision.gameObject.layer) & destroyableLayer) != 0)

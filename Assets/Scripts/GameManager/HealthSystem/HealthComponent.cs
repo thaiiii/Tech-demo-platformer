@@ -39,11 +39,12 @@ public class HealthComponent : MonoBehaviour
     public void TakeDamage(float amount) => healthSystem.TakeDamage(amount);
     private void OnDeath()
     {
-        //Debug.Log($"{gameObject.name} has died!");
         if (gameObject.CompareTag("Player"))
             gameObject.GetComponent<PlayerDeath>().KillPlayer();
         else if (gameObject.CompareTag("Robot"))
             gameObject.GetComponent<Robot>().OnRobotDestroyed();
+        else if (gameObject.CompareTag("Enemy"))
+            gameObject.GetComponent<Enemy>().KillEnemy();
         else
             Destroy(gameObject); // Có thể thay bằng hiệu ứng chết
     }

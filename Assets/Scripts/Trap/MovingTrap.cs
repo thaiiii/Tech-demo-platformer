@@ -116,6 +116,15 @@ public class MovingTrap : MonoBehaviour
             }
         }
 
+        //Nếu gắn vào Enemy thì quay đầu
+        if (gameObject.tag == "Enemy")
+        {
+            if (waypoints[nextWaypointIndex].transform.position.x > transform.position.x)
+                transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            else
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
+
         targetWaypoint = waypoints[nextWaypointIndex];
         moveSpeed = GetCurrentSegmentSpeed();
     }

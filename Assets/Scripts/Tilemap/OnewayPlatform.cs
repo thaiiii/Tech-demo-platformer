@@ -28,7 +28,6 @@ public class OnewayPlatform : MonoBehaviour
             }
         }
     }
-
     private bool IsPlayerAbovePlatform()
     {
         Collider2D[] colliders = Physics2D.OverlapBoxAll(
@@ -46,7 +45,6 @@ public class OnewayPlatform : MonoBehaviour
         }
         return false;
     }
-
     private Collider2D FindPlayerAbovePlatform()
     {
         Collider2D[] colliders = Physics2D.OverlapBoxAll(
@@ -58,13 +56,10 @@ public class OnewayPlatform : MonoBehaviour
         foreach (var col in colliders)
         {
             if (col.CompareTag("Player"))
-            {
                 return col; // Trả về Collider của người chơi
-            }
         }
         return null;
     }
-
     private IEnumerator AllowPlayerToFall()
     {
         // Tạm thời vô hiệu hóa va chạm giữa người chơi và platform
@@ -75,7 +70,6 @@ public class OnewayPlatform : MonoBehaviour
         // Kích hoạt lại va chạm
         Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
     }
-
     private void OnDrawGizmosSelected()
     {
         // Hiển thị vùng kiểm tra trong Scene View để debug

@@ -12,6 +12,7 @@ public class GameTimer : MonoBehaviour
     private TextMeshProUGUI timerText; // UI Text hiển thị thời gian chơi
     private TextMeshProUGUI pausedTimerText; // UI Text hiển thị thời gian lúc tạm dừng
     public float elapsedTime = 0f; //Tổng thời gian để trôi qua
+    public float savedTime = 0f;
     [SerializeField] private bool isTiming = false;
     [SerializeField] public bool hasStarted = false; //Kiểm tra xem người chơi đã di chuyển chưa
 
@@ -73,7 +74,7 @@ public class GameTimer : MonoBehaviour
     {
         hasStarted = false;
         isTiming = false;
-        elapsedTime = 0f;
+        elapsedTime = savedTime;
         UpdateTimeDisplay();
     }
     //public void ContinueTimer()

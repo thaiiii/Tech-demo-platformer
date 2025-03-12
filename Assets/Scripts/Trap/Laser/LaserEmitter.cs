@@ -47,21 +47,22 @@ public class LaserEmitter : MonoBehaviour
         if (hit.collider != null)
         {
             endPoint = hit.point;
+            
+            //Kiểm tra player
             if (hit.collider.CompareTag("Player") && !hit.collider.GetComponent<PlayerDeath>().HiddenStatus())
-            {
                 playerDeath.KillPlayer();
-            }
-
             // Kiểm tra nếu trúng đạn (dựa vào layer)
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
-            {
                 Destroy(hit.collider.gameObject);
-            }
             //Kiểm tra trúng clone
             else if (hit.collider.gameObject.CompareTag("SlimeClone"))
-            {
                 hit.collider.gameObject.GetComponent<SlimeClone>().KillClone();
-            }
+            //Kiểm tra robot
+            else if (hit.collider.gameObject.CompareTag("Robot"))
+                hit.collider.GetComponent<Robot>().OnRobotDestroyed();
+            //Kiểm tra Enemy 
+            else if (hit.collider.gameObject.CompareTag("Enemy"))
+                hit.collider.GetComponent<Enemy>().KillEnemy();
 
         }
         else

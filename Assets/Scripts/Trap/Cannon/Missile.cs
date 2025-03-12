@@ -50,6 +50,11 @@ public class Missile : MonoBehaviour
             collision.gameObject.GetComponent<SlimeClone>().KillClone();
             Destroy(gameObject);
         }
+        else if (collision.gameObject.CompareTag("Robot"))
+        {
+            collision.gameObject.GetComponent<HealthComponent>().TakeDamage(collision.gameObject.GetComponent<HealthComponent>().maxHealth / 2f);
+            Destroy(gameObject);
+        }
         else
         {
             Destroy(gameObject);

@@ -42,15 +42,10 @@ public class Trampoline : MonoBehaviour
     {
         if (!isActivated && applicableTags.Contains(collision.gameObject.tag))
         {
+            if (collision.gameObject.name == "Trampoline")
+                return;
             // Kích hoạt animation nhún xuống
             animator.SetTrigger("Bounce");
-
-            //// Bật người chơi lên cao
-            //Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            //if (playerRb != null)
-            //{
-            //    playerRb.velocity = new Vector2(playerRb.velocity.x, bounceForce); // Chỉ thay đổi velocity Y
-            //}
             Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
             rb.velocity = Vector2.up * bounceForce;
 

@@ -9,34 +9,58 @@ public class Enemy : MonoBehaviour
         Normal,
         Pointy
     }
-
-    public EnemyType type;
-    private Animator animator;
-    private Rigidbody2D rb;
-    private MovingEnemy movingEnemy; // Tham chiếu đến script MovingEnemy
-    private Vector3 previousPosition;
+    
     public float attackSpeed = 10f; // Tốc độ lao về phía điểm tiếp theo
     public float attackDelay = 1f; // Thời gian dừng trước khi tấn công
-    
+    public EnemyType type;
+    public Rigidbody2D rb;
+    private Animator animator;
+    private MovingTrap movingTrap; // Tham chiếu đến script MovingEnemy
+    private Vector3 previousPosition;
+    public HealthComponent healthComponent;
+    private Canvas healthUI;
     private bool isAttacking = false;
+    public bool isEnemyDead = false;
+    
 
     //Checkpoint info
     public Vector3 savedPosition;
-    //Hệ thống máu
-    public bool isEnemyDead = false;
+    public bool savedDeadStatus;
 
     //============================================================================
     private void Awake()
     {
-        movingEnemy = GetComponent<MovingEnemy>();    
-        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        movingTrap = GetComponent<MovingTrap>();    
+        animator = GetComponent<Animator>();
+        healthComponent = GetComponent<HealthComponent>();
+        healthUI = healthComponent.healthUI;
         previousPosition = transform.position;
         savedPosition = transform.position;
+        savedDeadStatus = isEnemyDead;
     }
 
     private void Update()
     {
+        if (transform.localScale.x > 0)
+        {
+            if (healthUI.GetComponent<RectTransform>().localScale.x < 0)
+            healthUI.GetComponent<RectTransform>().localScale = new Vector3(
+                Mathf.Abs(healthUI.GetComponent<RectTransform>().localScale.x),
+                healthUI.GetComponent<RectTransform>().localScale.y,
+                healthUI.GetComponent<RectTransform>().localScale.z);
+        }
+        else
+        {
+            if (healthUI.GetComponent<RectTransform>().localScale.x > 0)
+                healthUI.GetComponent<RectTransform>().localScale = new Vector3(
+                    -Mathf.Abs(healthUI.GetComponent<RectTransform>().localScale.x),
+                    healthUI.GetComponent<RectTransform>().localScale.y,
+                    healthUI.GetComponent<RectTransform>().localScale.z);
+        }
+
+        if (isEnemyDead)
+            return;
         HandleAnimator();
         if (type == EnemyType.Pointy && !isAttacking)
         {
@@ -51,7 +75,7 @@ public class Enemy : MonoBehaviour
 
         Vector3 playerPos = player.transform.position;
         Vector3 enemyPos = transform.position;
-        Vector3 targetPos = movingEnemy.waypoints[movingEnemy.nextWaypointIndex].position;
+        Vector3 targetPos = movingTrap.waypoints[movingTrap.nextWaypointIndex].position;
 
         // Kiểm tra người chơi có nằm trong đường đi từ enemy tới target không
         if (IsPlayerOnPath(playerPos, enemyPos, targetPos) && !player.GetComponent<PlayerAbilities>().isHidden)
@@ -72,7 +96,7 @@ public class Enemy : MonoBehaviour
     private IEnumerator AttackPlayer(Vector3 targetPos)
     {
         isAttacking = true;
-        movingEnemy.DisableMovingWithoutCountdown(); // Dừng di chuyển tạm thời
+        movingTrap.DisableMovingWithoutCountdown(); // Dừng di chuyển tạm thời
 
         // Dừng 1s trước khi tấn công
         yield return new WaitForSeconds(1);
@@ -85,7 +109,7 @@ public class Enemy : MonoBehaviour
         }
 
         isAttacking = false;
-        movingEnemy.StartCountdownForMoving(); // Kích hoạt di chuyển trở lại
+        movingTrap.StartCountdownForMoving(); // Kích hoạt di chuyển trở lại
     }
 
     private void HandleAnimator()
@@ -98,12 +122,40 @@ public class Enemy : MonoBehaviour
 
     public void LoadSavedEnemyStatus()
     {
-        //chua co gi
+        if (!savedDeadStatus)
+        {
+            isEnemyDead = savedDeadStatus;
+            transform.position = savedPosition;
+            rb.isKinematic = false;
+            GetComponent<SpriteRenderer>().enabled = true;
+            GetComponent<MovingTrap>().isMovingActivated = true;
+            GetComponent<Collider2D>().enabled = true;
+            healthComponent.healthUI.enabled = true;
+        } else
+        {
+            GetComponent<MovingTrap>().isMovingActivated = false;
+        }
     }
 
     public void KillEnemy()
     {
-        //giet enemy
-        Debug.Log("enemy dead");
+        if (isEnemyDead)
+            return;
+        isEnemyDead = true;
+        GetComponent<SpriteRenderer>().enabled = false;
+        transform.position = savedPosition;
+        GetComponent<MovingTrap>().isMovingActivated = false;
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = true;
+        GetComponent<Collider2D>().enabled = false;
+        healthComponent.healthUI.enabled = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Trap"))
+            KillEnemy();
+        if (collision.CompareTag("Robot"))
+            KillEnemy();
     }
 }

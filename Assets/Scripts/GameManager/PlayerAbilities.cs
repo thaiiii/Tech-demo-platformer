@@ -399,7 +399,8 @@ public class PlayerAbilities : MonoBehaviour
             return;
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        gameObject.GetComponent<SpriteRenderer>().enabled = false; 
+        GetComponent<Collider2D>().isTrigger = true;
         isHidden = true;
         gameObject.GetComponent<Player>().LockMove(false);
         isInCannon = true;
@@ -408,6 +409,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         isHidden = false;
+        GetComponent<Collider2D>().isTrigger = false;
         rb.velocity = shootDirection * shootForce; //Bắn theo hướng vào lực truyền vào
         gameObject.GetComponent<Player>().UnlockMove(true);
         StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());

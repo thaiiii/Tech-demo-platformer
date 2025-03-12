@@ -185,7 +185,7 @@ public class Robot : MonoBehaviour
             return;
         HealthComponent playerHealthComponent = playerAbilities.gameObject.GetComponent<HealthComponent>();
         if (playerAbilities.isInRobot)
-        {
+        {   
             ExitThisRobot();
             playerHealthComponent.TakeDamage(playerHealthComponent.maxHealth); // Chết theo robot
         }
@@ -279,6 +279,10 @@ public class Robot : MonoBehaviour
         {
             playerAbilities = other.GetComponent<PlayerAbilities>();
             isPlayerInRange = true;
+        }
+        if (other.CompareTag("Trap"))
+        {
+            OnRobotDestroyed();
         }
     }
     private void OnTriggerExit2D(Collider2D other)

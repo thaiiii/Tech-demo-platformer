@@ -9,7 +9,6 @@ public class Checkpoint : MonoBehaviour
     public bool isActivated = false;
     Animator animator;
     private List<ItemBase> allItems;
-    [SerializeField] private List<Robot> allRobots;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -19,37 +18,57 @@ public class Checkpoint : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            isActivated = true;
-            animator.SetBool("isActivated", isActivated);
-            //Save info player
-            SavePlayer(collision.gameObject);
-            //Tất cả các item đã bị ăn (inactive) sẽ được set isCheckpointPicked = true;
-            SaveAllItems();
-            //Save inventory hien tai
-            FindAnyObjectByType<InventoryManager>().SaveInventory();
-            //Save các clone hiện tại
-            SaveAllClones();
-            //Save cac robot hiện tại
-            SaveAllRobots();
-            //Save trạng thái các quạt
-            SaveAllFans();
-            //Save trạng thái các block
-            SaveAllBlocks();
-            //Save trạng thái các cannon
-            SaveAllCannons();
-            //Save trạng thái tất cả laser
-            SaveAllLasers();
-            //Save trạng thái moving trap
-            SaveAllMovingTraps();
-            //Save trạng thái ConveyorBelt
-            SaveAllConveyorBelts();
-            //Save trạng thái Gun
-            SaveAllGun();
-            //Save trạng thái Ênmy
-            SaveAllEnemy();
+            if (!isActivated)
+            {
+                //Save time
+                SaveTime();
+                //Save info player
+                SavePlayer(collision.gameObject);
+                //Tất cả các item đã bị ăn (inactive) sẽ được set isCheckpointPicked = true;
+                SaveAllItems();
+                //Save inventory hien tai
+                FindAnyObjectByType<InventoryManager>().SaveInventory();
+                //Save các clone hiện tại
+                SaveAllClones();
+                //Save cac robot hiện tại
+                SaveAllRobots();
+                //Save trạng thái các quạt
+                SaveAllFans();
+                //Save trạng thái ConveyorBelt
+                SaveAllConveyorBelts();
+                //Save trạng thái các block
+                SaveAllBlocks();
+                //Save trạng thái các cannon
+                SaveAllCannons();
+                //Save trạng thái tất cả laser
+                SaveAllLasers();
+                //Save trạng thái Gun
+                SaveAllGun();
+                //Save trạng thái moving trap
+                SaveAllMovingTraps();
+
+                //Save trạng thái Enemy
+                SaveAllEnemy();
+            }
+            ////Bật checkpoint nào được chạm vào vào tắt các checkpoint khác (viết sau cùng)
+            SaveCheckpoint();
         }
     }
-
+    private void SaveCheckpoint()
+    {
+        List<Checkpoint> checkpointList = new List<Checkpoint>(FindObjectsOfType<Checkpoint>());
+        foreach (Checkpoint checkpoint in checkpointList)
+        {
+            checkpoint.isActivated = false;
+            checkpoint.animator.SetBool("isActivated", checkpoint.isActivated);
+        }
+        isActivated = true;
+        animator.SetBool("isActivated", isActivated);
+    }
+    private void SaveTime()
+    {
+        FindObjectOfType<GameTimer>().savedTime = FindObjectOfType<GameTimer>().elapsedTime;
+    }
     private void SavePlayer(GameObject player)
     {
         player.GetComponent<Player>().startPosition = transform.position + Vector3.up * 3f + Vector3.right * 1.5f;
@@ -126,9 +145,9 @@ public class Checkpoint : MonoBehaviour
     private void SaveAllLasers()
     {
         List<LaserEmitter> allLaserEmitter = new List<LaserEmitter>(FindObjectsOfType<LaserEmitter>());
-        foreach(LaserEmitter emitter in allLaserEmitter)
+        foreach (LaserEmitter emitter in allLaserEmitter)
         {
-            if (emitter.disablePermanently && !emitter.isLaserActivate) 
+            if (emitter.disablePermanently && !emitter.isLaserActivate)
                 emitter.savedActivationStatus = false;
             emitter.savedLaserAngle = emitter.laserAngle;
         }
@@ -155,6 +174,12 @@ public class Checkpoint : MonoBehaviour
     }
     private void SaveAllEnemy()
     {
-        //chua co gi
+        List<Enemy> enemies = new List<Enemy>(FindObjectsOfType<Enemy>());
+        foreach (Enemy enemy in enemies)
+        {
+            enemy.savedDeadStatus = enemy.isEnemyDead;
+            enemy.savedPosition = enemy.transform.position;
+
+        }
     }
 }

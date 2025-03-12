@@ -45,6 +45,12 @@ public class Bullet : MonoBehaviour
             collision.GetComponent<SlimeClone>().KillClone();
             Destroy(gameObject);
         }
+        else if (collision.gameObject.CompareTag("Enemy"))
+        {
+            HealthComponent healthComponent = collision.gameObject.GetComponent<HealthComponent>();
+            healthComponent.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+        }
 
         else if (((1 << collision.gameObject.layer) & destroyableLayers) != 0)
             Destroy(gameObject);
