@@ -35,13 +35,13 @@ public class PlayerAbilities : MonoBehaviour
     [HideInInspector] public float swapControlRadius = 10f;
     [HideInInspector] public float absorbRadius = 5f;
     private InventoryManager inventoryManager;
-    //public SlimeClone[] clones;
-    //public SlimeClone closestClone;
 
     [Header("Robot")]
     public bool isInRobot = false;
     [SerializeField] public Robot currentRobot;
 
+    [Header("Talking to NPC")]
+    public bool isTalking = false;
 
     // //////////////////////////////////////////////////////////////////////////////////
     private void Awake()
@@ -214,7 +214,7 @@ public class PlayerAbilities : MonoBehaviour
             spriteRenderer.enabled = true;
 
             // Thả người chơi cao hơn một chút
-            rb.transform.position = currentTower.transform.position + new Vector3(0, 1.5f, 0);
+            rb.transform.position = currentTower.transform.position + new Vector3(0, 1f, 0);
             currentTower = null;
 
             // Khôi phục vận tốc trước khi teleport
@@ -248,6 +248,8 @@ public class PlayerAbilities : MonoBehaviour
         if (isInRobot)
             return false;
         if (isInCannon)
+            return false;
+        if (isTalking)
             return false;
         return true;
     }

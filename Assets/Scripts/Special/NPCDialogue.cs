@@ -8,45 +8,41 @@ public class NPCDialogue : MonoBehaviour
     public string[] dialogues; // Danh sách các câu thoại của NPC
     private int currentDialogueIndex = 0;
 
-    private Camera mainCamera;
-    public GameObject dialogueBox; // Hộp thoại UI
-    public TextMeshProUGUI dialogueText; // Nội dung câu thoại
-    public Transform dialogueAnchor; //Điển neo của hội thoại
-    public GameObject interactionMark; // Biểu tượng cảnh báo "Press E"
+    private GameObject dialogueBox; // Hộp thoại UI
+    private TextMeshProUGUI dialogueText; // Nội dung câu thoại
+    private GameObject interactionMark; // Biểu tượng cảnh báo "Press E"
 
     private bool isPlayerNearby = false; // Kiểm tra người chơi đã đến gần chưa
     public bool isInConversation = false; // Trạng thái hội thoại
 
-    public Transform player; // Người chơi
     public float interactionDistance = 2f; // Khoảng cách tương tác
 
-    private Player playerController; // Tham chiếu script điều khiển người chơi
+    private Player player; // Tham chiếu script điều khiển người chơi
 
     private void Start()
     {
+        GameObject dialogueCanvas = transform.Find("Dialogue").gameObject;
+        dialogueBox = dialogueCanvas.transform.Find("DialogueBox").gameObject;
+        dialogueText = dialogueBox.transform.Find("DialogueText").GetComponent<TextMeshProUGUI>();
+        interactionMark = transform.Find("InteractionMark").gameObject;
+        player = FindAnyObjectByType<Player>();
+
         // Tắt hộp thoại ban đầu
         dialogueBox.SetActive(false);
         interactionMark.SetActive(false); // Tắt biểu tượng cảnh báo ban đầu
-        playerController = player.GetComponent<Player>();
-        mainCamera = Camera.main;
     }
-
     private void Update()
     {
         // Kiểm tra khoảng cách với người chơi
-        float distance = Vector2.Distance(transform.position, player.position);
+        float distance = Vector2.Distance(transform.position, player.transform.position);
         isPlayerNearby = distance <= interactionDistance;
 
         // Hiển thị hộp thoại khi cần
-        if (isInConversation)
-        {
-            UpdateDialogueBoxPosition();
-        }
         if (isPlayerNearby)
         {
             if (!isInConversation)
-                ShowInteractionMark();
-            if (Input.GetKeyDown(KeyCode.E))
+                interactionMark.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 if (!isInConversation)
                     StartConversation();
@@ -56,55 +52,46 @@ public class NPCDialogue : MonoBehaviour
         }
         else
             interactionMark.SetActive(false);
-
     }
-
     private void StartConversation()
     {
+        player.GetComponent<PlayerAbilities>().isTalking = true;
+        player.GetComponent<HealthComponent>().healthUI.enabled = false;
+        GameTimer gameTimer = FindObjectOfType<GameTimer>();
+        Canvas stageUI = GameObject.Find("General UI").transform.Find("StageUI").gameObject.GetComponent<Canvas>();
+        gameTimer.PauseTimer();
+        stageUI.enabled = false;
+
         isInConversation = true;
         dialogueBox.SetActive(true);
         interactionMark.SetActive(false);
         currentDialogueIndex = 0;
         ShowDialogue();
-        playerController.LockMove(false); // Vô hiệu hóa di chuyển của người chơi
+        player.LockMove(false); // Vô hiệu hóa di chuyển của người chơi
     }
-
     private void NextDialogue()
     {
         currentDialogueIndex++;
         if (currentDialogueIndex < dialogues.Length)
-        {
             ShowDialogue();
-        }
         else
-        {
             EndConversation();
-        }
     }
-
     public void EndConversation()
     {
+        player.GetComponent<PlayerAbilities>().isTalking = false;
+        player.GetComponent<HealthComponent>().healthUI.enabled = true;
+        GameTimer gameTimer = FindObjectOfType<GameTimer>();
+        Canvas stageUI = GameObject.Find("General UI").transform.Find("StageUI").gameObject.GetComponent<Canvas>();
+        gameTimer.ResumeTimer();
+        stageUI.enabled = true;
+
         isInConversation = false;
         dialogueBox.SetActive(false);
-        playerController.UnlockMove(true); // Kích hoạt lại di chuyển
+        player.UnlockMove(true); // Kích hoạt lại di chuyển
     }
+    private void ShowDialogue() => dialogueText.text = dialogues[currentDialogueIndex];
 
-    private void ShowDialogue()
-    {
-        dialogueText.text = dialogues[currentDialogueIndex];
-    }
-
-    private void UpdateDialogueBoxPosition()
-    {
-        // Chuyển đổi vị trí từ thế giới sang không gian màn hình
-        Vector3 screenPosition = mainCamera.WorldToScreenPoint(dialogueAnchor.position);
-        dialogueBox.transform.position = screenPosition;
-    }
-
-    private void ShowInteractionMark()
-    {
-        interactionMark.SetActive(true);
-    }
 
     private void OnDrawGizmos()
     {
