@@ -40,9 +40,10 @@ public class NPCDialogue : MonoBehaviour
         // Hiển thị hộp thoại khi cần
         if (isPlayerNearby)
         {
+            player.GetComponent<PlayerAbilities>().isNearNPC = true;
             if (!isInConversation)
                 interactionMark.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.E))
             {
                 if (!isInConversation)
                     StartConversation();
@@ -51,7 +52,10 @@ public class NPCDialogue : MonoBehaviour
             }
         }
         else
+        {
+            player.GetComponent<PlayerAbilities>().isNearNPC = false;
             interactionMark.SetActive(false);
+        }
     }
     private void StartConversation()
     {

@@ -20,25 +20,31 @@ public class HazardZone : MonoBehaviour
     [Header("Low Gravity")]
     private Dictionary<Collider2D, Coroutine> activeEffects = new Dictionary<Collider2D, Coroutine>();
     private Dictionary<GameObject, float> originalGravityScales = new Dictionary<GameObject, float>();
+    private Dictionary<GameObject, float> originalFrictions = new Dictionary<GameObject, float>();
 
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         HealthComponent health = collision.GetComponent<HealthComponent>();
-        if (health == null) return;
+        
         Coroutine effectCoroutine = null;
 
-        //Debug.Log("smt");
         switch (hazardType)
         {
             case HazardType.Fire:
+                if (health == null) 
+                    return;
                 effectCoroutine = StartCoroutine(ApplyDamageOverTime(health));
                 break;
             case HazardType.ToxicGas:
+                if (health == null) 
+                    return;
                 effectCoroutine = StartCoroutine(ApplyPoisonEffect(health));
                 break;
             case HazardType.Lava:
+                if (health == null) 
+                    return;
                 health.TakeDamage(health.maxHealth); // Chết ngay lập tức
                 break;
             case HazardType.Ice:
@@ -66,6 +72,7 @@ public class HazardZone : MonoBehaviour
         if (hazardType == HazardType.Ice)
         {
             ResetIceEffect(collision.gameObject);
+
         }
         else if (hazardType == HazardType.LowGravity)
         {
@@ -95,18 +102,47 @@ public class HazardZone : MonoBehaviour
         {
             gameObject.GetComponent<Player>().isSliding = true;
             gameObject.GetComponent<Player>().slipperyValue = effectValue;
-        } 
-        else if (gameObject.CompareTag("Robot")) {
+        }
+        else if (gameObject.CompareTag("Robot"))
+        {
             gameObject.GetComponent<Robot>().isSliding = true;
             gameObject.GetComponent<Robot>().slipperyValue = effectValue;
+        }
+        else
+        {
+            
+            if (gameObject.GetComponent<Rigidbody2D>() == null)
+                return;
+
+            Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+            if (rb.sharedMaterial == null)
+            {
+                rb.sharedMaterial = new PhysicsMaterial2D("DefaultMaterial")
+                {
+                    friction = 0f, // Giá trị mặc định
+                    bounciness = 0
+                };
+            }
+            originalFrictions[gameObject] = rb.sharedMaterial.friction;
+            rb.sharedMaterial.friction = 1 / (float)effectValue;
+            Debug.Log(rb.sharedMaterial.friction + " " + originalFrictions[gameObject]);
         }
     }
     private void ResetIceEffect(GameObject gameObject)
     {
         if (gameObject.CompareTag("Player"))
             gameObject.GetComponent<Player>().isSliding = false;
-        else if(gameObject.CompareTag("Robot"))
-            gameObject.GetComponent<Robot>().isSliding= false;
+        else if (gameObject.CompareTag("Robot"))
+            gameObject.GetComponent<Robot>().isSliding = false;
+        else
+        {
+            if (gameObject.GetComponent<Rigidbody2D>() == null)
+                return;
+            Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+            rb.sharedMaterial.friction = originalFrictions[gameObject];
+            Debug.Log(rb.sharedMaterial.friction);
+            originalFrictions.Remove(gameObject);
+        }
     }
     private void SetLowGravity(GameObject gameObject)
     {
@@ -126,6 +162,18 @@ public class HazardZone : MonoBehaviour
 
             // Lắng nghe sự kiện khi trạng thái grounded thay đổi
             player.OnGroundedChanged += OnPlayerGroundedChanged;
+        }
+        else if (gameObject.CompareTag("Robot"))
+        {
+            Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                if (!originalGravityScales.ContainsKey(gameObject))
+                    originalGravityScales[gameObject] = rb.gravityScale;
+                rb.gravityScale = effectValue;
+                gameObject.GetComponent<Robot>().originalGravity = effectValue;
+                //Di chuyển với vận tốc cuối cùng, khóa chuyển động
+            }
         }
         else
         {
@@ -152,6 +200,19 @@ public class HazardZone : MonoBehaviour
                     gameObject.GetComponent<Player>().UnlockMove(false);
                 player.OnGroundedChanged -= OnPlayerGroundedChanged; // Ngừng lắng nghe sự kiện grounded
             }
+            else if (gameObject.CompareTag("Robot"))
+            {
+                Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.gravityScale = originalGravityScales[gameObject];
+                    gameObject.GetComponent<Robot>().originalGravity = 5f;
+                    if (!gameObject.GetComponent<Robot>().isDashing)
+                        rb.gravityScale = gameObject.GetComponent<Robot>().originalGravity;
+
+                    //Mở khóa di chuyển
+                }
+            }
             else
             {
                 Debug.Log("Resetting gravity for object: " + gameObject.name);
@@ -162,7 +223,6 @@ public class HazardZone : MonoBehaviour
                     //Mở khóa di chuyển
                 }
             }
-
             originalGravityScales.Remove(gameObject);
         }
     }

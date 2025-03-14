@@ -24,6 +24,7 @@ public class Robot : MonoBehaviour
     public bool isPlayerInRange = false;
     public bool isControlled = false;
     [SerializeField] private bool canMove = true;    //Mở khóa điều khiển
+    public float originalGravity = 5f;
     private Rigidbody2D rb;
     private HealthComponent health;
     public PlayerAbilities playerAbilities;
@@ -38,7 +39,7 @@ public class Robot : MonoBehaviour
     public float dashSpeed = 20f; // Tốc độ Dash
     public float dashDuration = 0.3f; // Thời gian Dash
     public float dashCooldown = 5f; // Hồi chiêu Dash
-    [SerializeField] private bool isDashing = false;
+    [SerializeField] public bool isDashing = false;
     [SerializeField] private float lastDashTime = 0;
     //=================================================================================
     private void Start()
@@ -115,7 +116,6 @@ public class Robot : MonoBehaviour
                 RobotSlide(slipperyValue);
             else
                 rb.velocity = new Vector2(horizontalValue * robotSpeed, rb.velocity.y);
-                
         }
         #endregion
 
@@ -164,7 +164,7 @@ public class Robot : MonoBehaviour
         #endregion
 
         #region Dash
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing )
             StartCoroutine(Dash());
         #endregion
 
@@ -222,6 +222,7 @@ public class Robot : MonoBehaviour
     }
     private IEnumerator Dash()
     {
+        Vector2 lastVelocity = rb.velocity;
         float originalSmoothFactor = cameraFollow.smoothFactor;
 
         if (Time.time - lastDashTime < dashCooldown) yield break; // Chặn nếu chưa hồi chiêu
@@ -232,7 +233,7 @@ public class Robot : MonoBehaviour
         lastDashTime = Time.time;
 
         cameraFollow.SetSmoothFactor(dashSpeed / robotSpeed * originalSmoothFactor);
-        float originalGravity = rb.gravityScale; // Lưu trọng lực cũ
+        originalGravity = rb.gravityScale; // Lưu trọng lực cũ
         rb.gravityScale = 0; // Tắt trọng lực để không bị rơi
         rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0); // Dash theo hướng hiện tại
 
@@ -241,6 +242,7 @@ public class Robot : MonoBehaviour
 
         cameraFollow.SetSmoothFactor(originalSmoothFactor);
         rb.velocity = Vector2.zero;
+        rb.velocity = lastVelocity;
         rb.gravityScale = originalGravity; // Khôi phục trọng lực
 
         //Mở khóa input
@@ -271,6 +273,15 @@ public class Robot : MonoBehaviour
 
         playerAbilities.ExitRobot();
     }
+    public IEnumerator TemporaryStopUpdatingHorizontalVelocity()
+    {
+        canMove = false;
+        yield return new WaitForSeconds(0.1f);
+        if (CheckRobotOnGround())
+            canMove = true;
+        else
+            StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());  
+    }
 
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -278,6 +289,7 @@ public class Robot : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerAbilities = other.GetComponent<PlayerAbilities>();
+            playerAbilities.isNearRobot = true;
             isPlayerInRange = true;
         }
         if (other.CompareTag("Trap"))
@@ -290,7 +302,7 @@ public class Robot : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerAbilities exitingPlayer = other.GetComponent<PlayerAbilities>();
-            // Chỉ đặt isPlayerInRange = false nếu người chơi không còn trong robot
+            playerAbilities.isNearRobot = false;
             if (exitingPlayer != null && !exitingPlayer.isInRobot)
             {
                 isPlayerInRange = false;

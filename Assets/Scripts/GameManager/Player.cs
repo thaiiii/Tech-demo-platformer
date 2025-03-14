@@ -178,10 +178,8 @@ public class Player : MonoBehaviour
             return;
         rb.AddForce(horizontalValue * speed * slipperyValue * Vector2.right);
     }
-    public void SwitchUpdateHorizontalVelocity(bool value)
-    {
-        isShotHorizontally = value;
-    }
+    public void SwitchUpdateHorizontalVelocity(bool value) => isShotHorizontally = !value;
+    
     private bool CanInputControl()
     {
         if (FindObjectOfType<PauseMenu>().isPaused)

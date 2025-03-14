@@ -15,12 +15,19 @@ public class PlayerAbilities : MonoBehaviour
     private HealthComponent healthComponent;
     private GameTimer gameTimer;
 
+    //Thứ tự kỹ năng 
+    //1: nói chuyện 
+    //2: cannon
+    //3: robot
+    //4: tower
+    //5: clone
+    [SerializeField] private int abilityOrder = 0;
+
     [Header("Teleport")]
     public float teleportRadius = 10f;
     public LayerMask towerLayer;
     public bool isHidden = false;
     [HideInInspector] public TeleportTower currentTower;
-    [HideInInspector] public Collider2D[] towersInRange;
     [HideInInspector] public float teleportDelay = 0.5f;
     [HideInInspector] public Vector2 storedVelocity;
 
@@ -28,20 +35,27 @@ public class PlayerAbilities : MonoBehaviour
     [HideInInspector] public GameObject playerBulletPrefab;
 
     [Header("Cannon")]
+    public bool isNearCannon = false;
     [HideInInspector] public bool isInCannon;
+    
 
-    [Header("SplitBody")]
+
+    [Header("Split Body")]
+    [SerializeField] private SlimeClone closestClone;
     [HideInInspector] public GameObject slimeClonePrefab;
     [HideInInspector] public float swapControlRadius = 10f;
     [HideInInspector] public float absorbRadius = 5f;
     private InventoryManager inventoryManager;
 
     [Header("Robot")]
-    public bool isInRobot = false;
-    [SerializeField] public Robot currentRobot;
+    [HideInInspector] public bool isInRobot = false;
+    public bool isNearRobot = false;
+    [HideInInspector] public Robot currentRobot;
 
     [Header("Talking to NPC")]
-    public bool isTalking = false;
+    public bool isNearNPC = false;
+    [HideInInspector] public bool isTalking = false;
+    
 
     // //////////////////////////////////////////////////////////////////////////////////
     private void Awake()
@@ -59,10 +73,45 @@ public class PlayerAbilities : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (FindClosestClone(swapControlRadius) != null)
+            abilityOrder = 5;
+        if (GetClosestTower() != null || GetClosestTower() == null && currentTower != null)
+            abilityOrder = 4;
+        if (isNearRobot)
+            abilityOrder = 3;
+        if (isNearCannon)
+            abilityOrder = 2;
+        if (isNearNPC)
+            abilityOrder = 1;
+
         if (isNormalStatus())
         {
             HandleTeleport();
             HandleSlime();
+            switch (abilityOrder)
+            {
+                //Tương tác npc
+                case 1:
+                    break;
+                //Tương tác cannon
+                case 2:
+                    break;
+                //Tương tác robot
+                case 3:
+                    break;
+                // Tương tác tower
+                case 4:
+                    if (Input.GetKeyDown(KeyCode.E))
+                        InteractTower();
+                    break;
+                //Tương tác clone
+                case 5:
+                    if (Input.GetKeyDown(KeyCode.E))
+                        AbsorbClone();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -71,42 +120,9 @@ public class PlayerAbilities : MonoBehaviour
     #region Teleport
     private void HandleTeleport()
     {
-        //Lấy tất cả trụ trong tầm tele
-        towersInRange = Physics2D.OverlapCircleAll(transform.position, teleportRadius, towerLayer);
-        //Kiểm tra trụ gần nhất để teleport
-        TeleportTower targetTower = GetClosestTower(towersInRange);
-
         if (Input.GetKeyDown(KeyCode.Space))
             ExitTower();
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (!isHidden)
-            {
-                //Nếu chưa ẩn, teleport hoặc swap
-                TryTeleportToTower(targetTower);
-                TrySwapTower(targetTower);
-            }
-            else
-            {
-                if (targetTower == null)
-                {
-                    //Nếu dang ẩn, ko có trụ khác xung quanh = thoát ra
-                    ExitTower();
-                }
-                else
-                {
-                    if (targetTower.type == TeleportTower.TowerType.TYPE_TELEPORT)
-                    {
-                        //Nếu đang ẩn, có trụ xung quanh, tele trụ mới
-                        currentTower.Activate(false);
-                        TryTeleportToTower(targetTower);
-                    }
-                    else if (targetTower.type == TeleportTower.TowerType.TYPE_SWAP)
-                        TrySwapTower(targetTower);
-                }
-            }
-        }
-        if (isHidden)//trc day ở Update
+        if (isHidden)   //trc day ở Update
         {
             if (currentTower != null)
             {
@@ -115,8 +131,39 @@ public class PlayerAbilities : MonoBehaviour
             }
         }
     }
-    private TeleportTower GetClosestTower(Collider2D[] towersInRange)
+    private void InteractTower()
     {
+        TeleportTower targetTower = GetClosestTower();
+        if (!isHidden)
+        {
+            //Nếu chưa ẩn, teleport hoặc swap
+            TryTeleportToTower(targetTower);
+            TrySwapTower(targetTower);
+        }
+        else
+        {
+            if (targetTower == null)
+            {
+                //Nếu dang ẩn, ko có trụ khác xung quanh = thoát ra
+                ExitTower();
+            }
+            else
+            {
+                if (targetTower.type == TeleportTower.TowerType.TYPE_TELEPORT)
+                {
+                    //Nếu đang ẩn, có trụ xung quanh, tele trụ mới
+                    currentTower.Activate(false);
+                    TryTeleportToTower(targetTower);
+                }
+                else if (targetTower.type == TeleportTower.TowerType.TYPE_SWAP)
+                    TrySwapTower(targetTower);
+            }
+        }
+    }
+    private TeleportTower GetClosestTower()
+    {
+        //Lấy tất cả trụ trong tầm tele
+        Collider2D[] towersInRange = Physics2D.OverlapCircleAll(transform.position, teleportRadius, towerLayer);
         TeleportTower closestAvailableTower = null;
         float closestDistance = teleportRadius;
 
@@ -265,7 +312,6 @@ public class PlayerAbilities : MonoBehaviour
     #region SplitBody
     public void HandleSlime()
     {
-
         if (Input.GetKeyDown(KeyCode.S))
         {
             SplitBody();
@@ -273,10 +319,6 @@ public class PlayerAbilities : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             SwapControl();
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            AbsorbClone();
         }
     }
     public void SplitBody()
@@ -347,7 +389,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     private void AbsorbClone()
     {
-        SlimeClone closestClone = FindClosestClone(absorbRadius);
+        closestClone = FindClosestClone(absorbRadius);
         if (closestClone == null)
             return;
         int cloneSlime = closestClone.slimeCount;
@@ -378,7 +420,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         List<SlimeClone> clones = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
         SlimeClone closestClone = null;
-        float closestDistance = maxDistance;
+        float closestDistance = swapControlRadius;
 
         foreach (SlimeClone clone in clones)
         {
@@ -401,7 +443,7 @@ public class PlayerAbilities : MonoBehaviour
             return;
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
-        gameObject.GetComponent<SpriteRenderer>().enabled = false; 
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Collider2D>().isTrigger = true;
         isHidden = true;
         gameObject.GetComponent<Player>().LockMove(false);
@@ -426,15 +468,18 @@ public class PlayerAbilities : MonoBehaviour
         }
         if (isInCannon)
             return false;
+        if (abilityOrder != 2)
+            return false;   
         return true;
     }
-    private IEnumerator TemporaryStopUpdatingHorizontalVelocity()
+    public IEnumerator TemporaryStopUpdatingHorizontalVelocity()
     {
-        gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(true);
-        yield return new WaitForSeconds(0.5f);
-        isInCannon = false;
+        gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(false);
+        if (isInCannon)
+            isInCannon = false;
+        yield return new WaitForSeconds(0.1f);
         if (gameObject.GetComponent<Player>().isGrounded)
-            gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(false);
+            gameObject.GetComponent<Player>().SwitchUpdateHorizontalVelocity(true);
         else
             StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
@@ -481,6 +526,8 @@ public class PlayerAbilities : MonoBehaviour
         if (robot.isDestroyed)
             return false;
         if (!robot.isPlayerInRange)
+            return false;
+        if (abilityOrder != 3)
             return false;
         return true;
     }

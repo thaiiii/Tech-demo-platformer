@@ -31,7 +31,7 @@ public class PlayerCannon : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 if (isPlayerInRange && playerAbilities.CanGetInsideCannon())
-                    EnterCannon();
+                    EnterThisCannon();
             }
 
             if (isPlayerInside)
@@ -54,7 +54,7 @@ public class PlayerCannon : MonoBehaviour
             }
         }
     }
-    public void EnterCannon()
+    public void EnterThisCannon()
     {
         if (!playerAbilities.isNormalStatus())
             return;
@@ -115,6 +115,7 @@ public class PlayerCannon : MonoBehaviour
         {
             playerAbilities = FindObjectOfType<PlayerAbilities>();
             isPlayerInRange = true;
+            playerAbilities.isNearCannon = true;
         }
     }
 
@@ -123,6 +124,7 @@ public class PlayerCannon : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = false;
+            playerAbilities.isNearCannon = false;
             playerAbilities = null;
         }
     }
