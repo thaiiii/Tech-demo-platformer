@@ -333,7 +333,7 @@ MonoBehaviour:
   isFanActivated: 1
   disablePermanently: 0
   disableDuration: 3
-  baseForce: 5
+  baseForce: 10
   savedActivationStatus: 1
 --- !u!1 &4956198124716255214
 GameObject:

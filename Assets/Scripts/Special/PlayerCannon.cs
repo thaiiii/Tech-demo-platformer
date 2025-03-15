@@ -23,11 +23,23 @@ public class PlayerCannon : MonoBehaviour
     [HideInInspector] public bool isPlayerInside = false;
     private bool isPlayerInRange = false; //Kiểm tra người chơi ở trong tầm hoạt động
 
-    // Update is called once per frame
+    [Header("Camera")]
+    public Vector3 cannonCameraOffset;
+    private Vector3 originalCameraOffset;
+    private CameraFollow cameraFollow;
+    
+
+    private void Start()
+    {
+        cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        originalCameraOffset = cameraFollow.offset;
+        cannonCameraOffset = originalCameraOffset;
+    }
     void Update()
     {
         if (playerAbilities != null)
         {
+            SetCamera();
             if (Input.GetKeyDown(KeyCode.E))
             {
                 if (isPlayerInRange && playerAbilities.CanGetInsideCannon())
@@ -50,7 +62,6 @@ public class PlayerCannon : MonoBehaviour
                     isPlayerInside = false;
                     playerAbilities.gameObject.transform.parent = null;
                 }
-
             }
         }
     }
@@ -69,6 +80,9 @@ public class PlayerCannon : MonoBehaviour
         cannonMuzzle.Rotate(Vector3.forward * rotateInput * rotationSpeed * Time.deltaTime);
         float angle = cannonMuzzle.eulerAngles.z;
         direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)).normalized; // Hướng bắn theo nòng pháo
+        //Tính camera offset
+        cannonCameraOffset = direction; 
+
     }
     private void ChargeShot()
     {
@@ -92,21 +106,41 @@ public class PlayerCannon : MonoBehaviour
             cannonCanvas.enabled = false;
         }
         if (Input.GetKeyUp(KeyCode.Space))
+        {
+
             FirePlayer(direction, force);
+        }
     }
     public void FirePlayer(Vector2 direction, float force)
     {
         if (playerAbilities == null)
             return;
-
         // Hướng bắn theo nòng pháo
         playerAbilities.ExitCannon(direction, force);
         playerAbilities.gameObject.transform.SetParent(null);
         isPlayerInside = false;
         currentChargeTime = 0f;
+        this.force = 0;
         cannonCanvas.enabled = false;
     }
-
+    private void SetCamera()
+    {
+        if (isPlayerInside)
+        {
+            
+            if (force / 2 > 7.5)
+            {
+                cameraFollow.SetCameraOffset(cannonCameraOffset * force /2);
+                cameraFollow.SetCameraSize(force / 2, 0f);
+                
+            }
+        }
+        else
+        {
+            cameraFollow.SetCameraSize(7.5f, 1f);
+            cameraFollow.SetCameraOffset(originalCameraOffset);
+        }
+    }
 
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -118,7 +152,6 @@ public class PlayerCannon : MonoBehaviour
             playerAbilities.isNearCannon = true;
         }
     }
-
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

@@ -332,7 +332,6 @@ MonoBehaviour:
   attackSpeed: 15
   attackDelay: 1
   type: 0
-  rb: {fileID: 0}
   healthComponent: {fileID: 0}
   isEnemyDead: 0
   savedPosition: {x: 0, y: 0, z: 0}
@@ -414,7 +413,7 @@ Transform:
   m_GameObject: {fileID: 6721396364282279476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.04, y: 0, z: 0}
+  m_LocalPosition: {x: 7.93, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -435,7 +434,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3279615240798375701
 Transform:
   m_ObjectHideFlags: 0
@@ -472,7 +471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1926263316430614011, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1926263316430614011, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMin.x
@@ -580,7 +579,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8099015069844537902, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8391502279065616725, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_Value

@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-            HandlePCInput();
+        HandlePCInput();
     }
     private void FixedUpdate()
     {
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
         rb.AddForce(horizontalValue * speed * slipperyValue * Vector2.right);
     }
     public void SwitchUpdateHorizontalVelocity(bool value) => isShotHorizontally = !value;
-    
+
     private bool CanInputControl()
     {
         if (FindObjectOfType<PauseMenu>().isPaused)
@@ -276,9 +276,6 @@ public class Player : MonoBehaviour
     }
 
     #endregion
-
-
-
     private void OnDrawGizmosSelected()
     {
         //Gizmos.color = Color.yellow;

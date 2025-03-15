@@ -39,14 +39,17 @@ public class CameraFollow : MonoBehaviour
     public void SetFollowTarget(GameObject newTarget) => target = newTarget.transform;
     public void SetSmoothFactor(float value) => smoothFactor = value;
     public void SetCameraOffset(Vector3 newOffsetvalue) => offset = newOffsetvalue;
-    public void SetCameraSize(float value) => StartCoroutine(SmoothZoom(value));
-    
-    private IEnumerator SmoothZoom(float targetSize)
+    public void SetCameraSize(float value, float duration)
+    {
+        if (duration != 0)
+            StartCoroutine(SmoothZoom(value, duration));
+        else
+            mainCamera.orthographicSize = value;
+    }
+    private IEnumerator SmoothZoom(float targetSize, float duration)
     {
         float startSize = mainCamera.orthographicSize;
         float elapsedTime = 0f;
-        float duration = Mathf.Abs(startSize - targetSize) / 0.7f; // Điều chỉnh tốc độ
-
         while (elapsedTime < duration)
         {
             mainCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);

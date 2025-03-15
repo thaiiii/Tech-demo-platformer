@@ -36,6 +36,7 @@ Transform:
   m_Children:
   - {fileID: 843728844796890146}
   - {fileID: 8422677662042489686}
+  - {fileID: 1385967691371717492}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1698702117290172551
@@ -177,6 +178,7 @@ MonoBehaviour:
   healthUI: {fileID: 4822837061416338964}
   jumpUI: {fileID: 8395814726661713246}
   jumpForceSlider: {fileID: 3724062509881708093}
+  groundCheck: {fileID: 1385967691371717492}
   robotSpeed: 10
   maxChargeTime: 2
   minJumpForce: 20
@@ -651,7 +653,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -105.96}
+  m_AnchoredPosition: {x: 250, y: -60}
   m_SizeDelta: {x: 433.54, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1702809449850407133
@@ -705,6 +707,37 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &6688978809811318969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1385967691371717492}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1385967691371717492
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6688978809811318969}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.78, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5248081549312015224}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6741912545961034361
 GameObject:
   m_ObjectHideFlags: 0

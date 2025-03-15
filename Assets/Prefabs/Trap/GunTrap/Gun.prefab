@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6829867870936831573
 Transform:
   m_ObjectHideFlags: 0
@@ -102,3 +102,4 @@ MonoBehaviour:
   fireInterval: 1.5
   bulletSpeed: 7
   bulletAngle: 0
+  savedBulletAngle: 0

@@ -13,11 +13,11 @@ public class Enemy : MonoBehaviour
     public float attackSpeed = 10f; // Tốc độ lao về phía điểm tiếp theo
     public float attackDelay = 1f; // Thời gian dừng trước khi tấn công
     public EnemyType type;
-    public Rigidbody2D rb;
+    private Rigidbody2D rb;
     private Animator animator;
     private MovingTrap movingTrap; // Tham chiếu đến script MovingEnemy
     private Vector3 previousPosition;
-    public HealthComponent healthComponent;
+    [HideInInspector] public HealthComponent healthComponent;
     private Canvas healthUI;
     private bool isAttacking = false;
     public bool isEnemyDead = false;
@@ -39,7 +39,6 @@ public class Enemy : MonoBehaviour
         savedPosition = transform.position;
         savedDeadStatus = isEnemyDead;
     }
-
     private void Update()
     {
         if (transform.localScale.x > 0)
@@ -68,6 +67,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     private void DetectAndAttackPlayer()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -83,7 +83,6 @@ public class Enemy : MonoBehaviour
             StartCoroutine(AttackPlayer(targetPos));
         }
     }
-
     private bool IsPlayerOnPath(Vector3 playerPos, Vector3 enemyPos, Vector3 targetPos)
     {
         Vector3 toTarget = targetPos - enemyPos;
@@ -92,7 +91,6 @@ public class Enemy : MonoBehaviour
         // Kiểm tra người chơi nằm trên đoạn đường từ enemy đến target
         return Vector3.Dot(toTarget.normalized, toPlayer.normalized) > 0.99f && toPlayer.magnitude < toTarget.magnitude;
     }
-
     private IEnumerator AttackPlayer(Vector3 targetPos)
     {
         isAttacking = true;
@@ -111,15 +109,15 @@ public class Enemy : MonoBehaviour
         isAttacking = false;
         movingTrap.StartCountdownForMoving(); // Kích hoạt di chuyển trở lại
     }
-
     private void HandleAnimator()
     {
+        if (animator == null)
+            return;
         // Tính toán vận tốc dựa trên thay đổi vị trí
         Vector3 currentVelocity = (transform.position - previousPosition) / Time.deltaTime;
         previousPosition = transform.position;
         animator.SetFloat("xVelocity", Mathf.Abs( currentVelocity.x));
     }
-
     public void LoadSavedEnemyStatus()
     {
         if (!savedDeadStatus)
@@ -128,15 +126,16 @@ public class Enemy : MonoBehaviour
             transform.position = savedPosition;
             rb.isKinematic = false;
             GetComponent<SpriteRenderer>().enabled = true;
-            GetComponent<MovingTrap>().isMovingActivated = true;
+            if (GetComponent<MovingTrap>() != null)
+                GetComponent<MovingTrap>().isMovingActivated = true;
             GetComponent<Collider2D>().enabled = true;
             healthComponent.healthUI.enabled = true;
         } else
         {
-            GetComponent<MovingTrap>().isMovingActivated = false;
+            if (GetComponent<MovingTrap>() != null)
+                GetComponent<MovingTrap>().isMovingActivated = false;
         }
     }
-
     public void KillEnemy()
     {
         if (isEnemyDead)
@@ -144,13 +143,13 @@ public class Enemy : MonoBehaviour
         isEnemyDead = true;
         GetComponent<SpriteRenderer>().enabled = false;
         transform.position = savedPosition;
-        GetComponent<MovingTrap>().isMovingActivated = false;
+        if (GetComponent<MovingTrap>() != null)
+            GetComponent<MovingTrap>().isMovingActivated = false;
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
         healthComponent.healthUI.enabled = false;
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Trap"))

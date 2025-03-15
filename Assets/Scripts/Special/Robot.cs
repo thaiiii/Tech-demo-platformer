@@ -10,6 +10,7 @@ public class Robot : MonoBehaviour
     public Slider jumpForceSlider;
 
     [Header("Move")]
+    public Transform groundCheck;
     private float horizontalValue;
     public float robotSpeed = 10f;
     private float chargeTime = 0f;
@@ -62,6 +63,7 @@ public class Robot : MonoBehaviour
 
             if (isControlled)
             {
+                SetCamera();
                 if (!CheckRobotOnGround())
                     canMove = false;
                 RobotMove();
@@ -135,9 +137,9 @@ public class Robot : MonoBehaviour
                     jumpUI.enabled = true;
                 jumpForceSlider.value = chargeTime / maxChargeTime;
 
-                if (Input.GetKey(KeyCode.A))
+                if (Input.GetKeyDown(KeyCode.A))
                     jumpDir = new Vector2(-1, 1);
-                else if (Input.GetKey(KeyCode.D))
+                else if (Input.GetKeyDown(KeyCode.D))
                     jumpDir = new Vector2(1, 1);
             }
             else
@@ -164,7 +166,7 @@ public class Robot : MonoBehaviour
         #endregion
 
         #region Dash
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing )
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing)
             StartCoroutine(Dash());
         #endregion
 
@@ -174,7 +176,7 @@ public class Robot : MonoBehaviour
     }
     private void RobotSlide(float slipperyValue)
     {
-        
+
         rb.AddForce(horizontalValue * robotSpeed * slipperyValue * Vector2.right);
     }
     public void SetControlled(bool controlled) => isControlled = controlled;
@@ -185,13 +187,21 @@ public class Robot : MonoBehaviour
             return;
         HealthComponent playerHealthComponent = playerAbilities.gameObject.GetComponent<HealthComponent>();
         if (playerAbilities.isInRobot)
-        {   
+        {
             ExitThisRobot();
             playerHealthComponent.TakeDamage(playerHealthComponent.maxHealth); // Chết theo robot
         }
     }
     public HealthComponent GetHealthComponent() => health;
-    public bool CheckRobotOnGround() => GetComponent<Collider2D>().IsTouchingLayers(groundLayer);
+    public bool CheckRobotOnGround()
+    {
+        Vector2 boxSize = new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f);
+        Collider2D[] collider = Physics2D.OverlapBoxAll(groundCheck.position, boxSize, 0f, groundLayer);
+        if (collider.Length > 0) 
+            return true;
+        else
+            return false;
+    }
     public void ToggleRobotPhysics(bool value)
     {
         if (playerAbilities != null)
@@ -253,7 +263,7 @@ public class Robot : MonoBehaviour
     {
         if (!playerAbilities.isNormalStatus())
             return;
-        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize + 1);
+        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize + 1, 1f);
         healthUI.enabled = true;
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = false;
         playerAbilities.EnterRobot(this);
@@ -266,8 +276,8 @@ public class Robot : MonoBehaviour
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = true;
         healthUI.enabled = false;
         jumpUI.enabled = false;
-        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize - 1);
-        
+        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize - 1, 1f);
+
         chargeTime = 0f;
         isControlled = false;
 
@@ -280,9 +290,17 @@ public class Robot : MonoBehaviour
         if (CheckRobotOnGround())
             canMove = true;
         else
-            StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());  
+            StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
-
+    private void SetCamera()
+    {
+        if (chargeTime > 0)
+        {
+            cameraFollow.SetCameraSize(8.5f * (1 + chargeTime/maxChargeTime/2), 0);
+        }
+        else
+            cameraFollow.SetCameraSize(8.5f, 0.2f);
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -309,5 +327,10 @@ public class Robot : MonoBehaviour
                 playerAbilities = null;
             }
         }
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawCube(groundCheck.position, new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f));
     }
 }
