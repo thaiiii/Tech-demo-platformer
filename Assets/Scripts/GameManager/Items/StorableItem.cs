@@ -8,11 +8,18 @@ public class StorableItem : ItemBase
     private void Start()
     {
         inventoryManager = InventoryManager.Instance;
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     public override void OnPickUp()
     {
-        inventoryManager.AddItem(GetComponent<SpriteRenderer>().sprite, itemName, quantity, isCounted);
+        if (isPicked)
+            return;
+        
         if (!inventoryManager.isFull)
-            gameObject.SetActive(false);
+        {   
+            inventoryManager.AddItem(GetComponent<SpriteRenderer>().sprite, itemName, quantity, isCounted);
+            isPicked = true;
+            spriteRenderer.enabled = false;
+        }
     }
 }

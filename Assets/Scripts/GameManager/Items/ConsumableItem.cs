@@ -11,6 +11,9 @@ public class ConsumableItem : ItemBase
 
     public override void OnPickUp()
     {
+        if (isPicked)
+            return;
+
         //Thay đổi thông số 
         switch (itemName)
         {
@@ -24,7 +27,8 @@ public class ConsumableItem : ItemBase
         }
         
         FindFirstObjectByType<PlayerEffects>().ApplyEffect(itemName);
-        gameObject.SetActive(false);
+        isPicked = true;
+        this.spriteRenderer.enabled = false;
     }
 
 

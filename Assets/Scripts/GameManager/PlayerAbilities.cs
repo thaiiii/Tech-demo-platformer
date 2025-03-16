@@ -16,11 +16,12 @@ public class PlayerAbilities : MonoBehaviour
     private GameTimer gameTimer;
 
     //Thứ tự kỹ năng 
-    //1: nói chuyện 
-    //2: cannon
-    //3: robot
-    //4: tower
-    //5: clone
+    //1: Mở rương
+    //2: nói chuyện 
+    //3: cannon
+    //4: robot
+    //5: tower
+    //6: clone
     [SerializeField] private int abilityOrder = 0;
 
     [Header("Teleport")]
@@ -38,8 +39,6 @@ public class PlayerAbilities : MonoBehaviour
     public bool isNearCannon = false;
     [HideInInspector] public bool isInCannon;
     
-
-
     [Header("Split Body")]
     [SerializeField] private SlimeClone closestClone;
     [HideInInspector] public GameObject slimeClonePrefab;
@@ -55,6 +54,9 @@ public class PlayerAbilities : MonoBehaviour
     [Header("Talking to NPC")]
     public bool isNearNPC = false;
     [HideInInspector] public bool isTalking = false;
+
+    [Header("Open chest")]
+    public bool isNearChest = false;
     
 
     // //////////////////////////////////////////////////////////////////////////////////
@@ -74,14 +76,16 @@ public class PlayerAbilities : MonoBehaviour
     void Update()
     {
         if (FindClosestClone(swapControlRadius) != null)
-            abilityOrder = 5;
+            abilityOrder = 6;
         if (GetClosestTower() != null || GetClosestTower() == null && currentTower != null)
-            abilityOrder = 4;
+            abilityOrder = 5;
         if (isNearRobot)
-            abilityOrder = 3;
+            abilityOrder = 4;
         if (isNearCannon)
-            abilityOrder = 2;
+            abilityOrder = 3;
         if (isNearNPC)
+            abilityOrder = 2;
+        if (isNearChest)
             abilityOrder = 1;
 
         if (isNormalStatus())
@@ -90,22 +94,25 @@ public class PlayerAbilities : MonoBehaviour
             HandleSlime();
             switch (abilityOrder)
             {
-                //Tương tác npc
+                //Mở rương
                 case 1:
                     break;
-                //Tương tác cannon
+                //Tương tác npc
                 case 2:
                     break;
-                //Tương tác robot
+                //Tương tác cannon
                 case 3:
                     break;
-                // Tương tác tower
+                //Tương tác robot
                 case 4:
+                    break;
+                // Tương tác tower
+                case 5:
                     if (Input.GetKeyDown(KeyCode.E))
                         InteractTower();
                     break;
                 //Tương tác clone
-                case 5:
+                case 6:
                     if (Input.GetKeyDown(KeyCode.E))
                         AbsorbClone();
                     break;

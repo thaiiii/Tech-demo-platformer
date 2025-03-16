@@ -5,77 +5,117 @@ using UnityEngine;
 public class Piston : MonoBehaviour
 {
     [Header("Piston Settings")]
-    public List<string> applicableTags; // Các tag được phép đẩy
-    private Transform pistonBody; // Pít tông di chuyển
-    public Transform pistonMaxPosition; // Vị trí tối đa
-    public Transform pistonMinPosition; // Vị trí tối thiểu
-    public float extendSpeed = 0.5f; // Tốc độ giãn ra
+    private Transform pistonBody; // Phần động của piston
+    private Transform pistonMaxPosition; // Vị trí tối đa
+    private Transform pistonMinPosition; // Vị trí tối thiểu
+    public float returnTime; // Thời gian piston quay lại Max
+    private float returnSpeed; // Vận tốc di chuyển về Max
 
-    [Header("Events")]
-    public UnityEngine.Events.UnityEvent onMaxExtend; // Sự kiện khi giãn tối đa
-    public UnityEngine.Events.UnityEvent onMinRetract; // Sự kiện khi bị ép tối đa
+    [SerializeField] private bool isReturning = false; // Đang quay về Max
 
-    public bool isExtending = true; // Trạng thái đang giãn
-    public bool isMax = false; //Đã giãn hết mức
-    public bool isMin = false;   //Đã thu hết mức
+    private enum FunctionType { SingleShow, MultipleShow };
+    [SerializeField] private FunctionType functionType;
 
-    private void Awake()
+    [Header("Single Object Settings")]
+    public GameObject objectToShow; // Object sẽ hiển thị
+
+    [Header("Multiple Objects Settings")]
+    public List<ObjectDisplay> objectDisplays; // Danh sách object
+    private Coroutine displayCoroutine;
+
+    [System.Serializable]
+    public class ObjectDisplay
+    {
+        public GameObject obj;
+        public bool originStatus; // Trạng thái ban đầu (true: hiện, false: ẩn)
+        public float delayToShow = 0f; // Delay xuất hiện
+        public float activeDuration = 2f; // Thời gian hiện
+        public float inactiveDuration = 2f; // Thời gian ẩn
+    }
+
+    private List<Coroutine> objectCoroutines = new List<Coroutine>();
+
+    private void Start()
     {
         pistonBody = GetComponent<Transform>();
+        pistonMaxPosition = transform.parent.Find("MaxPosition").GetComponent<Transform>();
+        pistonMinPosition = transform.parent.Find("MinPosition").GetComponent<Transform>();
+
+        // Tính vận tốc dựa trên khoảng cách giữa Min và Max
+        float distance = Vector3.Distance(pistonMinPosition.position, pistonMaxPosition.position);
+        returnSpeed = distance / returnTime;
     }
 
     private void Update()
     {
-        //transform.localPosition = new Vector3(transform.localPosition.x, 0, 0);
+        if (Vector3.Distance(pistonBody.position, pistonMinPosition.position) < 0.01f)
+            ActivateFunction();
 
-        // Di chuyển pít tông tùy thuộc vào trạng thái
-        if (isExtending)
+        // Nếu piston đang quay về Max, di chuyển nó với vận tốc đã tính
+        if (isReturning)
         {
-            RestractPiston(pistonMaxPosition.position, extendSpeed);
-        }
+            pistonBody.position = Vector3.MoveTowards(pistonBody.position, pistonMaxPosition.position, returnSpeed * Time.deltaTime);
 
-    }
-
-    private void RestractPiston(Vector3 targetPosition, float extendSpeed)
-    {
-        // Di chuyển pít tông
-        pistonBody.position = Vector3.MoveTowards(pistonBody.position, targetPosition, extendSpeed * Time.deltaTime);
-
-        // Kiểm tra trạng thái
-        if (Vector3.Distance(pistonBody.position, targetPosition) < 0.01f)
-        {
-            if (!isMax)
-                onMaxExtend?.Invoke();
-
-            isMax = true;
-            isMin = false;
-        }
-        else if (Vector3.Distance(pistonBody.position, pistonMinPosition.position) < 0.01f)
-        {
-            if (!isMin)
-                onMinRetract?.Invoke();
-            isMin = true;
-            isMax = false;
+            // Khi piston chạm Max, dừng di chuyển và reset object
+            if (Vector3.Distance(pistonBody.position, pistonMaxPosition.position) < 0.01f)
+            {
+                isReturning = false;
+                ResetObjects();
+            }
         }
         else
         {
-            isMin = false;
-            isMax = false;
+            if (Vector3.Distance(pistonBody.position, pistonMaxPosition.position) >= 0.01f)
+                isReturning = true;
         }
-
     }
 
-    #region Only choosen tags con collide with piston
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void ActivateFunction()
     {
-        if (!applicableTags.Contains(collision.collider.tag))
+        isReturning = true;
+        if (functionType == FunctionType.SingleShow && objectToShow != null)
+            objectToShow.SetActive(true);
+
+
+        if (functionType == FunctionType.MultipleShow)
         {
-            // Vô hiệu hóa va chạm với các tag không hợp lệ
-            Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>(), true);
-            return;
+            if (objectCoroutines.Count != 0)
+                StopAllCoroutines();
+            foreach (ObjectDisplay obj in objectDisplays)
+                objectCoroutines.Add(StartCoroutine(HandleObjectDisplay(obj)));
         }
     }
-    #endregion
 
+    private IEnumerator HandleObjectDisplay(ObjectDisplay obj)
+    {
+        yield return new WaitForSeconds(obj.delayToShow);
+        obj.obj.SetActive(true);
+        yield return new WaitForSeconds(obj.activeDuration);
 
+        while (true)
+        {
+            obj.obj.SetActive(false);
+            yield return new WaitForSeconds(obj.inactiveDuration);
+            obj.obj.SetActive(true);
+            yield return new WaitForSeconds(obj.activeDuration);
+        }
+    }
+
+    private void ResetObjects()
+    {
+        if (functionType == FunctionType.SingleShow && objectToShow != null)
+        {
+            objectToShow.SetActive(false);
+        }
+
+        if (functionType == FunctionType.MultipleShow)
+        {
+            StopAllCoroutines();
+            foreach (var obj in objectDisplays)
+            {
+                obj.obj.SetActive(obj.originStatus);
+            }
+            
+        }
+    }
 }

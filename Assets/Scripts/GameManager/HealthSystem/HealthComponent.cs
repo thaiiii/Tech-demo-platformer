@@ -36,14 +36,19 @@ public class HealthComponent : MonoBehaviour
         healthSystem.currentHealth = value;
         UpdateHealthUI();
     }
-    public void TakeDamage(float amount) => healthSystem.TakeDamage(amount);
+    public void TakeDamage(float amount)
+    {
+        if (!healthUI.enabled)
+            healthUI.enabled = true;
+        healthSystem.TakeDamage(amount);
+    }
     private void OnDeath()
     {
         if (gameObject.CompareTag("Player"))
             gameObject.GetComponent<PlayerDeath>().KillPlayer();
         else if (gameObject.CompareTag("Robot"))
             gameObject.GetComponent<Robot>().OnRobotDestroyed();
-        else if (gameObject.CompareTag("Enemy"))
+        else if (gameObject.CompareTag("Enemy") || gameObject.GetComponent<Enemy>() != null)
             gameObject.GetComponent<Enemy>().KillEnemy();
         else
             Destroy(gameObject); // Có thể thay bằng hiệu ứng chết

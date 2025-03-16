@@ -37,7 +37,7 @@ public class PlayerDeath : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // Kiểm tra nếu người chơi chạm vào tag Trap
         if (collision.gameObject.CompareTag("Trap") && !HiddenStatus())
@@ -62,7 +62,7 @@ public class PlayerDeath : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         Enemy enemy = collision.gameObject.GetComponent<Enemy>();
 

@@ -38,7 +38,7 @@ public class InventoryManager : MonoBehaviour
 
     public List<InventorySlot> inventorySlots = new List<InventorySlot>();
     public List<InventorySlot> savedInventorySlots = new List<InventorySlot>();
-    public GameObject player;
+    private GameObject player;
 
     private void Awake()
     {

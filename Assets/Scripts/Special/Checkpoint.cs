@@ -8,11 +8,9 @@ public class Checkpoint : MonoBehaviour
 {
     public bool isActivated = false;
     Animator animator;
-    private List<ItemBase> allItems;
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        allItems = new List<ItemBase>(FindObjectsOfType<ItemBase>());
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -24,6 +22,8 @@ public class Checkpoint : MonoBehaviour
                 SaveTime();
                 //Save info player
                 SavePlayer(collision.gameObject);
+                //Save trạng thái Chest
+                SaveAllChest();
                 //Tất cả các item đã bị ăn (inactive) sẽ được set isCheckpointPicked = true;
                 SaveAllItems();
                 //Save inventory hien tai
@@ -36,6 +36,7 @@ public class Checkpoint : MonoBehaviour
                 SaveAllFans();
                 //Save trạng thái ConveyorBelt
                 SaveAllConveyorBelts();
+
                 //Save trạng thái các block
                 SaveAllBlocks();
                 //Save trạng thái các cannon
@@ -46,7 +47,6 @@ public class Checkpoint : MonoBehaviour
                 SaveAllGun();
                 //Save trạng thái moving trap
                 SaveAllMovingTraps();
-
                 //Save trạng thái Enemy
                 SaveAllEnemy();
             }
@@ -88,10 +88,10 @@ public class Checkpoint : MonoBehaviour
     }
     private void SaveAllItems()
     {
+        List<ItemBase> allItems = new List<ItemBase>();    
         foreach (ItemBase item in allItems)
         {
-            if (!item.gameObject.activeSelf)
-                item.PickToSaveInventory();
+            item.isCheckpointPicked = item.isPicked;
         }
     }
     private void SaveAllRobots()
@@ -113,6 +113,16 @@ public class Checkpoint : MonoBehaviour
             }
         }
     }
+    private void SaveAllChest()
+    {
+        List<Chest> chests = new List<Chest>(FindObjectsOfType<Chest>());
+        foreach (Chest chest in chests)
+        {
+            chest.savedOpenStatus = chest.isOpened ? true : false;
+        }
+    }
+
+
     private void SaveAllBlocks()
     {
         List<UnblockSwitch> allBlocks = new List<UnblockSwitch>(FindObjectsOfType<UnblockSwitch>());

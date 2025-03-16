@@ -6,16 +6,20 @@ public abstract class ItemBase : MonoBehaviour
 {
     public string itemName;
     public bool isCounted;
-    private Vector3 itemPosition;
-    public bool isCheckpointPicked = false; //Vật phẩm đã được nhặt khi checkpoint thì sau khi restart sẽ mất
-
+    public bool isPicked = false;
+    
     //Tùy biến
     public int quantity;
     public bool isManualPicked;
     private bool isPlayerNearby = false;
+
+    //Saved infor
+    public bool isCheckpointPicked = false; //Vật phẩm đã được nhặt khi checkpoint thì sau khi restart sẽ mất
+    [HideInInspector]public SpriteRenderer spriteRenderer;
+
     private void Start()
     {
-        itemPosition = transform.position;
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -26,43 +30,23 @@ public abstract class ItemBase : MonoBehaviour
             OnPickUp();
         }
     }
-
     public abstract void OnPickUp();
     public void ActiveItem()
     {
-        gameObject.SetActive(true);
+        isPicked = false;
+        spriteRenderer.enabled = true;
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision) => isPlayerNearby = false;
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") || collision.CompareTag("Robot"))
         {
-            if (!isManualPicked)
-                OnPickUp();
-            else 
+            if (!isPlayerNearby)
                 isPlayerNearby = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        isPlayerNearby = false;
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Player") || collision.collider.CompareTag("Robot"))
-        {
             if (!isManualPicked || isManualPicked && Input.GetKeyDown(KeyCode.E))
             {
                 OnPickUp();
-                Debug.Log("bbb");
             }
         }
-    }
-
-    public void PickToSaveInventory()
-    {
-        isCheckpointPicked = true;
     }
 }

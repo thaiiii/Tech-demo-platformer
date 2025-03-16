@@ -129,7 +129,7 @@ public class Enemy : MonoBehaviour
             if (GetComponent<MovingTrap>() != null)
                 GetComponent<MovingTrap>().isMovingActivated = true;
             GetComponent<Collider2D>().enabled = true;
-            healthComponent.healthUI.enabled = true;
+            healthComponent.healthUI.enabled = false;
         } else
         {
             if (GetComponent<MovingTrap>() != null)

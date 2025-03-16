@@ -17,7 +17,6 @@ public class PauseMenu : MonoBehaviour
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
     private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
-    public List<ItemBase> items;
 
     #region Stage
     private void Awake()
@@ -70,18 +69,6 @@ public class PauseMenu : MonoBehaviour
     private void InitializeGameObjectReferences()
     {
         player = FindAnyObjectByType<Player>();
-
-        //Lấy vị trí các item trong map
-        List<ConsumableItem> consumableItems = new List<ConsumableItem>(FindObjectsOfType<ConsumableItem>());
-        List<StorableItem> storableItems = new List<StorableItem>(FindObjectsOfType<StorableItem>());
-        foreach (ConsumableItem item in consumableItems)
-        {
-            items.Add(item);
-        }
-        foreach (StorableItem item in storableItems)
-        {
-            items.Add(item);
-        }
     }
 
     // Update is called once per frame
@@ -163,6 +150,7 @@ public class PauseMenu : MonoBehaviour
         ResetRobot();
         ResetPlayerCannon();
         ResetConveyorBelt();
+        ResetChest();
 
         //Reset trap position and status
         ResetCannon();
@@ -216,6 +204,7 @@ public class PauseMenu : MonoBehaviour
     }
     private void ResetItem()
     {
+        List<ItemBase> items = new List<ItemBase>(FindObjectsOfType<ItemBase>());
         foreach (ItemBase item in items)
         {
             if (!item.isCheckpointPicked)
@@ -260,7 +249,14 @@ public class PauseMenu : MonoBehaviour
             playerCannon.FirePlayer(Vector2.up, 0f);
         }
     }
-
+    private void ResetChest()
+    {
+        List<Chest> chests = new List<Chest>(FindObjectsOfType<Chest>());
+        foreach (Chest chest in chests)
+        {
+            chest.LoadSavedChestStatus();
+        }
+    }
 
     //Reset trap
     private void ResetCannon()

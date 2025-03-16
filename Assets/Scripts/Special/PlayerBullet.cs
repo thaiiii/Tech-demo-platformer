@@ -37,7 +37,7 @@ public class PlayerBullet : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
         }
-        else if (collision.CompareTag("Enemy"))
+        else if (collision.GetComponent<Enemy>() != null)
         {
             //Trừ máu ke thu
             collision.GetComponent<Enemy>().healthComponent.TakeDamage(bulletDamage);
