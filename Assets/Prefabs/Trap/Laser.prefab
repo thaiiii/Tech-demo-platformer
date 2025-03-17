@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb54dcd677923fa4f82ad156f6d40516, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxLaserLength: 10
+  maxLaserLength: 30
   disableDuration: 5
   laserAngle: 0
   isLaserActivate: 1
@@ -377,7 +377,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4243711204947186730
 Transform:
   m_ObjectHideFlags: 0

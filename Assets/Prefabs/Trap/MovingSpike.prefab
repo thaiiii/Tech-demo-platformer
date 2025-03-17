@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8687406560683271049}
   - component: {fileID: 493445774298390681}
   - component: {fileID: 4328480492484956173}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -344,12 +344,12 @@ MonoBehaviour:
   segmentSpeeds:
   - fromWaypointIndex: 0
     toWaypointIndex: 1
-    speed: 2
+    speed: 5
     delay: 3
   - fromWaypointIndex: 1
     toWaypointIndex: 0
-    speed: 10
-    delay: 0.5
+    speed: 15
+    delay: 1
   isMovingActivated: 1
   disablePermanently: 0
   loop: 1
@@ -406,7 +406,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1033461411081967459
 Transform:
   m_ObjectHideFlags: 0

@@ -208,7 +208,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -2050633262, guid: c3d5bb4a0a973734aa2cc391d32a30e3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -303,8 +303,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c44892869c85aa6489ef7aef15b4f636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chestOpenSprite: {fileID: 21300000, guid: e852aa2a7fdfe3248b4320873e365674, type: 3}
-  chestClosedSprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  chestOpenSprite: {fileID: -86092792, guid: c3d5bb4a0a973734aa2cc391d32a30e3, type: 3}
+  chestClosedSprite: {fileID: -2050633262, guid: c3d5bb4a0a973734aa2cc391d32a30e3, type: 3}
   openType: 0
   isOpened: 0
   savedOpenStatus: 0

@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     public float lastDirection = 0f; //-1: trái, 0: đứng im, 1: phải
 
     [Header("Wall")]
-    private float wallSlideSpeed = 1f;
+    private float wallSlideSpeed = 2f;
     [SerializeField] public float checkWallRadius = 0.6f;
     [SerializeField] public LayerMask normalWallLayer; //normal wall block
     [SerializeField] public LayerMask glassWallLayer; //glass wall block
@@ -128,7 +128,6 @@ public class Player : MonoBehaviour
                 // Nhảy cao sang trái khi đang đu tường bên phải
                 rb.velocity = new Vector2(-speed, jumpPower);  // Điều chỉnh lực nhảy theo yêu cầu
             }
-
         }
         else
         {
@@ -278,8 +277,8 @@ public class Player : MonoBehaviour
     #endregion
     private void OnDrawGizmosSelected()
     {
-        //Gizmos.color = Color.yellow;
-        //Gizmos.DrawSphere(transform.position, checkWallRadius);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position, checkWallRadius);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawCube(groundCheckCollider.position, new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f));
