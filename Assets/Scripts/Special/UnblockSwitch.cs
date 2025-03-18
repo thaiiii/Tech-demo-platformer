@@ -12,14 +12,16 @@ public class UnblockSwitch : MonoBehaviour
     public List<string> applicableTags; // Các tag được phép di chuyển
     public Collider2D[] objectInside;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             if (blocker != null)
             {
-                blocker.GetComponent<SpriteRenderer>().enabled = !blocker.GetComponent<SpriteRenderer>().enabled;
-                blocker.GetComponent<Collider2D>().isTrigger = !blocker.GetComponent<Collider2D>().isTrigger;
+                if (blocker.GetComponent<SpriteRenderer>().enabled)
+                    blocker.GetComponent<SpriteRenderer>().enabled = false;
+                if (!blocker.GetComponent<Collider2D>().isTrigger)
+                    blocker.GetComponent<Collider2D>().isTrigger = true;
                 StopAllCoroutines();
             }
         }
@@ -29,6 +31,7 @@ public class UnblockSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag) && !isPermanent)
         {
+            Debug.Log(collision.name + " ra");
             StartCoroutine(ReappearBlocker());
         }
     }
@@ -53,6 +56,8 @@ public class UnblockSwitch : MonoBehaviour
                 obj.GetComponent<Robot>()?.OnRobotDestroyed();
             else if (obj.CompareTag("SlimeClone"))
                 obj.GetComponent<SlimeClone>().KillClone();
+            else if (obj.CompareTag("MassObject"))
+                Destroy(obj);
         }
 
         blocker.GetComponent<SpriteRenderer>().enabled = true;

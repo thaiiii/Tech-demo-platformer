@@ -77,7 +77,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353577648742563322}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
@@ -355,11 +355,11 @@ MonoBehaviour:
   segmentSpeeds:
   - fromWaypointIndex: 0
     toWaypointIndex: 1
-    speed: 5
+    speed: 8
     delay: 1
   - fromWaypointIndex: 1
     toWaypointIndex: 0
-    speed: 5
+    speed: 8
     delay: 1
   isMovingActivated: 1
   disablePermanently: 0
@@ -371,6 +371,8 @@ MonoBehaviour:
   moveSpeed: 0
   savedActivatonStatus: 1
   savedPosition: {x: 0, y: 0, z: 0}
+  savedCurrentWaypointIndex: 0
+  savedNextWaypointIndex: 0
 --- !u!114 &5241436140350646905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,7 +436,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3279615240798375701
 Transform:
   m_ObjectHideFlags: 0
@@ -471,7 +473,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1926263316430614011, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1926263316430614011, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMin.x
@@ -579,7 +581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8099015069844537902, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8391502279065616725, guid: 5c8737f112f1d18448676efc3731e59a, type: 3}
       propertyPath: m_Value

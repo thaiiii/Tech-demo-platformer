@@ -343,7 +343,13 @@ public class PlayerAbilities : MonoBehaviour
         inventoryManager.UpdateUI();
 
         // Tạo và cấu hình bản sao của người chơi
-        GameObject clone = Instantiate(slimeClonePrefab, transform.position - new Vector3(0, 0.5f, 0), Quaternion.identity);
+        rb.AddForce(Vector2.up);
+        GameObject clone = Instantiate(slimeClonePrefab, transform.position - new Vector3(0, 0.25f, 0), Quaternion.identity);
+        if (transform.localScale.x < 0)
+            clone.transform.localScale = new Vector3(
+                -Mathf.Abs(clone.transform.localScale.x),
+                clone.transform.localScale.y,
+                clone.transform.localScale.z);
         SlimeClone cloneScript = clone.GetComponent<SlimeClone>();
         if (cloneScript != null)
         {
@@ -388,6 +394,20 @@ public class PlayerAbilities : MonoBehaviour
         Vector3 tempPosision = transform.position;
         transform.position = closestClone.transform.position;
         closestClone.transform.position = tempPosision;
+
+        //Đảo chiều
+        if (transform.localScale.x * closestClone.transform.localScale.x <0 )
+        {
+            closestClone.transform.localScale = new Vector3(
+                -closestClone.transform.localScale.x,
+                closestClone.transform.localScale.y,
+                closestClone.transform.localScale.z);
+            transform.localScale = new Vector3(
+                -transform.localScale.x,
+                transform.localScale.y,
+                transform.localScale.z);
+        }
+
         //Doi so luong slime
         int tempSlime = playerSlimeCount;
         slimeSlot.itemCount = closestClone.slimeCount;
@@ -396,6 +416,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     private void AbsorbClone()
     {
+        Debug.Log("aa");
         closestClone = FindClosestClone(absorbRadius);
         if (closestClone == null)
             return;
@@ -427,7 +448,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         List<SlimeClone> clones = new List<SlimeClone>(FindObjectsOfType<SlimeClone>());
         SlimeClone closestClone = null;
-        float closestDistance = swapControlRadius;
+        float closestDistance = maxDistance;
 
         foreach (SlimeClone clone in clones)
         {
@@ -447,7 +468,10 @@ public class PlayerAbilities : MonoBehaviour
     {
         gameTimer.StartTimer();
         if (!isNormalStatus())
+        {
             return;
+        }
+        Debug.Log("aaa");
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -475,7 +499,7 @@ public class PlayerAbilities : MonoBehaviour
         }
         if (isInCannon)
             return false;
-        if (abilityOrder != 2)
+        if (abilityOrder != 3)
             return false;   
         return true;
     }
@@ -534,7 +558,7 @@ public class PlayerAbilities : MonoBehaviour
             return false;
         if (!robot.isPlayerInRange)
             return false;
-        if (abilityOrder != 3)
+        if (abilityOrder != 4)
             return false;
         return true;
     }
@@ -564,4 +588,13 @@ public class PlayerAbilities : MonoBehaviour
         }
     }
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, teleportRadius);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, absorbRadius);
+    }
 }

@@ -68,7 +68,10 @@ public class PlayerCannon : MonoBehaviour
     public void EnterThisCannon()
     {
         if (!playerAbilities.isNormalStatus())
+        {
             return;
+        }
+            
         isPlayerInside = true;
         playerAbilities.EnterCannon(transform.position);
         playerAbilities.gameObject.transform.SetParent(transform); //Thành cha của player

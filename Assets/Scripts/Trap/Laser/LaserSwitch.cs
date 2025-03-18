@@ -7,7 +7,7 @@ public class LaserSwitch : MonoBehaviour
     public LaserEmitter laserEmitter;
     public List<string> applicableTags;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {

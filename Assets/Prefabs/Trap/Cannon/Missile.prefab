@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  turnSpeed: 1
+  turnSpeed: 2
   target: {fileID: 0}
 --- !u!50 &-5174872495448805223
 Rigidbody2D:

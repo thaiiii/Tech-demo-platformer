@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
-  type: 1
+  type: 0
   returnToDisguiseTime: 3
   timeSinceLastSeenPlayer: 0
   disguisedSprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
@@ -300,6 +300,7 @@ MonoBehaviour:
   type: 0
   healthComponent: {fileID: 0}
   isEnemyDead: 0
+  hasDashSkill: 0
   savedPosition: {x: 0, y: 0, z: 0}
   savedDeadStatus: 0
 --- !u!114 &3503431691789056437
@@ -347,7 +348,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 0.82, y: 0.82, z: 0.82}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 613308934127797865}

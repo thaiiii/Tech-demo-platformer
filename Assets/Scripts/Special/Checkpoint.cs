@@ -32,8 +32,6 @@ public class Checkpoint : MonoBehaviour
                 SaveAllClones();
                 //Save cac robot hiện tại
                 SaveAllRobots();
-                //Save trạng thái các quạt
-                SaveAllFans();
                 //Save trạng thái ConveyorBelt
                 SaveAllConveyorBelts();
 
@@ -88,7 +86,7 @@ public class Checkpoint : MonoBehaviour
     }
     private void SaveAllItems()
     {
-        List<ItemBase> allItems = new List<ItemBase>();    
+        List<ItemBase> allItems = new List<ItemBase>();
         foreach (ItemBase item in allItems)
         {
             item.isCheckpointPicked = item.isPicked;
@@ -100,17 +98,6 @@ public class Checkpoint : MonoBehaviour
         foreach (Robot robot in allRobots)
         {
             robot.SaveRobotStatus();
-        }
-    }
-    private void SaveAllFans()
-    {
-        List<Fan> allFans = new List<Fan>(FindObjectsOfType<Fan>());
-        foreach (Fan fan in allFans)
-        {
-            if (fan.disablePermanently && !fan.isFanActivated)
-            {
-                fan.savedActivationStatus = false;
-            }
         }
     }
     private void SaveAllChest()
@@ -168,8 +155,17 @@ public class Checkpoint : MonoBehaviour
         foreach (MovingTrap trap in movingTraps)
         {
             trap.savedPosition = trap.transform.position;
-            if (!trap.isMovingActivated && trap.disablePermanently)
-                trap.savedActivatonStatus = false;
+            if (!trap.isMovingActivated)
+            {
+                if (trap.disablePermanently)
+                {
+                    trap.savedActivatonStatus = false;
+                    trap.savedActivatonStatus = false;
+                    trap.savedCurrentWaypointIndex = trap.currentWaypointIndex;
+                    trap.savedNextWaypointIndex = trap.nextWaypointIndex;
+                }
+            }
+
             if (trap.isMovingActivated)
                 trap.savedActivatonStatus = true;
         }

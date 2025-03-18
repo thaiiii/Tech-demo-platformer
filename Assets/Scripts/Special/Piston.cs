@@ -49,7 +49,9 @@ public class Piston : MonoBehaviour
     private void Update()
     {
         if (Vector3.Distance(pistonBody.position, pistonMinPosition.position) < 0.01f)
+        {
             ActivateFunction();
+        }
 
         // Nếu piston đang quay về Max, di chuyển nó với vận tốc đã tính
         if (isReturning)

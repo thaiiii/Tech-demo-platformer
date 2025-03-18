@@ -22,11 +22,14 @@ public class MovingTrap : MonoBehaviour
     public bool loop = true;       // Có lặp lại khi đến điểm cuối không
     public bool movingForward = true;
     public bool isWaiting = false;
-    public int currentWaypointIndex = 0;
+    public int currentWaypointIndex;
     public int nextWaypointIndex;
     public float moveSpeed;
+    
     public bool savedActivatonStatus = true;
     public Vector3 savedPosition;
+    public int savedCurrentWaypointIndex;
+    public int savedNextWaypointIndex;
 
     private Transform targetWaypoint;
     private Coroutine countdownCoroutine;
@@ -117,7 +120,7 @@ public class MovingTrap : MonoBehaviour
         }
 
         //Nếu gắn vào Enemy thì quay đầu
-        if (gameObject.tag == "Enemy")
+        if (gameObject.GetComponent<Enemy>() != null)
         {
             if (waypoints[nextWaypointIndex].transform.position.x > transform.position.x)
                 transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
@@ -159,12 +162,23 @@ public class MovingTrap : MonoBehaviour
 
     public void LoadSavedMovingTrapStatus()
     {
-        gameObject.transform.position = savedPosition;
         if (!savedActivatonStatus && disablePermanently)
         {
             isMovingActivated = false;
+            transform.position = savedPosition;
+            currentWaypointIndex = savedCurrentWaypointIndex;
+            nextWaypointIndex = savedNextWaypointIndex;
+
+            // Cập nhật targetWaypoint và tốc độ
+            targetWaypoint = waypoints[nextWaypointIndex];
+            moveSpeed = GetCurrentSegmentSpeed();
+
+            // Reset trạng thái chờ
+            isWaiting = false;
         }
         else if (savedActivatonStatus)
+        {
             isMovingActivated = true;
+        }
     }
 }

@@ -8,6 +8,7 @@ public class NPCDialogue : MonoBehaviour
     public string[] dialogues; // Danh sách các câu thoại của NPC
     private int currentDialogueIndex = 0;
 
+    private GameObject dialogueCanvas;
     private GameObject dialogueBox; // Hộp thoại UI
     private TextMeshProUGUI dialogueText; // Nội dung câu thoại
     private GameObject interactionMark; // Biểu tượng cảnh báo "Press E"
@@ -21,7 +22,7 @@ public class NPCDialogue : MonoBehaviour
 
     private void Start()
     {
-        GameObject dialogueCanvas = transform.Find("Dialogue").gameObject;
+        dialogueCanvas = transform.Find("Dialogue").gameObject;
         dialogueBox = dialogueCanvas.transform.Find("DialogueBox").gameObject;
         dialogueText = dialogueBox.transform.Find("DialogueText").GetComponent<TextMeshProUGUI>();
         interactionMark = transform.Find("InteractionMark").gameObject;
@@ -59,6 +60,22 @@ public class NPCDialogue : MonoBehaviour
     }
     private void StartConversation()
     {
+        if (player.transform.position.x < transform.position.x)
+        {
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            dialogueCanvas.GetComponent<RectTransform>().localScale = new Vector3(
+                -Mathf.Abs(dialogueCanvas.GetComponent<RectTransform>().localScale.x),
+                dialogueCanvas.GetComponent<RectTransform>().localScale.y,
+                dialogueCanvas.GetComponent<RectTransform>().localScale.z);
+        }
+        else
+        {
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            dialogueCanvas.GetComponent<RectTransform>().localScale = new Vector3(
+                Mathf.Abs(dialogueCanvas.GetComponent<RectTransform>().localScale.x),
+                dialogueCanvas.GetComponent<RectTransform>().localScale.y,
+                dialogueCanvas.GetComponent<RectTransform>().localScale.z);
+        }
         player.GetComponent<PlayerAbilities>().isTalking = true;
         player.GetComponent<HealthComponent>().healthUI.enabled = false;
         GameTimer gameTimer = FindObjectOfType<GameTimer>();
@@ -95,12 +112,4 @@ public class NPCDialogue : MonoBehaviour
         player.UnlockMove(true); // Kích hoạt lại di chuyển
     }
     private void ShowDialogue() => dialogueText.text = dialogues[currentDialogueIndex];
-
-
-    private void OnDrawGizmos()
-    {
-        // Vẽ khoảng cách tương tác
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionDistance);
-    }
 }

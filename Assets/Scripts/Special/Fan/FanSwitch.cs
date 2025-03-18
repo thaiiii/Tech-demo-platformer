@@ -6,14 +6,25 @@ public class FanSwitch : MonoBehaviour
 {
     public Fan fan;
     public List<string> applicableTags;
+    public float switchOffDelay = 3f; // Thời gian chờ trước khi tắt quạt nếu không có vật nào chạm vào
+
+    private int objectsOnSwitch = 0;
+    private Coroutine turnOffCoroutine;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
-            // Tắt fan nhưng không bắt đầu đếm ngược ngay
-            if(fan != null)
-            fan.DisableFanWithoutCountdown();
+            objectsOnSwitch++;
+            if (fan != null)
+            {
+                fan.EnableFan();
+                if (turnOffCoroutine != null)
+                {
+                    StopCoroutine(turnOffCoroutine);
+                    turnOffCoroutine = null;
+                }
+            }
         }
     }
 
@@ -21,12 +32,20 @@ public class FanSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
-            // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
-            if (fan != null && fan.gameObject.activeSelf) // Kiểm tra Fan đang active
+            if (applicableTags.Contains(collision.gameObject.tag))
             {
-                fan.StartCountdownForFan();
+                objectsOnSwitch--;
+                if (objectsOnSwitch <= 0 && fan != null)
+                {
+                    turnOffCoroutine = StartCoroutine(TurnOffFanAfterDelay());
+                }
             }
-
         }
+    }
+
+    private IEnumerator TurnOffFanAfterDelay()
+    {
+        yield return new WaitForSeconds(switchOffDelay);
+        fan.DisableFan();
     }
 }

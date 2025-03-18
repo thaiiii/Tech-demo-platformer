@@ -5,7 +5,7 @@ using UnityEngine;
 public class GunTrap : MonoBehaviour
 {
     public GameObject bulletPrefab;      // Prefab của đạn
-    public Transform firePoint;          // Vị trí bắn đạn
+    [SerializeField]private Transform firePoint;          // Vị trí bắn đạn
     public float fireInterval = 2.0f;    // Thời gian giữa các lần bắn
     public float bulletSpeed = 5.0f;     // Tốc độ bay của đạn
     [Range(0f, 360f)]public float bulletAngle = 0.0f;     // Góc bắn (độ)
@@ -37,6 +37,8 @@ public class GunTrap : MonoBehaviour
     {
         // Tạo viên đạn tại firePoint
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        bullet.transform.parent = gameObject.transform;
+        
 
         // Tính toán hướng bắn dựa trên góc
         Vector2 direction = new Vector2(Mathf.Cos(bulletAngle * Mathf.Deg2Rad), Mathf.Sin(bulletAngle * Mathf.Deg2Rad));

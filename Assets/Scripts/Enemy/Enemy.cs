@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
     private Canvas healthUI;
     private bool isAttacking = false;
     public bool isEnemyDead = false;
-    
+    public bool hasDashSkill;
 
     //Checkpoint info
     public Vector3 savedPosition;
@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
         if (isEnemyDead)
             return;
         HandleAnimator();
-        if (type == EnemyType.Pointy && !isAttacking)
+        if (hasDashSkill && !isAttacking)
         {
             DetectAndAttackPlayer();
         }
@@ -152,7 +152,7 @@ public class Enemy : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Trap"))
+        if (collision.CompareTag("Trap") && gameObject.transform.parent.name != "Turtle")
             KillEnemy();
         if (collision.CompareTag("Robot"))
             KillEnemy();
