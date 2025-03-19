@@ -151,6 +151,7 @@ public class PauseMenu : MonoBehaviour
         ResetPlayerCannon();
         ResetConveyorBelt();
         ResetChest();
+        ResetPushableBox();
 
         //Reset trap position and status
         ResetCannon();
@@ -168,6 +169,7 @@ public class PauseMenu : MonoBehaviour
     //Reset player and all health object
     private void ResetPlayer()
     {
+        player.GetComponent<SpriteRenderer>().enabled = true ;
         player.GetComponent<PlayerAbilities>().ExitTower();
         player.GetComponent<PlayerAbilities>().ExitCannon(Vector2.up , 0f);
         player.GetComponent<PlayerAbilities>().ExitRobot();
@@ -256,6 +258,14 @@ public class PauseMenu : MonoBehaviour
         {
             chest.LoadSavedChestStatus();
         }
+    }
+    private void ResetPushableBox()
+    {
+        List<PushableBox> pushableBoxes = new List<PushableBox>(FindObjectsOfType<PushableBox>());
+        foreach (PushableBox pushableBox in pushableBoxes)
+        {
+            pushableBox.LoadStartPosition();
+        } 
     }
 
     //Reset trap

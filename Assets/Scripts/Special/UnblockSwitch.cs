@@ -31,7 +31,6 @@ public class UnblockSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag) && !isPermanent)
         {
-            Debug.Log(collision.name + " ra");
             StartCoroutine(ReappearBlocker());
         }
     }
@@ -57,7 +56,8 @@ public class UnblockSwitch : MonoBehaviour
             else if (obj.CompareTag("SlimeClone"))
                 obj.GetComponent<SlimeClone>().KillClone();
             else if (obj.CompareTag("MassObject"))
-                Destroy(obj);
+            {
+            }
         }
 
         blocker.GetComponent<SpriteRenderer>().enabled = true;

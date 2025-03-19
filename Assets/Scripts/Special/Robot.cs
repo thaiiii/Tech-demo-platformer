@@ -182,7 +182,11 @@ public class Robot : MonoBehaviour
     public void SetControlled(bool controlled) => isControlled = controlled;
     public void OnRobotDestroyed()
     {
+        if (isDestroyed)
+            return;
+        transform.position = restartPosition;
         isDestroyed = true;
+        rb.velocity = Vector3.zero;
         if (playerAbilities == null)
             return;
         HealthComponent playerHealthComponent = playerAbilities.gameObject.GetComponent<HealthComponent>();
@@ -212,11 +216,10 @@ public class Robot : MonoBehaviour
     public void LoadSavedRobotStatus()
     {
         ExitThisRobot();
-        transform.position = restartPosition;
-        isDestroyed = savedDestroyStatus;
+        
         canMove = true;
         isPlayerInRange = false;
-
+        isDestroyed = savedDestroyStatus;
         // Đợi 0.1 giây rồi mới bật vật lý
         StartCoroutine(EnablePhysicsAfterDelay(0.02f));
     }

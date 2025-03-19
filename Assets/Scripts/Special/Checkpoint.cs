@@ -1,7 +1,5 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.Search;
 using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
@@ -34,6 +32,10 @@ public class Checkpoint : MonoBehaviour
                 SaveAllRobots();
                 //Save trạng thái ConveyorBelt
                 SaveAllConveyorBelts();
+                //Save trạng thái tất cả các box 
+                SaveAllPushableBox();
+                //Saved quạt
+                SavedAllFan();
 
                 //Save trạng thái các block
                 SaveAllBlocks();
@@ -69,7 +71,7 @@ public class Checkpoint : MonoBehaviour
     }
     private void SavePlayer(GameObject player)
     {
-        player.GetComponent<Player>().startPosition = transform.position + Vector3.up * 3f + Vector3.right * 1.5f;
+        player.GetComponent<Player>().startPosition = transform.position + Vector3.up * 1f + Vector3.right * 1.5f;
         List<HealthComponent> healthComponents = new List<HealthComponent>(FindObjectsOfType<HealthComponent>());
         foreach (HealthComponent health in healthComponents)
         {
@@ -108,7 +110,23 @@ public class Checkpoint : MonoBehaviour
             chest.savedOpenStatus = chest.isOpened ? true : false;
         }
     }
+    private void SaveAllPushableBox()
+    {
+        List<PushableBox> pushableBoxes = new List<PushableBox>(FindObjectsOfType<PushableBox>());
+        foreach (PushableBox box in pushableBoxes)
+        {
+            box.rb.velocity = Vector2.zero;
+            box.savedPosition = box.transform.position;
+        }
+    }
+    private void SavedAllFan()
+    {
+        List<Fan> fans = new List<Fan>(FindObjectsOfType<Fan>());   
+        foreach (Fan fan in fans)
+        {
 
+        }
+    }
 
     private void SaveAllBlocks()
     {

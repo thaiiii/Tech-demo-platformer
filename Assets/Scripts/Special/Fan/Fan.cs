@@ -10,11 +10,13 @@ public class Fan : MonoBehaviour
     public Vector3 forceDirection = Vector3.up;
     public float baseForce = 5f;
     public bool isFanActivated = false;
+    public Vector3 savedPosition;
 
     private Animator animator;
 
     private void Awake()
     {
+        savedPosition = transform.position;
         animator = GetComponent<Animator>();
         if (!isFanActivated)
             DisableFan();
@@ -47,7 +49,8 @@ public class Fan : MonoBehaviour
 
     public void ResetFan()
     {
-            DisableFan();
+        transform.position = savedPosition;    
+        DisableFan();
     }
 
 }

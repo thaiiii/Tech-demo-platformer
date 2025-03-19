@@ -281,7 +281,7 @@ MonoBehaviour:
   type: 0
   returnToDisguiseTime: 3
   timeSinceLastSeenPlayer: 0
-  disguisedSprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  disguisedSprite: {fileID: -2050633262, guid: c3d5bb4a0a973734aa2cc391d32a30e3, type: 3}
   revealedSprite: {fileID: 21300000, guid: 459aeeb4499bd4ae18acaca0c2f18a18, type: 3}
 --- !u!114 &3062486561101233309
 MonoBehaviour:

@@ -1,7 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.UI;
 using static Bullet;
@@ -77,7 +74,7 @@ public class PlayerDeath : MonoBehaviour
 
     public void KillPlayer()
     {
-        Debug.Log("chet");
+        GetComponent<SpriteRenderer>().enabled = false;
         // Xử lý cái chết của người chơi, ví dụ: hiển thị hiệu ứng, tải lại màn chơi
         m_camera.GetComponent<CameraFollow>().isFollowing = false;
         

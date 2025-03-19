@@ -125,7 +125,6 @@ public class HazardZone : MonoBehaviour
             }
             originalFrictions[gameObject] = rb.sharedMaterial.friction;
             rb.sharedMaterial.friction = 1 / (float)effectValue;
-            Debug.Log(rb.sharedMaterial.friction + " " + originalFrictions[gameObject]);
         }
     }
     private void ResetIceEffect(GameObject gameObject)
@@ -140,7 +139,6 @@ public class HazardZone : MonoBehaviour
                 return;
             Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
             rb.sharedMaterial.friction = originalFrictions[gameObject];
-            Debug.Log(rb.sharedMaterial.friction);
             originalFrictions.Remove(gameObject);
         }
     }

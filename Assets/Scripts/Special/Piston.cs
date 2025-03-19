@@ -74,6 +74,7 @@ public class Piston : MonoBehaviour
 
     private void ActivateFunction()
     {
+        ResetObjects();
         isReturning = true;
         if (functionType == FunctionType.SingleShow && objectToShow != null)
             objectToShow.SetActive(true);

@@ -313,7 +313,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: Demo
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -340,8 +340,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 90
-  m_fontSizeBase: 90
+  m_fontSize: 32.3
+  m_fontSizeBase: 32.3
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -836,7 +836,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1355270086
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1063,6 +1063,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4a9265b609115b4196154d04f9e0ace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isComplete: 0
 --- !u!114 &1662945772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1076,6 +1077,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elapsedTime: 0
+  savedTime: 0
+  isTiming: 0
+  hasStarted: 0
 --- !u!114 &1662945773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1088,6 +1092,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45ba23b2975178941af7548a6845ba48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPaused: 0
 --- !u!4 &1662945774
 Transform:
   m_ObjectHideFlags: 0
@@ -1133,7 +1138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1948202564
 RectTransform:
   m_ObjectHideFlags: 0

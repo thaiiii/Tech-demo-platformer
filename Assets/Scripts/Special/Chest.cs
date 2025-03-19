@@ -9,6 +9,7 @@ public class Chest : MonoBehaviour
     public Sprite chestOpenSprite;  // Sprite khi rương mở
     public Sprite chestClosedSprite; // Sprite khi rương đóng
     private Collider2D detectionTrigger;
+    private SpriteRenderer mark;
     private enum OpenType { Negative, Positive };
     [SerializeField] private OpenType openType;
 
@@ -20,6 +21,8 @@ public class Chest : MonoBehaviour
     //================================================================================
     private void Start()
     {
+        mark = transform.Find("InteractionMark").GetComponent<SpriteRenderer>();
+        mark.enabled = false;
         spriteRenderer = GetComponent<SpriteRenderer>();
         detectionTrigger = transform.Find("DetectionTrigger").GetComponent<Collider2D>();
         item = transform.Find("ItemInside").GetComponent<ItemBase>();
@@ -32,15 +35,19 @@ public class Chest : MonoBehaviour
             return;
         if (detectionTrigger.IsTouchingLayers(LayerMask.GetMask("Player")))
         {
+            mark.enabled = true;
             if (openType == OpenType.Positive || openType == OpenType.Negative && Input.GetKeyDown(KeyCode.E))
                 OpenChest();
         }
+        else
+            mark.enabled = false;
     }
     private void OpenChest()
     {
         isOpened = true;
         spriteRenderer.sprite = chestOpenSprite;
         item.ActiveItem();
+        mark.enabled = false;
     }
     public void LoadSavedChestStatus()
     {

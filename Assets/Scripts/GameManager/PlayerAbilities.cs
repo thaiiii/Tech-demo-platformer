@@ -1,11 +1,8 @@
-﻿using System;
+﻿
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static InventoryManager;
-using static UnityEditor.Timeline.Actions.MenuPriority;
 
 public class PlayerAbilities : MonoBehaviour
 {
@@ -38,12 +35,12 @@ public class PlayerAbilities : MonoBehaviour
     [Header("Cannon")]
     public bool isNearCannon = false;
     [HideInInspector] public bool isInCannon;
-    
+
     [Header("Split Body")]
     [SerializeField] private SlimeClone closestClone;
     [HideInInspector] public GameObject slimeClonePrefab;
-    [HideInInspector] public float swapControlRadius = 10f;
-    [HideInInspector] public float absorbRadius = 5f;
+    public float swapControlRadius = 5f;
+    public float absorbRadius = 5f;
     private InventoryManager inventoryManager;
 
     [Header("Robot")]
@@ -57,7 +54,7 @@ public class PlayerAbilities : MonoBehaviour
 
     [Header("Open chest")]
     public bool isNearChest = false;
-    
+
 
     // //////////////////////////////////////////////////////////////////////////////////
     private void Awake()
@@ -75,18 +72,7 @@ public class PlayerAbilities : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (FindClosestClone(swapControlRadius) != null)
-            abilityOrder = 6;
-        if (GetClosestTower() != null || GetClosestTower() == null && currentTower != null)
-            abilityOrder = 5;
-        if (isNearRobot)
-            abilityOrder = 4;
-        if (isNearCannon)
-            abilityOrder = 3;
-        if (isNearNPC)
-            abilityOrder = 2;
-        if (isNearChest)
-            abilityOrder = 1;
+        CheckAbilityOrder();
 
         if (isNormalStatus())
         {
@@ -122,6 +108,40 @@ public class PlayerAbilities : MonoBehaviour
         }
     }
 
+    private void CheckAbilityOrder()
+    {
+        if (isNearChest)
+        {
+            abilityOrder = 1;
+            return;
+        }
+        if (isNearNPC)
+        {
+            abilityOrder = 2;
+            return;
+        }
+        if (isNearCannon)
+        {
+            abilityOrder = 3;
+            return;
+        }
+        if (isNearRobot)
+        {
+            abilityOrder = 4;
+            return;
+        }
+        if (GetClosestTower() != null || GetClosestTower() == null && currentTower != null)
+        {
+            abilityOrder = 5;
+            return;
+        }
+        if (FindClosestClone(swapControlRadius) != null)
+        {
+            abilityOrder = 6;
+            return;
+        }
+        abilityOrder = -1;
+    }
 
 
     #region Teleport
@@ -278,18 +298,21 @@ public class PlayerAbilities : MonoBehaviour
     #endregion
 
     #region Player skills
-    public void UseItem(InventoryManager.InventorySlot selectedSlot)
+    public bool UseItem(InventoryManager.InventorySlot selectedSlot)
     {
+        bool isUsed = false;
         gameTimer.StartTimer();
         switch (selectedSlot.itemName)
         {
             case "PlayerBullet":
                 PlayerShoot();
+                isUsed = true;
                 break;
             default:
-                Debug.Log("Loi khi dung skill");
+                isUsed = false;
                 break;
         }
+        return isUsed;
     }
     public bool isNormalStatus()
     {
@@ -377,7 +400,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     public void SwapControl()
     {
-        SlimeClone closestClone = FindClosestClone(swapControlRadius);
+        closestClone = FindClosestClone(swapControlRadius);
         if (closestClone == null)
             return;
 
@@ -396,7 +419,7 @@ public class PlayerAbilities : MonoBehaviour
         closestClone.transform.position = tempPosision;
 
         //Đảo chiều
-        if (transform.localScale.x * closestClone.transform.localScale.x <0 )
+        if (transform.localScale.x * closestClone.transform.localScale.x < 0)
         {
             closestClone.transform.localScale = new Vector3(
                 -closestClone.transform.localScale.x,
@@ -416,7 +439,6 @@ public class PlayerAbilities : MonoBehaviour
     }
     private void AbsorbClone()
     {
-        Debug.Log("aa");
         closestClone = FindClosestClone(absorbRadius);
         if (closestClone == null)
             return;
@@ -452,6 +474,11 @@ public class PlayerAbilities : MonoBehaviour
 
         foreach (SlimeClone clone in clones)
         {
+            clone.mark.enabled = false;
+        }
+
+        foreach (SlimeClone clone in clones)
+        {
             float distance = Vector2.Distance(transform.position, clone.transform.position);
             if (distance < closestDistance)
             {
@@ -459,6 +486,8 @@ public class PlayerAbilities : MonoBehaviour
                 closestDistance = distance;
             }
         }
+        if (closestClone != null)
+            closestClone.mark.enabled = true;
         return closestClone;
     }
     #endregion
@@ -471,7 +500,6 @@ public class PlayerAbilities : MonoBehaviour
         {
             return;
         }
-        Debug.Log("aaa");
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -500,7 +528,7 @@ public class PlayerAbilities : MonoBehaviour
         if (isInCannon)
             return false;
         if (abilityOrder != 3)
-            return false;   
+            return false;
         return true;
     }
     public IEnumerator TemporaryStopUpdatingHorizontalVelocity()

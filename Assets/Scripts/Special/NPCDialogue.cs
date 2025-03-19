@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 public class NPCDialogue : MonoBehaviour
@@ -18,7 +16,7 @@ public class NPCDialogue : MonoBehaviour
 
     public float interactionDistance = 2f; // Khoảng cách tương tác
 
-    private Player player; // Tham chiếu script điều khiển người chơi
+    private PlayerAbilities player; // Tham chiếu script điều khiển người chơi
 
     private void Start()
     {
@@ -26,38 +24,48 @@ public class NPCDialogue : MonoBehaviour
         dialogueBox = dialogueCanvas.transform.Find("DialogueBox").gameObject;
         dialogueText = dialogueBox.transform.Find("DialogueText").GetComponent<TextMeshProUGUI>();
         interactionMark = transform.Find("InteractionMark").gameObject;
-        player = FindAnyObjectByType<Player>();
-
         // Tắt hộp thoại ban đầu
         dialogueBox.SetActive(false);
         interactionMark.SetActive(false); // Tắt biểu tượng cảnh báo ban đầu
     }
     private void Update()
     {
-        // Kiểm tra khoảng cách với người chơi
-        float distance = Vector2.Distance(transform.position, player.transform.position);
-        isPlayerNearby = distance <= interactionDistance;
-
-        // Hiển thị hộp thoại khi cần
-        if (isPlayerNearby)
+        if (player != null)
         {
-            player.GetComponent<PlayerAbilities>().isNearNPC = true;
-            if (!isInConversation)
-                interactionMark.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.E))
+            // Hiển thị hộp thoại khi cần
+            if (isPlayerNearby)
             {
+                player.isNearNPC = true;
                 if (!isInConversation)
-                    StartConversation();
-                else
-                    NextDialogue();
+                    interactionMark.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    if (!isInConversation)
+                        StartConversation();
+                    else
+                        NextDialogue();
+                }
+            }
+            else
+            {
+                player.GetComponent<PlayerAbilities>().isNearNPC = false;
+                interactionMark.SetActive(false);
+                player = null;
             }
         }
-        else
-        {
-            player.GetComponent<PlayerAbilities>().isNearNPC = false;
-            interactionMark.SetActive(false);
-        }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        player = collision.gameObject.GetComponent<PlayerAbilities>();
+        isPlayerNearby = true;
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        isPlayerNearby=false;
+    }
+
+
     private void StartConversation()
     {
         if (player.transform.position.x < transform.position.x)
@@ -88,7 +96,7 @@ public class NPCDialogue : MonoBehaviour
         interactionMark.SetActive(false);
         currentDialogueIndex = 0;
         ShowDialogue();
-        player.LockMove(false); // Vô hiệu hóa di chuyển của người chơi
+        player.GetComponent<Player>().LockMove(false); // Vô hiệu hóa di chuyển của người chơi
     }
     private void NextDialogue()
     {
@@ -109,7 +117,7 @@ public class NPCDialogue : MonoBehaviour
 
         isInConversation = false;
         dialogueBox.SetActive(false);
-        player.UnlockMove(true); // Kích hoạt lại di chuyển
+        player.GetComponent<Player>().UnlockMove(true); // Kích hoạt lại di chuyển
     }
     private void ShowDialogue() => dialogueText.text = dialogues[currentDialogueIndex];
 }

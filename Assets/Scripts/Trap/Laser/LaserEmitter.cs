@@ -59,7 +59,7 @@ public class LaserEmitter : MonoBehaviour
                 hit.collider.gameObject.GetComponent<SlimeClone>().KillClone();
             //Kiểm tra robot
             else if (hit.collider.gameObject.CompareTag("Robot"))
-                hit.collider.GetComponent<Robot>().OnRobotDestroyed();
+                hit.collider.GetComponent<HealthComponent>().TakeDamage(hit.collider.GetComponent<HealthComponent>().maxHealth);
             //Kiểm tra Enemy 
             else if (hit.collider.gameObject.CompareTag("Enemy"))
                 hit.collider.GetComponent<Enemy>().KillEnemy();
@@ -100,11 +100,11 @@ public class LaserEmitter : MonoBehaviour
         if (!disablePermanently)
         {
             // Bắt đầu đếm ngược để bật lại laser sau khi rời khỏi switch
-            countdownCoroutine = StartCoroutine(TemporaryDisable());
+            countdownCoroutine = StartCoroutine(TemporaryDisable(disableDuration));
         }
     }
 
-    IEnumerator TemporaryDisable()
+    IEnumerator TemporaryDisable(float disableDuration)
     {
         yield return new WaitForSeconds(disableDuration);
         isLaserActivate = true;
@@ -114,7 +114,7 @@ public class LaserEmitter : MonoBehaviour
 
     public void LoadSavedEmitterStatus()
     {
-        isLaserActivate = true ? savedActivationStatus : false;
+        isLaserActivate = savedActivationStatus;
         laserAngle = savedLaserAngle;
     }
 }

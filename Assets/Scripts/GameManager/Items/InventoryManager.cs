@@ -87,9 +87,11 @@ public class InventoryManager : MonoBehaviour
             InventorySlot selectedItem = inventorySlots[selectedSlotIndex];
             if (player.GetComponent<PlayerAbilities>().isNormalStatus())
             {
-                player.GetComponent<PlayerAbilities>().UseItem(selectedItem); //Su dung item de dung skill
-                RemoveItem(selectedItem);
-                UpdateUI();
+                if (player.GetComponent<PlayerAbilities>().UseItem(selectedItem)) //Su dung item de dung skill
+                {
+                    RemoveItem(selectedItem);
+                    UpdateUI();
+                }
             }
         }
 

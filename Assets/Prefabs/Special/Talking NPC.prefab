@@ -298,7 +298,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: -1075234459, guid: 6231e50ca6d354f4198cf3abfcbae2a6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -366,7 +366,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.011043549, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -377,7 +377,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.4375, y: 1.5}
+  m_Size: {x: 3.5, y: 1.5}
   m_EdgeRadius: 0
 --- !u!114 &6845720243609969120
 MonoBehaviour:
@@ -392,8 +392,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogues:
-  - "c\xF3 th\u1EC3 leo l\xEAn/xu\u1ED1ng c\xE1c b\u1EC1 m\u1EB7t m\u1ECFng b\u1EB1ng
-    c\xE1ch nh\u1EA3y l\xEAn ho\u1EB7c Shift \u0111\u1EC3 xu\u1ED1ng"
+  - "Nh\u1EB7t l\u1EA5y \u0111\u1EA1n \u1EDF trong r\u01B0\u01A1ng"
+  - "B\u1EA5m \"1\" \u0111\u1EC3 ch\u1ECDn slot 1 trong inventory"
+  - "Nh\u1EA5n/gi\u1EEF  Q \u0111\u1EC3 b\u1EAFn \u0111\u1EA1n, s\u1ED1 \u0111\u1EA1n
+    l\xE0 c\xF3 h\u1EA1n :D"
+  - "\u0110\u1EA1n c\xF3 th\u1EC3 g\xE2y s\xE1t th\u01B0\u01A1ng l\xEAn \u0111\u1ECBch"
   isInConversation: 0
   interactionDistance: 2
 --- !u!1 &4327427196676862552

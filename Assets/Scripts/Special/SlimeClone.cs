@@ -6,6 +6,7 @@ public class SlimeClone : MonoBehaviour
 {
     public int slimeCount;
     [HideInInspector]public Sprite slimeSprite;
+    public SpriteRenderer mark;
     private SpriteRenderer spriteRenderer;
 
     public bool isSaved = false; //trạng thái được checkpoint của clone
@@ -14,6 +15,7 @@ public class SlimeClone : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        mark = transform.Find("InteractionMark").GetComponent<SpriteRenderer>();
     }
     public void SetSlimeCount(int count)
     {
