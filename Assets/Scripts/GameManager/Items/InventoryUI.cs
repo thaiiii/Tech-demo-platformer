@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 public class InventoryUI : MonoBehaviour
@@ -15,6 +16,7 @@ public class InventoryUI : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -22,10 +24,25 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    public GameObject slotPrefab;
-    public Transform inventoryPanel;
+    [HideInInspector] public GameObject slotPrefab;
+    [HideInInspector] private Transform inventoryPanel;
     private List<GameObject> activeSlots = new List<GameObject>();
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            GameObject UI = GameObject.Find("General UI").gameObject;
+            GameObject stageUI = UI.transform.Find("StageUI").gameObject;
+            inventoryPanel = stageUI.transform.Find("InventoryPanel").transform;
+        }
+        else
+            inventoryPanel = null;
+    }
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;   
+    }
     public void RefreshUI(List<InventoryManager.InventorySlot> inventorySlots)
     {
         foreach (var slot in activeSlots)
@@ -51,7 +68,6 @@ public class InventoryUI : MonoBehaviour
         }
         HighlightSlot(FindObjectOfType<InventoryManager>().selectedSlotIndex);
     }
-
     public void HighlightSlot(int selectedIndex)
     {
         for (int i = 0; i < activeSlots.Count; i++)

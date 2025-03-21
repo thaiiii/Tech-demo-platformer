@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -46,12 +45,30 @@ public class InventoryManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
             Destroy(gameObject);
         }
-        player = FindAnyObjectByType<Player>().gameObject;
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        isFull = false;
+        selectedSlotIndex = -1;
+        inventorySlots.Clear();
+        savedInventorySlots.Clear();
+        timeSinceLastUse = 5f;
+
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+            player = FindAnyObjectByType<Player>().gameObject;
+        else
+            player = null;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     private void Update()
     {

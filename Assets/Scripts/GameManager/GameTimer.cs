@@ -20,36 +20,6 @@ public class GameTimer : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
     }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        hasStarted = false;
-        isTiming = false;
-        InitializeUIReferences();
-    }
-
-    private void OnDestroy()
-    {
-        // Hủy đăng ký sự kiện
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void InitializeUIReferences()
-    {
-        GameObject UI = GameObject.Find("General UI");
-        if (UI == null)
-        {
-            return;
-        }
-        GameObject pauseMenuUI = UI.transform.Find("PauseMenu").gameObject;
-        pausedTimerText = pauseMenuUI.transform.Find("PauseTimer").GetComponent<TextMeshProUGUI>();
-
-        GameObject stageUI = UI.transform.Find("StageUI").gameObject;
-        timerText = stageUI.transform.Find("StageTimer").GetComponent<TextMeshProUGUI>();
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         //Nếu bộ đếm hoạt động, chạy thơi gian
@@ -59,17 +29,50 @@ public class GameTimer : MonoBehaviour
             UpdateTimeDisplay();
         }
     }
-    //Hàm bắt đầu khi người chơi di chuyển lần đầu
-    public void StartTimer()
+    
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        hasStarted = false;
+        isTiming = false;
+        elapsedTime = 0f;
+        savedTime = 0f;
+        InitializeUIReferences();
+    }
+    private void OnDestroy()
+    {
+        // Hủy đăng ký sự kiện
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    private void InitializeUIReferences()
+    {
+        if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            hasStarted = true;
-            isTiming = true;
-            UpdateTimeDisplay();
+            GameObject UI = GameObject.Find("General UI");
+            if (UI == null)
+            {
+                return;
+            }
+            GameObject pauseMenuUI = UI.transform.Find("PauseMenu").gameObject;
+            pausedTimerText = pauseMenuUI.transform.Find("PauseTimer").GetComponent<TextMeshProUGUI>();
+
+            GameObject stageUI = UI.transform.Find("StageUI").gameObject;
+            timerText = stageUI.transform.Find("StageTimer").GetComponent<TextMeshProUGUI>();
+        }
+        else
+        {
+            timerText = null;
+            pausedTimerText = null;
         }
     }
 
-    //Reset đồng hồ
+
+    public void StartTimer()
+    {
+        hasStarted = true;
+        isTiming = true;
+        UpdateTimeDisplay();
+    }
     public void ResetTimer()
     {
         hasStarted = false;
@@ -77,37 +80,12 @@ public class GameTimer : MonoBehaviour
         elapsedTime = savedTime;
         UpdateTimeDisplay();
     }
-    //public void ContinueTimer()
-    //{
-
-    //}
-    //Hàm tạm dừng bộ đến
     public void PauseTimer()
     {
         isTiming = false;
         pausedTimerText.text = timerText.text;
     }
-
-    //Hàm tiếp tục chạy bộ đếm
-    public void ResumeTimer()
-    {
-        isTiming = true;
-    }
-
-    //Hàm dừng bộ đếm
-    public void StopTimer()
-    {
-        isTiming = false;
-
-    }
-
-    //Hàm cập nhật hiển thị thời gian
-    private void UpdateTimeDisplay()
-    {
-        //int seconds = Mathf.FloorToInt(elapsedTime);
-        //int miliseconds = Mathf.FloorToInt((elapsedTime * 100) % 100);
-
-        //timerText.text = string.Format("TIME    {0:00}.{1:00}", seconds, miliseconds);
-        timerText.text = $"TIME: {elapsedTime:F2}";
-    }
+    public void ResumeTimer() => isTiming = true;
+    public void StopTimer() => isTiming = false;
+    private void UpdateTimeDisplay() => timerText.text = $"TIME: {elapsedTime:F2}";
 }

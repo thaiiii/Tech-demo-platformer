@@ -1,36 +1,28 @@
-﻿using System;
-using System.Collections;
+﻿
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
 
 public class PauseMenu : MonoBehaviour
 {
     [Header("In Game")]
-    private GameObject pauseMenuUI;
     public bool isPaused = false;
+    private GameObject pauseMenuUI;
     private Player player;
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
-    private NPCDialogue npcDialogue;  // Tham chiếu đến hội thoại NPC
 
 
     #region Stage
     private void Awake()
     {
-        gameTimer = FindAnyObjectByType<GameTimer>();
-        npcDialogue = FindAnyObjectByType<NPCDialogue>();
-
         SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        isPaused = false;
         InitializeUIReferences(); // Cập nhật tham chiếu khi scene mới được tải
         InitializeGameObjectReferences(); //Cập nhật tham chiếu các game object khác
-        //RestartStage();
     }
     private void OnDestroy()
     {
@@ -38,37 +30,54 @@ public class PauseMenu : MonoBehaviour
     }
     private void InitializeUIReferences()
     {
-        GameObject UI = GameObject.Find("General UI");
-        if (UI == null)
+        if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            return;
-        }
-        pauseMenuUI = UI.transform.Find("PauseMenu").gameObject;
-        GameObject buttons = pauseMenuUI.transform.Find("Buttons").gameObject;
-        Button resumeButton = buttons.transform.Find("ResumeButton").GetComponent<Button>();
-        Button restartButton = buttons.transform.Find("RestartButton").GetComponent<Button>();
-        Button menuButton = buttons.transform.Find("MenuButton").GetComponent<Button>();
+            GameObject UI = GameObject.Find("General UI");
+            if (UI == null)
+            {
+                return;
+            }
+            pauseMenuUI = UI.transform.Find("PauseMenu").gameObject;
+            GameObject buttons = pauseMenuUI.transform.Find("Buttons").gameObject;
+            Button resumeButton = buttons.transform.Find("ResumeButton").GetComponent<Button>();
+            Button restartButton = buttons.transform.Find("RestartButton").GetComponent<Button>();
+            Button menuButton = buttons.transform.Find("MenuButton").GetComponent<Button>();
 
-        //Gắn method cho onClick() các nút
-        if (resumeButton != null)
-        {
-            resumeButton.onClick.RemoveAllListeners();
-            resumeButton.onClick.AddListener(ResumeStage);
+            //Gắn method cho onClick() các nút
+            if (resumeButton != null)
+            {
+                resumeButton.onClick.RemoveAllListeners();
+                resumeButton.onClick.AddListener(ResumeStage);
+            }
+            if (restartButton != null)
+            {
+                restartButton.onClick.RemoveAllListeners();
+                restartButton.onClick.AddListener(RestartStage);
+            }
+            if (menuButton != null)
+            {
+                menuButton.onClick.RemoveAllListeners();
+                menuButton.onClick.AddListener(LoadMenu);
+            }
         }
-        if (restartButton != null)
+        else
         {
-            restartButton.onClick.RemoveAllListeners();
-            restartButton.onClick.AddListener(RestartStage);
-        }
-        if (menuButton != null)
-        {
-            menuButton.onClick.RemoveAllListeners();
-            menuButton.onClick.AddListener(LoadMenu);
+            pauseMenuUI = null;
         }
     }
     private void InitializeGameObjectReferences()
     {
-        player = FindAnyObjectByType<Player>();
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            gameTimer = FindAnyObjectByType<GameTimer>();
+            player = FindAnyObjectByType<Player>();
+        }
+        else
+        {
+            gameTimer = null;
+            player = null;
+        }
+            
     }
 
     // Update is called once per frame
@@ -77,13 +86,8 @@ public class PauseMenu : MonoBehaviour
         //Nhan ESC de tam dung
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (npcDialogue != null && npcDialogue.isInConversation)
-            {
-                // Nếu đang trong hội thoại, kết thúc nó
-                npcDialogue.EndConversation();
+            if (CheckTalking())
                 return;
-            }
-
             if (isPaused)
                 ResumeStage();
             else
@@ -95,6 +99,20 @@ public class PauseMenu : MonoBehaviour
                 PauseStage();
             }
         }
+    }
+    private bool CheckTalking()
+    {
+        List<NPCDialogue> NPCs = new List<NPCDialogue>(FindObjectsOfType<NPCDialogue>());
+        foreach (NPCDialogue npc in NPCs)
+        {
+            // Nếu đang trong hội thoại, kết thúc nó
+            if (npc.isInConversation)
+            {
+                npc.EndConversation();
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -169,9 +187,9 @@ public class PauseMenu : MonoBehaviour
     //Reset player and all health object
     private void ResetPlayer()
     {
-        player.GetComponent<SpriteRenderer>().enabled = true ;
+        player.GetComponent<SpriteRenderer>().enabled = true;
         player.GetComponent<PlayerAbilities>().ExitTower();
-        player.GetComponent<PlayerAbilities>().ExitCannon(Vector2.up , 0f);
+        player.GetComponent<PlayerAbilities>().ExitCannon(Vector2.up, 0f);
         player.GetComponent<PlayerAbilities>().ExitRobot();
         player.transform.parent = null;
         player.ResetPosition();
@@ -246,7 +264,7 @@ public class PauseMenu : MonoBehaviour
     private void ResetPlayerCannon()
     {
         List<PlayerCannon> playerCannons = new List<PlayerCannon>(FindObjectsOfType<PlayerCannon>());
-        foreach(PlayerCannon playerCannon in playerCannons)
+        foreach (PlayerCannon playerCannon in playerCannons)
         {
             playerCannon.FirePlayer(Vector2.up, 0f);
         }
@@ -265,7 +283,7 @@ public class PauseMenu : MonoBehaviour
         foreach (PushableBox pushableBox in pushableBoxes)
         {
             pushableBox.LoadStartPosition();
-        } 
+        }
     }
 
     //Reset trap

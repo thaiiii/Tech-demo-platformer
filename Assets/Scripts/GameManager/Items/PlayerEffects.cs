@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerEffects : MonoBehaviour
 {
@@ -8,18 +9,37 @@ public class PlayerEffects : MonoBehaviour
 
     public float speedRate = 1f;
     public float speedEffectDuration = 0f;
-    public float sizeUpValue = 0;
+    public float sizeUpValue = 1f;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            speedRate = 1f;
+            speedEffectDuration = 0f;
+            sizeUpValue = 1f;
+        }
+        else
+        {
+            StopAllCoroutines();
+        }
+    }
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     public void ApplyEffect(string effectName)
     {

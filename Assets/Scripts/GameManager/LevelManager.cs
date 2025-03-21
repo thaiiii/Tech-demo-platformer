@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     private GameTimer gameTimer;
     private GameStats gameStats;
     private LevelCompleteMenu levelCompleteMenu;
+    private InventoryManager inventoryManager;
 
     [Header("Level Buttons Canvas")]
     private Transform levelsContainer;
@@ -30,6 +31,7 @@ public class LevelManager : MonoBehaviour
         pauseMenu = GetComponent<PauseMenu>();
         gameTimer = GetComponent<GameTimer>();
         gameStats = GetComponent<GameStats>();
+        inventoryManager = GetComponent<InventoryManager>();
         levelCompleteMenu = GetComponent<LevelCompleteMenu>();
 
         SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
@@ -57,7 +59,9 @@ public class LevelManager : MonoBehaviour
             pauseMenu.enabled = false;
             gameTimer.enabled = false;
             levelCompleteMenu.enabled = false;
+            inventoryManager.enabled = false;   
             gameStats.enabled = false;
+
         }
         else
         {
@@ -65,6 +69,7 @@ public class LevelManager : MonoBehaviour
             pauseMenu.enabled = true;
             gameTimer.enabled = true;
             levelCompleteMenu.enabled = true;
+            inventoryManager.enabled = true;
             gameStats.enabled = true;
         }
     }
