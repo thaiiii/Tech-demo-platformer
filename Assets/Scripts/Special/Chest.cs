@@ -8,8 +8,9 @@ public class Chest : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Sprite chestOpenSprite;  // Sprite khi rương mở
     public Sprite chestClosedSprite; // Sprite khi rương đóng
-    private Collider2D detectionTrigger;
+    private bool isPlayerNearBy;
     private SpriteRenderer mark;
+    private PlayerAbilities player;
     private enum OpenType { Negative, Positive };
     [SerializeField] private OpenType openType;
 
@@ -24,24 +25,51 @@ public class Chest : MonoBehaviour
         mark = transform.Find("InteractionMark").GetComponent<SpriteRenderer>();
         mark.enabled = false;
         spriteRenderer = GetComponent<SpriteRenderer>();
-        detectionTrigger = transform.Find("DetectionTrigger").GetComponent<Collider2D>();
         item = transform.Find("ItemInside").GetComponent<ItemBase>();
         spriteRenderer.sprite = isOpened ? chestOpenSprite : chestClosedSprite;
     }
 
     private void Update()
     {
-        if (isOpened)
-            return;
-        if (detectionTrigger.IsTouchingLayers(LayerMask.GetMask("Player")))
+        if (player != null)
         {
-            mark.enabled = true;
-            if (openType == OpenType.Positive || openType == OpenType.Negative && Input.GetKeyDown(KeyCode.E))
-                OpenChest();
+            if (isOpened)
+            {
+                player.isNearChest = false;
+                player = null;
+                return;
+            }
+                
+            if (isPlayerNearBy)
+            {
+                mark.enabled = true;
+                player.isNearChest = true;
+                if (openType == OpenType.Positive || openType == OpenType.Negative && Input.GetKeyDown(KeyCode.E) && player.CanOpenChest())
+                    OpenChest();
+            }
+            else
+            {
+                mark.enabled = false;
+                player.isNearChest = false;
+                player = null;
+            }
         }
-        else
-            mark.enabled = false;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!isOpened)
+        {
+            isPlayerNearBy = true;
+            player = collision.GetComponent<PlayerAbilities>();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        isPlayerNearBy = false;
+    }
+
     private void OpenChest()
     {
         isOpened = true;

@@ -38,7 +38,7 @@ public class NPCDialogue : MonoBehaviour
                 player.isNearNPC = true;
                 if (!isInConversation)
                     interactionMark.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E) && player.CanTalkToNPC())
                 {
                     if (!isInConversation)
                         StartConversation();

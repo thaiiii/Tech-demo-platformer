@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6738103079648305916}
   - component: {fileID: 6804788682273072650}
   - component: {fileID: 1972351980606882552}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: PushableBox
   m_TagString: MassObject
   m_Icon: {fileID: 0}
@@ -100,6 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   savedPosition: {x: 0, y: 0, z: 0}
+  isInLowGravityZone: 0
+  rb: {fileID: 0}
 --- !u!61 &6804788682273072650
 BoxCollider2D:
   m_ObjectHideFlags: 0

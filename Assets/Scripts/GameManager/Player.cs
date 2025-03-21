@@ -33,12 +33,12 @@ public class Player : MonoBehaviour
 
     [Header("Ground")]
     [HideInInspector] public Transform groundCheckCollider;
-     public LayerMask groundLayer;
+    public LayerMask groundLayer;
     private float jumpPower = 20f;
     private bool isJumped;
     private bool coyoteJump;
     [SerializeField] private bool _isGrounded;
-    
+
     public bool isGrounded
     {
         get => _isGrounded;
@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
             gameTimer.StartTimer();
         }
 
-        
+
         // Kiểm tra xem người chơi có chạm vào block thường hay block kính
         isTouchingNormalWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, normalWallLayer);
         isTouchingGlassWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, glassWallLayer);
@@ -226,7 +226,10 @@ public class Player : MonoBehaviour
     }
     IEnumerator CoyoteJumpDelay()
     {
-        yield return new WaitForSeconds(0.3f);
+        if (!isJumped)
+            yield return new WaitForSeconds(0.3f);
+        else
+            yield return null;
         coyoteJump = false;
     }
 

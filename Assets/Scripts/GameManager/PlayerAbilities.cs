@@ -28,6 +28,7 @@ public class PlayerAbilities : MonoBehaviour
     [HideInInspector] public TeleportTower currentTower;
     [HideInInspector] public float teleportDelay = 0.5f;
     [HideInInspector] public Vector2 storedVelocity;
+    [SerializeField] private TeleportTower closestAvailableTower;
 
     [Header("Shooting")]
     [HideInInspector] public GameObject playerBulletPrefab;
@@ -73,7 +74,12 @@ public class PlayerAbilities : MonoBehaviour
     void Update()
     {
         CheckAbilityOrder();
+    }
 
+    private void CheckAbilityOrder()
+    {
+        if (!isSkillAvailable())
+            abilityOrder = -1;
         if (isNormalStatus())
         {
             HandleTeleport();
@@ -107,46 +113,54 @@ public class PlayerAbilities : MonoBehaviour
             }
         }
     }
-
-    private void CheckAbilityOrder()
-    {
+    private bool isSkillAvailable()
+    {   
         if (isNearChest)
         {
             abilityOrder = 1;
-            return;
+            return true;
         }
         if (isNearNPC)
         {
             abilityOrder = 2;
-            return;
+            return true;
         }
         if (isNearCannon)
         {
             abilityOrder = 3;
-            return;
+            return true;
         }
         if (isNearRobot)
         {
             abilityOrder = 4;
-            return;
+            return true;
         }
         if (GetClosestTower() != null || GetClosestTower() == null && currentTower != null)
         {
             abilityOrder = 5;
-            return;
+            return true;
         }
         if (FindClosestClone(swapControlRadius) != null)
         {
             abilityOrder = 6;
-            return;
+            return true;
         }
-        abilityOrder = -1;
+        return false;
     }
-
 
     #region Teleport
     private void HandleTeleport()
     {
+        // Nếu tìm được tower available gần nhất, bật availableMark của nó
+        if (closestAvailableTower != null)
+        {
+            if (abilityOrder == 5)
+                closestAvailableTower.availableMark.GetComponent<SpriteRenderer>().enabled = true;
+            else
+            {
+                closestAvailableTower.availableMark.GetComponent<SpriteRenderer>().enabled = false;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Space))
             ExitTower();
         if (isHidden)   //trc day ở Update
@@ -191,7 +205,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         //Lấy tất cả trụ trong tầm tele
         Collider2D[] towersInRange = Physics2D.OverlapCircleAll(transform.position, teleportRadius, towerLayer);
-        TeleportTower closestAvailableTower = null;
+        closestAvailableTower = null;
         float closestDistance = teleportRadius;
 
         // Lấy toàn bộ tower trong game
@@ -216,9 +230,7 @@ public class PlayerAbilities : MonoBehaviour
                 }
             }
         }
-        // Nếu tìm được tower available gần nhất, bật availableMark của nó
-        if (closestAvailableTower != null)
-            closestAvailableTower.availableMark.GetComponent<SpriteRenderer>().enabled = true;
+        
         return closestAvailableTower;
     }
     private void TryTeleportToTower(TeleportTower tower)
@@ -335,6 +347,10 @@ public class PlayerAbilities : MonoBehaviour
     {
         Instantiate(playerBulletPrefab, transform.position, transform.rotation);
     }
+    #endregion
+    #region Talking & OpenChest
+    public bool CanTalkToNPC() => (abilityOrder == 2);
+    public bool CanOpenChest() => (abilityOrder == 1);
     #endregion
 
     #endregion
