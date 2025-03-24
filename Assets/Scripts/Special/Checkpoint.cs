@@ -16,6 +16,7 @@ public class Checkpoint : MonoBehaviour
         {
             if (!isActivated)
             {
+                AudioManager.Instance.PlaySFX("checkpoint");
                 //Save time
                 SaveTime();
                 //Save info player

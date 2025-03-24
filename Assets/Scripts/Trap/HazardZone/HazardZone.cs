@@ -84,6 +84,8 @@ public class HazardZone : MonoBehaviour
         //Mất 1 lượng máu mỗi giây cho đến khi rời khỏi
         while (health.GetHealthSystem().currentHealth > 0 && health != null)
         {
+
+            AudioManager.Instance.PlaySFX("fire");
             health.TakeDamage(effectValue);
             yield return new WaitForSeconds(effectDuration);
         }
@@ -92,6 +94,8 @@ public class HazardZone : MonoBehaviour
     {   //Mất tổng (value) máu trong vòng (duration) giây, reset nếu vẫn trong tầm ảnh hưởng
         while (health.GetHealthSystem().currentHealth > 0 && health != null)
         {
+
+            AudioManager.Instance.PlaySFX("gas");
             health.ApplyDamageOverTime(effectValue / effectDuration, effectDuration);
             yield return new WaitForSeconds(effectDuration);
         }

@@ -21,7 +21,11 @@ public class PushableBox : MonoBehaviour
 
     public void LoadStartPosition()
     {
+        rb.velocity = Vector2.zero;
         transform.position = savedPosition;
+        GetComponent<SpriteRenderer>().enabled = true;
+        GetComponent<Collider2D>().isTrigger = false;
+        GetComponent<Rigidbody2D>().isKinematic = false;
     }
     
 }

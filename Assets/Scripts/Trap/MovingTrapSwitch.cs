@@ -12,6 +12,7 @@ public class MovingTrapSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
+            AudioManager.Instance.PlaySFX("switch");
             movingTrap.DisableMovingWithoutCountdown();
         }
     }
@@ -21,6 +22,7 @@ public class MovingTrapSwitch : MonoBehaviour
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
+            AudioManager.Instance.PlaySFX("switch");
             movingTrap.StartCountdownForMoving();
         }
     }

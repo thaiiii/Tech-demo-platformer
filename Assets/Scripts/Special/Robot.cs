@@ -147,6 +147,7 @@ public class Robot : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.Space))
             {
+                AudioManager.Instance.PlaySFX("robot_jump");
                 jumpUI.enabled = false;
                 float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, chargeTime / maxChargeTime);
                 rb.velocity = jumpDir.normalized * jumpForce;
@@ -250,6 +251,7 @@ public class Robot : MonoBehaviour
         rb.gravityScale = 0; // Tắt trọng lực để không bị rơi
         rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0); // Dash theo hướng hiện tại
 
+        AudioManager.Instance.PlaySFX("dash");
 
         yield return new WaitForSeconds(dashDuration); // Đợi Dash kết thúc
 

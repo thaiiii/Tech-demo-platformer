@@ -30,9 +30,12 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            HealthComponent healthComponent = collision.gameObject.GetComponent<HealthComponent>();
-            healthComponent.TakeDamage(bulletDamage);
-            Destroy(gameObject);
+            if (!collision.GetComponent<PlayerAbilities>().isHidden && type == BulletType.NORMAL || type == BulletType.SPECIAL)
+            {
+                HealthComponent healthComponent = collision.gameObject.GetComponent<HealthComponent>();
+                healthComponent.TakeDamage(bulletDamage);
+                Destroy(gameObject);
+            }
         }
         else if (collision.gameObject.CompareTag("Robot"))
         {

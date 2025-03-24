@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class InventoryUI : MonoBehaviour
 {
     public static InventoryUI Instance;
-
     private void Awake()
     {
         if (Instance == null)

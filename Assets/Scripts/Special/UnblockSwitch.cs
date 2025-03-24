@@ -12,6 +12,15 @@ public class UnblockSwitch : MonoBehaviour
     public List<string> applicableTags; // Các tag được phép di chuyển
     public Collider2D[] objectInside;
 
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (applicableTags.Contains(collision.gameObject.tag))
+        {
+            AudioManager.Instance.PlaySFX("switch");
+            Debug.Log("aaa");
+        }
+    }
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
@@ -31,6 +40,7 @@ public class UnblockSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag) && !isPermanent)
         {
+            AudioManager.Instance.PlaySFX("switch");
             StartCoroutine(ReappearBlocker());
         }
     }
@@ -38,7 +48,7 @@ public class UnblockSwitch : MonoBehaviour
     private IEnumerator ReappearBlocker()
     {
         yield return new WaitForSeconds(reappearDelay);
-
+        AudioManager.Instance.PlaySFX("block");
         //Kiểm tra va chạm trước khi bật lại
         Collider2D blockerCollider = blocker.GetComponent<Collider2D>();
         objectInside = Physics2D.OverlapBoxAll(
@@ -57,6 +67,9 @@ public class UnblockSwitch : MonoBehaviour
                 obj.GetComponent<SlimeClone>().KillClone();
             else if (obj.CompareTag("MassObject"))
             {
+                obj.GetComponent<SpriteRenderer>().enabled = false;
+                obj.GetComponent<Collider2D>().isTrigger = true;
+                obj.GetComponent<Rigidbody2D>().isKinematic = true;
             }
         }
 

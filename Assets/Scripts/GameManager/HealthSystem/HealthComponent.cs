@@ -22,7 +22,6 @@ public class HealthComponent : MonoBehaviour
         UpdateHealthUI();
         savedCurrentHealth = currentHealth;
     }
-
     public HealthSystem GetHealthSystem()
     {
         if (healthSystem == null)
@@ -40,6 +39,8 @@ public class HealthComponent : MonoBehaviour
     {
         if (!healthUI.enabled)
             healthUI.enabled = true;
+        if (currentHealth > 0)
+            AudioManager.Instance.PlaySFX("hit");
         healthSystem.TakeDamage(amount);
     }
     private void OnDeath()

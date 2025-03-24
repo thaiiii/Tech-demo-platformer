@@ -38,7 +38,6 @@ public class Player : MonoBehaviour
     private bool isJumped;
     private bool coyoteJump;
     [SerializeField] private bool _isGrounded;
-
     public bool isGrounded
     {
         get => _isGrounded;
@@ -149,6 +148,7 @@ public class Player : MonoBehaviour
 
                 // Thêm lực nhảy
                 rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+                AudioManager.Instance.PlaySFX("jump");
                 gameTimer.StartTimer();
             }
         }
@@ -182,7 +182,6 @@ public class Player : MonoBehaviour
         rb.AddForce(horizontalValue * speed * slipperyValue * Vector2.right);
     }
     public void SwitchUpdateHorizontalVelocity(bool value) => isShotHorizontally = !value;
-
     private bool CanInputControl()
     {
         if (FindObjectOfType<PauseMenu>().isPaused)
@@ -207,6 +206,7 @@ public class Player : MonoBehaviour
         {
             if (!isGrounded) // Nếu mới chạm đất
             {
+                AudioManager.Instance.PlaySFX("land");
                 isGrounded = true;
                 isJumped = false; // Cho phép nhảy lại
             }
@@ -232,9 +232,6 @@ public class Player : MonoBehaviour
             yield return null;
         coyoteJump = false;
     }
-
-
-
     #endregion
 
 
@@ -278,9 +275,7 @@ public class Player : MonoBehaviour
     {
         ResetPosition();
         LockMove(false);
-
     }
-
     #endregion
     private void OnDrawGizmosSelected()
     {

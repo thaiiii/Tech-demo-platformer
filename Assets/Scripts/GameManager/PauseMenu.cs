@@ -8,10 +8,11 @@ public class PauseMenu : MonoBehaviour
 {
     [Header("In Game")]
     public bool isPaused = false;
+    public bool isSettingsOpen = false;
     private GameObject pauseMenuUI;
     private Player player;
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
-
+    private GameObject settingsPanel;
 
     #region Stage
     private void Awake()
@@ -38,10 +39,12 @@ public class PauseMenu : MonoBehaviour
                 return;
             }
             pauseMenuUI = UI.transform.Find("PauseMenu").gameObject;
+            settingsPanel = UI.transform.Find("SettingsPanel").gameObject;
             GameObject buttons = pauseMenuUI.transform.Find("Buttons").gameObject;
             Button resumeButton = buttons.transform.Find("ResumeButton").GetComponent<Button>();
             Button restartButton = buttons.transform.Find("RestartButton").GetComponent<Button>();
             Button menuButton = buttons.transform.Find("MenuButton").GetComponent<Button>();
+            Button settingsButton = buttons.transform.Find("SettingsButton").GetComponent<Button>();
 
             //Gắn method cho onClick() các nút
             if (resumeButton != null)
@@ -58,6 +61,11 @@ public class PauseMenu : MonoBehaviour
             {
                 menuButton.onClick.RemoveAllListeners();
                 menuButton.onClick.AddListener(LoadMenu);
+            }
+            if (settingsButton != null)
+            {
+                settingsButton.onClick.RemoveAllListeners();
+                settingsButton.onClick.AddListener(ToogleSettingsFromPause);
             }
         }
         else
@@ -88,8 +96,16 @@ public class PauseMenu : MonoBehaviour
         {
             if (CheckTalking())
                 return;
+            if (isSettingsOpen)
+            {
+                ToogleSettingsFromPause();
+                return;
+            }
             if (isPaused)
+            {
                 ResumeStage();
+                return;
+            }
             else
             {
                 //Các trường hợp ko thể pause
@@ -184,6 +200,13 @@ public class PauseMenu : MonoBehaviour
         ResetAllHealthObject();
 
     }
+    public void ToogleSettingsFromPause()
+    {
+        pauseMenuUI.SetActive(!pauseMenuUI.activeSelf);        // Ẩn PauseMenu
+        settingsPanel.SetActive(!settingsPanel.activeSelf);       // Hiện SettingsPanel
+        isSettingsOpen = settingsPanel.activeSelf;
+    }
+    
     //Reset player and all health object
     private void ResetPlayer()
     {

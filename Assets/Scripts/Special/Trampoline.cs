@@ -26,6 +26,7 @@ public class Trampoline : MonoBehaviour
 
             // Kích hoạt animation nhún xuống
             animator.SetTrigger("Bounce");
+            AudioManager.Instance.PlaySFX("trampoline");
             Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
             if (boostAngle != transform.rotation.eulerAngles.z)
                 boostAngle = transform.rotation.eulerAngles.z;

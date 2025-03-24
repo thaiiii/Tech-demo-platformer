@@ -16,7 +16,8 @@ public class StorableItem : ItemBase
             return;
         
         if (!inventoryManager.isFull)
-        {   
+        {
+            AudioManager.Instance.PlaySFX("pickup_item");
             inventoryManager.AddItem(GetComponent<SpriteRenderer>().sprite, itemName, quantity, isCounted);
             isPicked = true;
             spriteRenderer.enabled = false;

@@ -27,6 +27,7 @@ public class ConsumableItem : ItemBase
         }
         
         FindFirstObjectByType<PlayerEffects>().ApplyEffect(itemName);
+        AudioManager.Instance.PlaySFX("pickup_item");
         isPicked = true;
         this.spriteRenderer.enabled = false;
     }

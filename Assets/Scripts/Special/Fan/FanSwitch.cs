@@ -16,6 +16,7 @@ public class FanSwitch : MonoBehaviour
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             objectsOnSwitch++;
+            AudioManager.Instance.PlaySFX("switch");
             if (fan != null)
             {
                 fan.EnableFan();
@@ -35,6 +36,7 @@ public class FanSwitch : MonoBehaviour
             if (applicableTags.Contains(collision.gameObject.tag))
             {
                 objectsOnSwitch--;
+                AudioManager.Instance.PlaySFX("switch");
                 if (objectsOnSwitch <= 0 && fan != null)
                 {
                     turnOffCoroutine = StartCoroutine(TurnOffFanAfterDelay());

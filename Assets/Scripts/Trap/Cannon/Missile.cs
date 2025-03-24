@@ -2,8 +2,8 @@
 
 public class Missile : MonoBehaviour
 {
-    public float speed = 10f;
-    public float turnSpeed = 5f; // tốc độ bẻ hướng, có thể điều chỉnh được
+    public float speed = 12f;
+    public float turnSpeed = 3f; // tốc độ bẻ hướng, có thể điều chỉnh được
     
 
     public Transform target;
@@ -43,26 +43,22 @@ public class Missile : MonoBehaviour
         else if (collision.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<Enemy>().KillEnemy();
-            Destroy(gameObject);
         }
         else if (collision.CompareTag("SlimeClone"))
         {
             collision.gameObject.GetComponent<SlimeClone>().KillClone();
-            Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Robot"))
         {
             collision.gameObject.GetComponent<HealthComponent>().TakeDamage(collision.gameObject.GetComponent<HealthComponent>().maxHealth / 2f);
-            Destroy(gameObject);
+
         }
         else if (collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<PlayerDeath>().KillPlayer();
-            Destroy(gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
+        AudioManager.Instance.PlaySFX("explosion");
+        Destroy(gameObject);
     }
 }

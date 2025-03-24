@@ -244,6 +244,7 @@ public class PlayerAbilities : MonoBehaviour
         if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_TELEPORT) //Kiểm tra nếu tower teleport khả dụng
         {
             gameTimer.StartTimer();
+            AudioManager.Instance.PlaySFX("enter");
             //Lưu lại vận tốc trước khi teleport
             storedVelocity = rb.velocity;
 
@@ -267,6 +268,7 @@ public class PlayerAbilities : MonoBehaviour
         if (tower != null && tower.isAvailable && tower.type == TeleportTower.TowerType.TYPE_SWAP) //Kiểm tra nếu tower swap khả dụng
         {
             gameTimer.StartTimer();
+            AudioManager.Instance.PlaySFX("swap");
             if (!isHidden)
             {
                 Vector3 tempPos = transform.position;
@@ -304,6 +306,7 @@ public class PlayerAbilities : MonoBehaviour
             currentTower = null;
 
             // Khôi phục vận tốc trước khi teleport
+            AudioManager.Instance.PlaySFX("enter");
             rb.velocity = storedVelocity;
         }
     }
@@ -342,16 +345,13 @@ public class PlayerAbilities : MonoBehaviour
             return false;
         return true;
     }
-    #region Shooting
     private void PlayerShoot()
     {
+        AudioManager.Instance.PlaySFX("shoot");
         Instantiate(playerBulletPrefab, transform.position, transform.rotation);
     }
-    #endregion
-    #region Talking & OpenChest
     public bool CanTalkToNPC() => (abilityOrder == 2);
     public bool CanOpenChest() => (abilityOrder == 1);
-    #endregion
 
     #endregion
 
@@ -384,6 +384,7 @@ public class PlayerAbilities : MonoBehaviour
         // Tạo và cấu hình bản sao của người chơi
         rb.AddForce(Vector2.up);
         GameObject clone = Instantiate(slimeClonePrefab, transform.position - new Vector3(0, 0.25f, 0), Quaternion.identity);
+        AudioManager.Instance.PlaySFX("split");
         if (transform.localScale.x < 0)
             clone.transform.localScale = new Vector3(
                 -Mathf.Abs(clone.transform.localScale.x),
@@ -429,6 +430,7 @@ public class PlayerAbilities : MonoBehaviour
             return;
 
         gameTimer.StartTimer();
+        AudioManager.Instance.PlaySFX("swap");
         //Doi vi tri
         Vector3 tempPosision = transform.position;
         transform.position = closestClone.transform.position;
@@ -468,6 +470,7 @@ public class PlayerAbilities : MonoBehaviour
             {
                 gameTimer.StartTimer();
                 inventoryManager.AddItem(slot.itemSprite, slot.itemName, cloneSlime, slot.isCounted);
+                AudioManager.Instance.PlaySFX("absorb");
                 Destroy(closestClone.gameObject);
                 return;
             }
@@ -511,11 +514,11 @@ public class PlayerAbilities : MonoBehaviour
     #region Cannon
     public void EnterCannon(Vector3 cannonPosition)
     {
-        gameTimer.StartTimer();
+        
         if (!isNormalStatus())
-        {
             return;
-        }
+        gameTimer.StartTimer();
+        AudioManager.Instance.PlaySFX("enter");
         rb.velocity = Vector2.zero;
         transform.position = cannonPosition;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -526,6 +529,7 @@ public class PlayerAbilities : MonoBehaviour
     }
     public void ExitCannon(Vector2 shootDirection, float shootForce)
     {
+        AudioManager.Instance.PlaySFX("cannon_shoot");
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         isHidden = false;
         GetComponent<Collider2D>().isTrigger = false;
@@ -567,6 +571,8 @@ public class PlayerAbilities : MonoBehaviour
     {
         if (currentRobot == null)
             return;
+
+        AudioManager.Instance.PlaySFX("robot_quit");
         // Tắt điều khiển robot
         currentRobot.SetControlled(false);
         currentRobot.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
@@ -611,7 +617,7 @@ public class PlayerAbilities : MonoBehaviour
         if (isNormalStatus())
         {
             gameTimer.StartTimer();
-
+            AudioManager.Instance.PlaySFX("robot_boot");
             //setting người chơi
             GetComponent<Player>().LockMove(false);
             currentRobot = robot;
