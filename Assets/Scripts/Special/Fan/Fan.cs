@@ -18,8 +18,6 @@ public class Fan : MonoBehaviour
     {
         savedPosition = transform.position;
         animator = GetComponent<Animator>();
-        if (!isFanActivated)
-            DisableFan();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -37,6 +35,8 @@ public class Fan : MonoBehaviour
 
     public void EnableFan()
     {
+        if (!isFanActivated)
+            AudioManager.Instance.PlayStopableSFX("fan");
         isFanActivated = true;
         animator.SetBool("isFanActivated", true);
     }
@@ -45,6 +45,7 @@ public class Fan : MonoBehaviour
     {
         isFanActivated = false;
         animator.SetBool("isFanActivated", false);
+        AudioManager.Instance.StopSFX("fan");
     }
 
     public void ResetFan()

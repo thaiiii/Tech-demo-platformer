@@ -18,7 +18,6 @@ public class UnblockSwitch : MonoBehaviour
         if (applicableTags.Contains(collision.gameObject.tag))
         {
             AudioManager.Instance.PlaySFX("switch");
-            Debug.Log("aaa");
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
@@ -40,7 +39,6 @@ public class UnblockSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag) && !isPermanent)
         {
-            AudioManager.Instance.PlaySFX("switch");
             StartCoroutine(ReappearBlocker());
         }
     }

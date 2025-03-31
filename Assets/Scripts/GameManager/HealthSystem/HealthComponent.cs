@@ -12,6 +12,8 @@ public class HealthComponent : MonoBehaviour
     private HealthSystem healthSystem;
     public float currentHealth;
     public float savedCurrentHealth;
+
+    private SpriteRenderer spriteRenderer;
     // Start is called before the first frame update
     void Awake()
     {
@@ -21,6 +23,8 @@ public class HealthComponent : MonoBehaviour
         currentHealth = healthSystem.currentHealth;
         UpdateHealthUI();
         savedCurrentHealth = currentHealth;
+    
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     public HealthSystem GetHealthSystem()
     {
@@ -40,7 +44,12 @@ public class HealthComponent : MonoBehaviour
         if (!healthUI.enabled)
             healthUI.enabled = true;
         if (currentHealth > 0)
+        {
             AudioManager.Instance.PlaySFX("hit");
+            StartCoroutine(FlashRedEffect());
+            if (gameObject.CompareTag("Player"))
+                StartCoroutine(ScreenShake(0.2f, 0.3f));
+        }
         healthSystem.TakeDamage(amount);
     }
     private void OnDeath()
@@ -69,4 +78,31 @@ public class HealthComponent : MonoBehaviour
     {
         return healthSystem.IsDead();
     }
+
+    #region Effect
+    private IEnumerator FlashRedEffect()
+    {
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+        spriteRenderer.color = Color.white;
+    }
+    public IEnumerator ScreenShake(float duration, float magnitude)
+    {
+        Vector3 originalPosition = Camera.main.transform.position;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+
+            Camera.main.transform.position = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        Camera.main.transform.position = originalPosition;
+    }
+    #endregion
 }

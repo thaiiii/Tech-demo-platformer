@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,11 +10,13 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     public AudioSource bgmSource;
     public AudioSource sfxSource;
+    private AudioSource stopableSfxSource;
 
     [Header("Audio Clips")]
     public List<AudioClip> sfxClips;
 
     private Dictionary<string, AudioClip> sfxDict = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioSource> activeStopableSFX = new Dictionary<string, AudioSource>();
     void Awake()
     {
         if (Instance == null)
@@ -56,13 +58,26 @@ public class AudioManager : MonoBehaviour
         }
         else
             Debug.Log($"SFX {sfxName} not found");
+    }
+    public void PlayStopableSFX(string sfxName)
+    {
+        if (sfxDict.TryGetValue(sfxName, out AudioClip clip))
+        {
+            GameObject sfxObject = new GameObject($"SFX_{sfxName}");
+            AudioSource newSource = sfxObject.AddComponent<AudioSource>(); // Tạo AudioSource mới
+            newSource.clip = clip;
+            newSource.Play();
+            activeStopableSFX[sfxName] = newSource;
+            Destroy(sfxObject, clip.length); // Tự hủy sau khi phát xong
         }
-
-
-
-
-
-
-
-
+    }
+    public void StopSFX(string sfxName)
+    {
+        if (activeStopableSFX.TryGetValue(sfxName, out AudioSource source))
+        {
+            source.Stop();
+            Destroy(source.gameObject); // Hủy GameObject chứa AudioSource
+            activeStopableSFX.Remove(sfxName);
+        }
+    }
 }

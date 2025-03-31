@@ -36,15 +36,22 @@ public class BreakableTileManager : MonoBehaviour
         if (playerTransform == null || playerCollider == null) return;
 
         // Lấy vị trí chính xác của chân người chơi
-        Vector3 feetPosition = new Vector3(playerTransform.position.x, playerCollider.bounds.min.y - 0.1f, 0);
+        Vector3 frontPosition = new Vector3(playerTransform.position.x + playerCollider.bounds.size.x /2f , playerCollider.bounds.min.y - 0.1f, 0);
+        Vector3 backPosition = new Vector3(playerTransform.position.x - playerCollider.bounds.size.x /2f , playerCollider.bounds.min.y - 0.1f, 0);
 
         // Chuyển vị trí chân về tọa độ trong tilemap
-        Vector3Int tilePos = tilemap.WorldToCell(feetPosition);
+        Vector3Int frontTilePos = tilemap.WorldToCell(frontPosition);
+        Vector3Int backTilePos = tilemap.WorldToCell(backPosition);
         // Nếu tile có tồn tại và chưa trong danh sách vỡ thì bắt đầu quá trình
-        if (tilemap.HasTile(tilePos) && !breakingTiles.ContainsKey(tilePos))
+        if (tilemap.HasTile(frontTilePos) && !breakingTiles.ContainsKey(frontTilePos))
         {
-            Coroutine coroutine = StartCoroutine(BreakTile(tilePos));
-            breakingTiles[tilePos] = coroutine;
+            Coroutine coroutine = StartCoroutine(BreakTile(frontTilePos));
+            breakingTiles[frontTilePos] = coroutine;
+        } 
+        if (tilemap.HasTile(backTilePos) && !breakingTiles.ContainsKey(backTilePos))
+        {
+            Coroutine coroutine = StartCoroutine(BreakTile(backTilePos));
+            breakingTiles[backTilePos] = coroutine;
         }
     }
 

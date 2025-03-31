@@ -1,13 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Missile : MonoBehaviour
 {
     public float speed = 12f;
     public float turnSpeed = 3f; // tốc độ bẻ hướng, có thể điều chỉnh được
-    
+    private CameraFollow cameraFollow;
 
     public Transform target;
 
+    private void Start()
+    {
+        cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+    }
     void Update()
     {
         if (target != null)
@@ -59,6 +64,9 @@ public class Missile : MonoBehaviour
         }
 
         AudioManager.Instance.PlaySFX("explosion");
+        if (CameraShake.Instance != null)
+            CameraShake.Instance.Shake(10f, 0.25f); // Độ rung: 3, thời gian: 0.25 giây
         Destroy(gameObject);
     }
+    
 }

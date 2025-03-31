@@ -19,7 +19,7 @@ public class LaserEmitter : MonoBehaviour
     private PlayerDeath playerDeath;
     private Coroutine countdownCoroutine;
 
-
+    public bool canMakeSound = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +39,10 @@ public class LaserEmitter : MonoBehaviour
         }
          
     }
-
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
     private void UpdateLaserBeam()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, maxLaserLength, obstacleLayers);
@@ -77,10 +80,6 @@ public class LaserEmitter : MonoBehaviour
     
     
     }
-
-   
-
-
     public void DisableLaserWithoutCountdown()
     {
         laserBeam.enabled = false;
@@ -109,7 +108,8 @@ public class LaserEmitter : MonoBehaviour
         yield return new WaitForSeconds(disableDuration);
         isLaserActivate = true;
         laserBeam.enabled = true;
-
+        if (canMakeSound)
+            AudioManager.Instance.PlaySFX("laser");
     }
 
     public void LoadSavedEmitterStatus()

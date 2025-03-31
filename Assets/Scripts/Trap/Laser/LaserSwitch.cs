@@ -8,6 +8,10 @@ public class LaserSwitch : MonoBehaviour
     public LaserEmitter laserEmitter;
     public List<string> applicableTags;
 
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
@@ -29,8 +33,6 @@ public class LaserSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
-            if (switchSound)
-                AudioManager.Instance.PlaySFX("switch");
             // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
             laserEmitter.StartCountdownForLaser();
         }

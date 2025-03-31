@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class NPCDialogue : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class NPCDialogue : MonoBehaviour
 
     private bool isPlayerNearby = false; // Kiểm tra người chơi đã đến gần chưa
     public bool isInConversation = false; // Trạng thái hội thoại
+    private bool canProceed = true;
 
     public float interactionDistance = 2f; // Khoảng cách tương tác
 
@@ -38,7 +40,7 @@ public class NPCDialogue : MonoBehaviour
                 player.isNearNPC = true;
                 if (!isInConversation)
                     interactionMark.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E) && player.CanTalkToNPC())
+                if (Input.GetKeyDown(KeyCode.E) && player.CanTalkToNPC() && canProceed)
                 {
                     if (!isInConversation)
                         StartConversation();
@@ -68,6 +70,8 @@ public class NPCDialogue : MonoBehaviour
 
     private void StartConversation()
     {
+        StartCoroutine(DelayNextDialog());
+        AudioManager.Instance.PlaySFX("mumble");
         if (player.transform.position.x < transform.position.x)
         {
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
@@ -100,11 +104,14 @@ public class NPCDialogue : MonoBehaviour
     }
     private void NextDialogue()
     {
+        StartCoroutine(DelayNextDialog());
+        AudioManager.Instance.PlaySFX("mumble");
         currentDialogueIndex++;
         if (currentDialogueIndex < dialogues.Length)
             ShowDialogue();
         else
             EndConversation();
+        
     }
     public void EndConversation()
     {
@@ -120,4 +127,10 @@ public class NPCDialogue : MonoBehaviour
         player.GetComponent<Player>().UnlockMove(true); // Kích hoạt lại di chuyển
     }
     private void ShowDialogue() => dialogueText.text = dialogues[currentDialogueIndex];
+    IEnumerator DelayNextDialog()
+    {
+        canProceed = false;
+        yield return new WaitForSeconds(1.1f);
+        canProceed = true;
+    }
 }

@@ -15,6 +15,7 @@ public class LevelGoal : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            AudioManager.Instance.PlaySFX("victory");
             levelCompleteMenu.CompleteLevel();
         }
     }

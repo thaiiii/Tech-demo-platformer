@@ -21,7 +21,6 @@ public class CannonSwitch : MonoBehaviour
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
-            AudioManager.Instance.PlaySFX("switch");
             // Khi người chơi rời khỏi Switch, bắt đầu đếm ngược
             cannon.StartCountdownForCannon();
         }
