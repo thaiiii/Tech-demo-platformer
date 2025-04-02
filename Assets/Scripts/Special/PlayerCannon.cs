@@ -1,7 +1,7 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class PlayerCannon : MonoBehaviour
 {
@@ -26,14 +26,23 @@ public class PlayerCannon : MonoBehaviour
     [Header("Camera")]
     public Vector3 cannonCameraOffset;
     private Vector3 originalCameraOffset;
-    private CameraFollow cameraFollow;
-    
-
+    private CinemachineVirtualCamera virtualCamera;
+    private CinemachineFramingTransposer transposer;
     private void Start()
     {
-        cameraFollow = Camera.main.GetComponent<CameraFollow>();
-        originalCameraOffset = cameraFollow.offset;
-        cannonCameraOffset = originalCameraOffset;
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>(); // Tìm camera
+        if (virtualCamera != null)
+        {
+            transposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+            if (transposer != null)
+            {
+                originalCameraOffset = new Vector3(
+                transposer.m_TrackedObjectOffset.x,
+                transposer.m_TrackedObjectOffset.y,
+                -10f // Hoặc giá trị Z bạn muốn giữ cố định
+            );
+            }
+        }
     }
     void Update()
     {
@@ -128,23 +137,46 @@ public class PlayerCannon : MonoBehaviour
     }
     private void SetCamera()
     {
+        if (virtualCamera == null) return; // Kiểm tra nếu camera không tồn tại
+        if (transposer == null) return;
+
+
         if (isPlayerInside)
         {
-            
             if (force / 2 > 7.5)
             {
-                cameraFollow.SetCameraOffset(cannonCameraOffset * force /2);
-                cameraFollow.SetCameraSize(force / 2, 0f);
+                transposer.m_TrackedObjectOffset = cannonCameraOffset * (force / 2); // Thay đổi offset
+                SetCameraSize(force / 2, 0f);
                 
             }
         }
         else
         {
-            cameraFollow.SetCameraSize(7.5f, 1f);
-            cameraFollow.SetCameraOffset(originalCameraOffset);
+            SetCameraSize(7.5f, 1f);
+            transposer.m_TrackedObjectOffset = originalCameraOffset;
         }
     }
+    private void SetCameraSize(float targetSize, float duration)
+    {
+        if (virtualCamera != null)
+        {
+            StartCoroutine(SmoothZoom(targetSize, duration));
+        }
+    }
+    private IEnumerator SmoothZoom(float targetSize, float duration)
+    {
+        float startSize = virtualCamera.m_Lens.OrthographicSize;
+        float elapsedTime = 0f;
 
+        while (elapsedTime < duration)
+        {
+            virtualCamera.m_Lens.OrthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        virtualCamera.m_Lens.OrthographicSize = targetSize; // Đảm bảo set đúng size cuối cùng
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

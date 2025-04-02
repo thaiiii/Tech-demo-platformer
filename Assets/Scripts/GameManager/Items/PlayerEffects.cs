@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
 public class PlayerEffects : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerEffects : MonoBehaviour
     public float speedRate = 1f;
     public float speedEffectDuration = 0f;
     public float sizeUpValue = 1f;
+    private CinemachineVirtualCamera virtualCamera;
 
     private void Awake()
     {
@@ -31,6 +33,7 @@ public class PlayerEffects : MonoBehaviour
             speedRate = 1f;
             speedEffectDuration = 0f;
             sizeUpValue = 1f;
+            virtualCamera = FindObjectOfType<CinemachineVirtualCamera>(); // Tìm Cinemachine Camera
         }
         else
         {
@@ -100,17 +103,17 @@ public class PlayerEffects : MonoBehaviour
     }
     private IEnumerator SmoothZoom(float targetSize, float duration)
     {
-        float startSize = Camera.main.orthographicSize;
+        float startSize = virtualCamera.m_Lens.OrthographicSize;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
         {
-            Camera.main.orthographicSize = Mathf.Lerp(startSize, startSize * sizeUpValue, elapsedTime / duration);
+            virtualCamera.m_Lens.OrthographicSize = Mathf.Lerp(startSize, startSize * sizeUpValue, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        Camera.main.orthographicSize = startSize * sizeUpValue;
+        virtualCamera.m_Lens.OrthographicSize = startSize * sizeUpValue;
     }
    
 

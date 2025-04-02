@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using static Bullet;
+using Cinemachine;
 using static Enemy;
 
 public class PlayerDeath : MonoBehaviour
 {
-    private Camera m_camera;
     private GameObject gameManager;
+    private CinemachineVirtualCamera virtualCamera;
 
     [Header("Death UI")]
     private GameObject UI;
@@ -19,9 +19,9 @@ public class PlayerDeath : MonoBehaviour
 
     private void Awake()
     {
-        m_camera = FindObjectOfType<Camera>();
         gameManager = FindObjectOfType<PauseMenu>().gameObject;
         playerAbilities = gameObject.GetComponent<PlayerAbilities>();
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>(); // Tìm Cinemachine Camera
 
         // Tìm trong Scene các thành phần UI
         UI = GameObject.Find("General UI");
@@ -71,7 +71,7 @@ public class PlayerDeath : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().enabled = false;
             // Xử lý cái chết của người chơi, ví dụ: hiển thị hiệu ứng, tải lại màn chơi
-            m_camera.GetComponent<CameraFollow>().isFollowing = false;
+            virtualCamera.Follow = null;
             //Nếu isHidden = true, gọi ExitTower, bỏ hết Parent
             if (playerAbilities.isHidden)
                 playerAbilities.ExitTower();
@@ -102,7 +102,7 @@ public class PlayerDeath : MonoBehaviour
         isDead = false;
 
         FindAnyObjectByType<PauseMenu>().RestartStage();
-        m_camera.GetComponent<CameraFollow>().isFollowing = true;
+        virtualCamera.Follow = transform;
 
     }
 

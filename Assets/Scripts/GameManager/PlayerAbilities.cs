@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 using static InventoryManager;
 
 public class PlayerAbilities : MonoBehaviour
@@ -11,6 +12,7 @@ public class PlayerAbilities : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private HealthComponent healthComponent;
     private GameTimer gameTimer;
+    private CinemachineVirtualCamera virtualCamera;
 
     //Thứ tự kỹ năng 
     //1: Mở rương
@@ -65,6 +67,7 @@ public class PlayerAbilities : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         healthComponent = GetComponent<HealthComponent>();
         gameTimer = FindObjectOfType<GameTimer>();
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>(); // Tìm Cinemachine Camera
     }
     private void Start()
     {
@@ -586,7 +589,7 @@ public class PlayerAbilities : MonoBehaviour
         playerCollider.enabled = true;                                     //Bat collider
         GetComponent<Player>().UnlockMove(true);
         healthComponent.SetInvincible(false);
-        Camera.main.GetComponent<CameraFollow>().SetFollowTarget(gameObject);
+        virtualCamera.Follow = transform;
 
         // Đưa người chơi ra khỏi vị trí của robot (xa hơn để tránh va chạm)
         Vector3 exitPosition = currentRobot.transform.position + Vector3.up * 2f;
@@ -634,7 +637,7 @@ public class PlayerAbilities : MonoBehaviour
             //Setting của robot
             currentRobot.SetControlled(true);
             currentRobot.ToggleRobotPhysics(false);
-            Camera.main.GetComponent<CameraFollow>().SetFollowTarget(currentRobot.gameObject);
+            virtualCamera.Follow = currentRobot.transform;
         }
     }
     #endregion

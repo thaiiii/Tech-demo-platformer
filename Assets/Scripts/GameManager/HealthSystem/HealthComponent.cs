@@ -47,8 +47,6 @@ public class HealthComponent : MonoBehaviour
         {
             AudioManager.Instance.PlaySFX("hit");
             StartCoroutine(FlashRedEffect());
-            if (gameObject.CompareTag("Player"))
-                StartCoroutine(ScreenShake(0.2f, 0.3f));
         }
         healthSystem.TakeDamage(amount);
     }
@@ -85,24 +83,6 @@ public class HealthComponent : MonoBehaviour
         spriteRenderer.color = Color.red;
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.color = Color.white;
-    }
-    public IEnumerator ScreenShake(float duration, float magnitude)
-    {
-        Vector3 originalPosition = Camera.main.transform.position;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            float x = Random.Range(-1f, 1f) * magnitude;
-            float y = Random.Range(-1f, 1f) * magnitude;
-
-            Camera.main.transform.position = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
-            elapsed += Time.deltaTime;
-
-            yield return null;
-        }
-
-        Camera.main.transform.position = originalPosition;
     }
     #endregion
 }

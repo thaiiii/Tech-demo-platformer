@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
+using Cinemachine;
 
 public class Robot : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public class Robot : MonoBehaviour
     private HealthComponent health;
     public PlayerAbilities playerAbilities;
     public LayerMask groundLayer;
-    private CameraFollow cameraFollow;
+    private CinemachineVirtualCamera virtualCamera;
 
     [Header("Save info")]//Saved info
     [SerializeField] private bool savedDestroyStatus;
@@ -48,7 +49,7 @@ public class Robot : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         health = GetComponent<HealthComponent>();
         health.GetHealthSystem();
-        cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>(); // Tìm Cinemachine Camera
 
         //First save info
         restartPosition = transform.position;
@@ -237,7 +238,7 @@ public class Robot : MonoBehaviour
     private IEnumerator Dash()
     {
         Vector2 lastVelocity = rb.velocity;
-        float originalSmoothFactor = cameraFollow.smoothFactor;
+        //float originalSmoothFactor = cameraFollow.smoothFactor;
 
         if (Time.time - lastDashTime < dashCooldown) yield break; // Chặn nếu chưa hồi chiêu
 
@@ -246,7 +247,7 @@ public class Robot : MonoBehaviour
         canMove = false;
         lastDashTime = Time.time;
 
-        cameraFollow.SetSmoothFactor(dashSpeed / robotSpeed * originalSmoothFactor);
+        //cameraFollow.SetSmoothFactor(dashSpeed / robotSpeed * originalSmoothFactor);
         originalGravity = rb.gravityScale; // Lưu trọng lực cũ
         rb.gravityScale = 0; // Tắt trọng lực để không bị rơi
         rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0); // Dash theo hướng hiện tại
@@ -255,7 +256,7 @@ public class Robot : MonoBehaviour
 
         yield return new WaitForSeconds(dashDuration); // Đợi Dash kết thúc
 
-        cameraFollow.SetSmoothFactor(originalSmoothFactor);
+        //cameraFollow.SetSmoothFactor(originalSmoothFactor);
         rb.velocity = Vector2.zero;
         rb.velocity = lastVelocity;
         rb.gravityScale = originalGravity; // Khôi phục trọng lực
@@ -268,7 +269,7 @@ public class Robot : MonoBehaviour
     {
         if (!playerAbilities.isNormalStatus())
             return;
-        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize + 1, 1f);
+        SetCameraSize(virtualCamera.m_Lens.OrthographicSize + 1f, 1f);
         healthUI.enabled = true;
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = false;
         playerAbilities.EnterRobot(this);
@@ -281,7 +282,7 @@ public class Robot : MonoBehaviour
         playerAbilities.GetComponent<HealthComponent>().healthUI.enabled = true;
         healthUI.enabled = false;
         jumpUI.enabled = false;
-        cameraFollow.SetCameraSize(cameraFollow.GetComponent<Camera>().orthographicSize - 1, 1f);
+        SetCameraSize(virtualCamera.m_Lens.OrthographicSize - 1f, 1f);
 
         chargeTime = 0f;
         isControlled = false;
@@ -297,15 +298,8 @@ public class Robot : MonoBehaviour
         else
             StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
-    private void SetCamera()
-    {
-        if (chargeTime > 0)
-        {
-            cameraFollow.SetCameraSize(8.5f * (1 + chargeTime/maxChargeTime/2), 0);
-        }
-        else
-            cameraFollow.SetCameraSize(8.5f, 0.2f);
-    }
+
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -333,9 +327,46 @@ public class Robot : MonoBehaviour
             }
         }
     }
+
+    private void SetCameraSize(float targetSize, float duration)
+    {
+        if (virtualCamera != null)
+        {
+            StartCoroutine(SmoothZoom( targetSize, duration));
+        }
+    }
+    private IEnumerator SmoothZoom(float targetSize, float duration)
+    {
+        float startSize = virtualCamera.m_Lens.OrthographicSize;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            virtualCamera.m_Lens.OrthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        virtualCamera.m_Lens.OrthographicSize = targetSize; // Đảm bảo set đúng size cuối cùng
+    }
+    private void SetCamera()
+    {
+        if (chargeTime > 0)
+        {
+            SetCameraSize((virtualCamera.m_Lens.OrthographicSize + 1) * (1 + chargeTime / maxChargeTime / 2), 0);
+        }
+        else
+        {
+            SetCameraSize(virtualCamera.m_Lens.OrthographicSize + 1, 0.2f);
+        }
+    }
+
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawCube(groundCheck.position, new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f));
     }
+
+
 }
