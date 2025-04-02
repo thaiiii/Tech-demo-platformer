@@ -297,7 +297,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 20
+  m_Mass: 70
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 5
@@ -330,11 +330,9 @@ MonoBehaviour:
   - Enemy
   - SlimeClone
   forceDirection: {x: 0, y: 1, z: 0}
-  isFanActivated: 1
-  disablePermanently: 0
-  disableDuration: 3
   baseForce: 10
-  savedActivationStatus: 1
+  isFanActivated: 1
+  savedPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &4956198124716255214
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,3 +515,4 @@ MonoBehaviour:
   - MassObject
   - Enemy
   - SlimeClone
+  switchOffDelay: 3

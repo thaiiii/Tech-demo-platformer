@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279747819412b31418d84154a952595f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchSound: 1
   laserEmitter: {fileID: 2146555507994513055}
   applicableTags:
   - Player
@@ -258,6 +259,7 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 323265
+  canMakeSound: 1
 --- !u!120 &6619787400444135872
 LineRenderer:
   serializedVersion: 2

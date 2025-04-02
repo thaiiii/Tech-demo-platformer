@@ -325,18 +325,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bbab04eb0aeff4c8ee7425255a453b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disableDuration: 3
+  disableDuration: 0
   waypoints:
   - {fileID: 1017443378091519611}
   - {fileID: 8147841755529842311}
   segmentSpeeds:
   - fromWaypointIndex: 0
     toWaypointIndex: 1
-    speed: 5
+    speed: 3
     delay: 0
   - fromWaypointIndex: 1
     toWaypointIndex: 0
-    speed: 5
+    speed: 3
     delay: 0
   isMovingActivated: 1
   disablePermanently: 0
@@ -348,6 +348,8 @@ MonoBehaviour:
   moveSpeed: 2
   savedActivatonStatus: 1
   savedPosition: {x: 0, y: 0, z: 0}
+  savedCurrentWaypointIndex: 0
+  savedNextWaypointIndex: 0
 --- !u!114 &4023379092095137286
 MonoBehaviour:
   m_ObjectHideFlags: 0

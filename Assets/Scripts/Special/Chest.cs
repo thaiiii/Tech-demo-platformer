@@ -60,7 +60,7 @@ public class Chest : MonoBehaviour
     {
         if (!isOpened)
         {
-            AudioManager.Instance.PlaySFX("chest_open");
+            
             isPlayerNearBy = true;
             player = collision.GetComponent<PlayerAbilities>();
         }
@@ -73,6 +73,7 @@ public class Chest : MonoBehaviour
 
     private void OpenChest()
     {
+        AudioManager.Instance.PlaySFX("chest_open");
         isOpened = true;
         spriteRenderer.sprite = chestOpenSprite;
         item.ActiveItem();

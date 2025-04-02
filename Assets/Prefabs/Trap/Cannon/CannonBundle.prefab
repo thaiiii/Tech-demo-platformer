@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7472763604487577198
 Transform:
   m_ObjectHideFlags: 0
@@ -284,7 +284,7 @@ MonoBehaviour:
   missilePrefab: {fileID: 7102816233473011773, guid: cb720378fc9721548b6ac930c4b4af8a, type: 3}
   firePoint: {fileID: 8814841330790594616}
   rotationSpeed: 5
-  fireRate: 3
+  fireRate: 2
   disableDuration: 3
   obstacleLayer:
     serializedVersion: 2

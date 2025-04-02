@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f00bb7137e0c6c4eb13410bb07d53a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  conveyorSpeed: 3
+  conveyorSpeed: 5
   moveRight: 1
   isActive: 1
   savedActivationStatus: 1

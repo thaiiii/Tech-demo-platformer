@@ -193,7 +193,7 @@ SpriteRenderer:
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
-  m_RendererPriority: 0
+  m_RendererPriority: -1
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -239,7 +239,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 20
+  m_Mass: 50
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 5
@@ -351,12 +351,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 558ecbdadfb2e4542b33b83afa3b0727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPosition: {x: -15, y: 1, z: 0}
+  startPosition: {x: 0, y: 0, z: 0}
   isShotHorizontally: 0
   allowKeepVelocity: 0
   isSliding: 0
   slipperyValue: 0
-  speed: 4
+  speed: 5
   environmentGravityScale: 5
   lastDirection: 0
   checkWallRadius: 0.6
@@ -366,10 +366,12 @@ MonoBehaviour:
   glassWallLayer:
     serializedVersion: 2
     m_Bits: 1024
+  isTouchingNormalWall: 0
   groundCheckCollider: {fileID: 4332633839407706824}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 46656
+    m_Bits: 1095232
+  _isGrounded: 0
 --- !u!114 &5613869237819076943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,7 +398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityOrder: 0
-  teleportRadius: 10
+  teleportRadius: 12
   towerLayer:
     serializedVersion: 2
     m_Bits: 8192
@@ -404,18 +406,20 @@ MonoBehaviour:
   currentTower: {fileID: 0}
   teleportDelay: 0.5
   storedVelocity: {x: 0, y: 0}
+  closestAvailableTower: {fileID: 0}
   playerBulletPrefab: {fileID: 4393764535513539557, guid: 5bf6e9e10ef59d547915eb89ce994b41, type: 3}
   isNearCannon: 0
   isInCannon: 0
   closestClone: {fileID: 0}
   slimeClonePrefab: {fileID: 126324649092060540, guid: 44adcf9d3f6783b4ab985437fc216054, type: 3}
-  swapControlRadius: 10
+  swapControlRadius: 5
   absorbRadius: 5
   isInRobot: 0
   isNearRobot: 0
   currentRobot: {fileID: 0}
   isNearNPC: 0
   isTalking: 0
+  isNearChest: 0
 --- !u!114 &4204455383805139926
 MonoBehaviour:
   m_ObjectHideFlags: 0
