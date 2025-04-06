@@ -6,41 +6,38 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    private static LevelManager Instance;
+    public static LevelManager Instance;
     private PauseMenu pauseMenu;
     private GameTimer gameTimer;
     private GameStats gameStats;
     private LevelCompleteMenu levelCompleteMenu;
     private InventoryManager inventoryManager;
-
-    [Header("Level Buttons Canvas")]
     private Transform levelsContainer;
 
+
+    Transform ui;
+    Button settingsButton;
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // Đảm bảo không bị phá hủy khi chuyển cảnh
+            SceneManager.sceneLoaded -= OnSceneLoaded; // Tránh đăng ký trùng
+            SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
         }
         else
         {
             Destroy(gameObject);
         }
 
-        pauseMenu = GetComponent<PauseMenu>();
-        gameTimer = GetComponent<GameTimer>();
-        gameStats = GetComponent<GameStats>();
-        inventoryManager = GetComponent<InventoryManager>();
-        levelCompleteMenu = GetComponent<LevelCompleteMenu>();
-
-        SceneManager.sceneLoaded += OnSceneLoaded; // Đăng ký sự kiện
+        
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeComponentReferences();
-        InitiallizeGameObjectReferences();
+        InitiallizeUIReferences();
     }
 
     private void OnDestroy()
@@ -50,6 +47,12 @@ public class LevelManager : MonoBehaviour
 
     private void InitializeComponentReferences()
     {
+        pauseMenu = GetComponent<PauseMenu>();
+        gameTimer = GetComponent<GameTimer>();
+        gameStats = GetComponent<GameStats>();
+        inventoryManager = GetComponent<InventoryManager>();
+        levelCompleteMenu = GetComponent<LevelCompleteMenu>();
+
         //Kiểm tra scene hiện tại
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "MainMenu")
@@ -73,26 +76,20 @@ public class LevelManager : MonoBehaviour
             gameStats.enabled = true;
         }
     }
-
-    private void InitiallizeGameObjectReferences()
+    private void InitiallizeUIReferences()
     {
         //Kiểm tra scene hiện tại
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene != "MainMenu")
             return;
-
-        levelsContainer = GameObject.Find("Levels")?.transform;
-        if (levelsContainer == null)
-        {
-            return;
-        }
+        
+        ui = GameObject.Find("Levels").transform;
+        settingsButton = ui.Find("SettingsButton").GetComponent<Button>();
+        levelsContainer = GameObject.Find("LevelsPanel")?.transform;
+        
         AssignLevelButtons();
-
-    }
-
-    void Start()
-    {
-
+        AssignOtherButtons();
+        
     }
 
     private void AssignLevelButtons()
@@ -111,8 +108,16 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
-
-    private void LoadLevel(string levelName)
+    private void AssignOtherButtons()
+    {
+        if (settingsButton == null)
+        {
+            return;
+        } 
+        settingsButton.onClick.RemoveAllListeners();
+        settingsButton.onClick.AddListener(LoadSettings);
+    }
+    public void LoadLevel(string levelName)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
@@ -123,4 +128,9 @@ public class LevelManager : MonoBehaviour
             Debug.LogError($"Level {levelName} does not exist or is not added to the build settings!");
         }
     }
+    public void LoadSettings()
+    {
+        SceneManager.LoadScene("SettingsMenu", LoadSceneMode.Additive);
+    }
+    
 }

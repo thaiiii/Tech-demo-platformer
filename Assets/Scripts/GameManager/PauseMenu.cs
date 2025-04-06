@@ -12,7 +12,6 @@ public class PauseMenu : MonoBehaviour
     private GameObject pauseMenuUI;
     private Player player;
     private GameTimer gameTimer; // Tham chiếu đến GameTimer
-    private GameObject settingsPanel;
 
     #region Stage
     private void Awake()
@@ -39,7 +38,6 @@ public class PauseMenu : MonoBehaviour
                 return;
             }
             pauseMenuUI = UI.transform.Find("PauseMenu").gameObject;
-            settingsPanel = UI.transform.Find("SettingsPanel").gameObject;
             GameObject buttons = pauseMenuUI.transform.Find("Buttons").gameObject;
             Button resumeButton = buttons.transform.Find("ResumeButton").GetComponent<Button>();
             Button restartButton = buttons.transform.Find("RestartButton").GetComponent<Button>();
@@ -65,7 +63,7 @@ public class PauseMenu : MonoBehaviour
             if (settingsButton != null)
             {
                 settingsButton.onClick.RemoveAllListeners();
-                settingsButton.onClick.AddListener(ToogleSettingsFromPause);
+                settingsButton.onClick.AddListener(OpenSettingsFromPause);
             }
         }
         else
@@ -98,7 +96,7 @@ public class PauseMenu : MonoBehaviour
                 return;
             if (isSettingsOpen)
             {
-                ToogleSettingsFromPause();
+                OpenSettingsFromPause();
                 return;
             }
             if (isPaused)
@@ -164,7 +162,7 @@ public class PauseMenu : MonoBehaviour
     public void LoadMenu()
     {
         Time.timeScale = 1; //Khoi phuc toc do game
-        SceneManager.LoadScene("MainMenu"); //Tai lai menu
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single); //Tai lai menu
     }
     public void RestartStage()
     {
@@ -200,11 +198,9 @@ public class PauseMenu : MonoBehaviour
         ResetAllHealthObject();
 
     }
-    public void ToogleSettingsFromPause()
+    public void OpenSettingsFromPause()
     {
-        pauseMenuUI.SetActive(!pauseMenuUI.activeSelf);        // Ẩn PauseMenu
-        settingsPanel.SetActive(!settingsPanel.activeSelf);       // Hiện SettingsPanel
-        isSettingsOpen = settingsPanel.activeSelf;
+        SceneManager.LoadScene("SettingsMenu", LoadSceneMode.Additive);
     }
     
     //Reset player and all health object

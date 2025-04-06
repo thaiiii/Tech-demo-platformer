@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
@@ -10,24 +11,26 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     public AudioSource bgmSource;
     public AudioSource sfxSource;
-    private AudioSource stopableSfxSource;
 
     [Header("Audio Clips")]
     public List<AudioClip> sfxClips;
-
     private Dictionary<string, AudioClip> sfxDict = new Dictionary<string, AudioClip>();
     private Dictionary<string, AudioSource> activeStopableSFX = new Dictionary<string, AudioSource>();
+
+    [Header("Volume")]
+    [SerializeField] private AudioMixer audioMixer;
+    private const string BGM_VOLUME = "BGMVolume";
+    private const string SFX_VOLUME = "SFXVolume";
+
+
+
+
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // Persist across scenes
-            foreach (AudioClip clip in sfxClips)
-            {
-                if (!sfxDict.ContainsKey(clip.name)) 
-                    sfxDict.Add(clip.name, clip);
-            }
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
@@ -37,13 +40,22 @@ public class AudioManager : MonoBehaviour
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        foreach (AudioClip clip in sfxClips)
+        {
+            if (!sfxDict.ContainsKey(clip.name))
+                sfxDict.Add(clip.name, clip);
+        }
         if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
             StopBGM();
+        }
         else
         {
             PlayBGM();
         }
     }
+
+    #region Play sfx & Bgm
     public void PlayBGM()
     {
         bgmSource.loop = true;
@@ -80,4 +92,24 @@ public class AudioManager : MonoBehaviour
             activeStopableSFX.Remove(sfxName);
         }
     }
+    #endregion
+
+    #region Volume
+    public void SetBGMVolume(float volume)
+    {
+        float volumeDb = Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f;
+        audioMixer.SetFloat(BGM_VOLUME, volumeDb);
+        PlayerPrefs.SetFloat(BGM_VOLUME, Mathf.Clamp(volume, 0.0001f, 1f));
+
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        float volumeDb = Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f;
+        audioMixer.SetFloat(SFX_VOLUME, volumeDb);
+        PlayerPrefs.SetFloat(SFX_VOLUME, Mathf.Clamp(volume, 0.0001f, 1f));
+    }
+    #endregion
+
+
 }

@@ -60,10 +60,14 @@ public class InventoryManager : MonoBehaviour
         savedInventorySlots.Clear();
         timeSinceLastUse = 5f;
 
-        if (SceneManager.GetActiveScene().name != "MainMenu")
-            player = FindAnyObjectByType<Player>().gameObject;
-        else
+        if (SceneManager.GetActiveScene().name == "MainMenu")
             player = null;
+        else if (SceneManager.GetActiveScene().name == "SettingsMenu")
+        {
+
+        }    
+        else
+            player = FindAnyObjectByType<Player>().gameObject;
     }
 
     private void OnDestroy()

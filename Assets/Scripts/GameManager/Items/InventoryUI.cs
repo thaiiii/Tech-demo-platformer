@@ -29,18 +29,21 @@ public class InventoryUI : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (SceneManager.GetActiveScene().name != "MainMenu")
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+            inventoryPanel = null;
+        else if (SceneManager.GetActiveScene().name == "SettingsMenu")
+        {
+        }
+        else
         {
             GameObject UI = GameObject.Find("General UI").gameObject;
             GameObject stageUI = UI.transform.Find("StageUI").gameObject;
             inventoryPanel = stageUI.transform.Find("InventoryPanel").transform;
         }
-        else
-            inventoryPanel = null;
     }
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;   
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     public void RefreshUI(List<InventoryManager.InventorySlot> inventorySlots)
     {
