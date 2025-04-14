@@ -31,7 +31,7 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        
+
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -62,7 +62,7 @@ public class LevelManager : MonoBehaviour
             pauseMenu.enabled = false;
             gameTimer.enabled = false;
             levelCompleteMenu.enabled = false;
-            inventoryManager.enabled = false;   
+            inventoryManager.enabled = false;
             gameStats.enabled = false;
 
         }
@@ -82,14 +82,14 @@ public class LevelManager : MonoBehaviour
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene != "MainMenu")
             return;
-        
+
         ui = GameObject.Find("Levels").transform;
         settingsButton = ui.Find("SettingsButton").GetComponent<Button>();
         levelsContainer = GameObject.Find("LevelsPanel")?.transform;
-        
+
         AssignLevelButtons();
         AssignOtherButtons();
-        
+
     }
 
     private void AssignLevelButtons()
@@ -113,9 +113,12 @@ public class LevelManager : MonoBehaviour
         if (settingsButton == null)
         {
             return;
-        } 
-        settingsButton.onClick.RemoveAllListeners();
-        settingsButton.onClick.AddListener(LoadSettings);
+        }
+        if (settingsButton.onClick.GetPersistentEventCount() == 0)
+        {
+            settingsButton.onClick.RemoveAllListeners();
+            settingsButton.onClick.AddListener(LoadSettings);
+        }
     }
     public void LoadLevel(string levelName)
     {
@@ -132,5 +135,5 @@ public class LevelManager : MonoBehaviour
     {
         SceneManager.LoadScene("SettingsMenu", LoadSceneMode.Additive);
     }
-    
+
 }

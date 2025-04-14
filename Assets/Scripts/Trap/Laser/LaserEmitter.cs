@@ -32,6 +32,7 @@ public class LaserEmitter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isLaserActivate) return;
         transform.rotation = Quaternion.Euler(0f, 0f, laserAngle);
         if (isLaserActivate)
         {
@@ -82,8 +83,9 @@ public class LaserEmitter : MonoBehaviour
     }
     public void DisableLaserWithoutCountdown()
     {
-        laserBeam.enabled = false;
         isLaserActivate = false;
+        laserBeam.enabled = false;
+        
         // Nếu có một countdown đang chạy, hủy nó
         if (countdownCoroutine != null)
         {
@@ -98,6 +100,10 @@ public class LaserEmitter : MonoBehaviour
     {
         if (!disablePermanently)
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
             // Bắt đầu đếm ngược để bật lại laser sau khi rời khỏi switch
             countdownCoroutine = StartCoroutine(TemporaryDisable(disableDuration));
         }
