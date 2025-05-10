@@ -70,6 +70,7 @@ public class NPCDialogue : MonoBehaviour
 
     private void StartConversation()
     {
+        player.GetComponent<Animator>().SetFloat("xVelocity", 0f) ;
         StartCoroutine(DelayNextDialog());
         AudioManager.Instance.PlaySFX("mumble");
         if (player.transform.position.x < transform.position.x)

@@ -43,6 +43,8 @@ public class Robot : MonoBehaviour
     public float dashCooldown = 5f; // Hồi chiêu Dash
     [SerializeField] public bool isDashing = false;
     [SerializeField] private float lastDashTime = 0;
+
+    float defaultRobotCameraSize;
     //=================================================================================
     private void Start()
     {
@@ -50,6 +52,7 @@ public class Robot : MonoBehaviour
         health = GetComponent<HealthComponent>();
         health.GetHealthSystem();
         virtualCamera = FindObjectOfType<CinemachineVirtualCamera>(); // Tìm Cinemachine Camera
+        defaultRobotCameraSize = virtualCamera.m_Lens.OrthographicSize + 1;
 
         //First save info
         restartPosition = transform.position;
@@ -125,7 +128,6 @@ public class Robot : MonoBehaviour
         #region Jump
         if (CheckRobotOnGround())
         {
-
             Vector2 jumpDir = Vector2.up;
             if (Input.GetKey(KeyCode.Space))
             {
@@ -178,7 +180,6 @@ public class Robot : MonoBehaviour
     }
     private void RobotSlide(float slipperyValue)
     {
-
         rb.AddForce(horizontalValue * robotSpeed * slipperyValue * Vector2.right);
     }
     public void SetControlled(bool controlled) => isControlled = controlled;
@@ -203,7 +204,7 @@ public class Robot : MonoBehaviour
     {
         Vector2 boxSize = new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f);
         Collider2D[] collider = Physics2D.OverlapBoxAll(groundCheck.position, boxSize, 0f, groundLayer);
-        if (collider.Length > 0) 
+        if (collider.Length > 0)
             return true;
         else
             return false;
@@ -218,7 +219,7 @@ public class Robot : MonoBehaviour
     public void LoadSavedRobotStatus()
     {
         ExitThisRobot();
-        
+
         canMove = true;
         isPlayerInRange = false;
         isDestroyed = savedDestroyStatus;
@@ -299,8 +300,6 @@ public class Robot : MonoBehaviour
             StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
     }
 
-
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -328,15 +327,14 @@ public class Robot : MonoBehaviour
         }
     }
 
-    private void SetCameraSize(float targetSize, float duration)
-    {
-        if (virtualCamera != null)
-        {
-            StartCoroutine(SmoothZoom( targetSize, duration));
-        }
-    }
+
     private IEnumerator SmoothZoom(float targetSize, float duration)
     {
+        if (duration == 0)
+        {
+            virtualCamera.m_Lens.OrthographicSize = targetSize;
+            yield return null;
+        }    
         float startSize = virtualCamera.m_Lens.OrthographicSize;
         float elapsedTime = 0f;
 
@@ -352,15 +350,17 @@ public class Robot : MonoBehaviour
     private void SetCamera()
     {
         if (chargeTime > 0)
-        {
-            SetCameraSize((virtualCamera.m_Lens.OrthographicSize + 1) * (1 + chargeTime / maxChargeTime / 2), 0);
-        }
+            SetCameraSize(defaultRobotCameraSize + (chargeTime/maxChargeTime) * 3f, 0f);
         else
+            SetCameraSize(defaultRobotCameraSize, 0.5f);
+    }
+    private void SetCameraSize(float targetSize, float duration)
+    {
+        if (virtualCamera != null)
         {
-            SetCameraSize(virtualCamera.m_Lens.OrthographicSize + 1, 0.2f);
+            StartCoroutine(SmoothZoom(targetSize, duration));
         }
     }
-
 
     private void OnDrawGizmosSelected()
     {

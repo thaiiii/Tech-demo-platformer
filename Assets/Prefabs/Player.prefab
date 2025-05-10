@@ -216,12 +216,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: c5633e20c54532144855410ba4a12e8c, type: 3}
+  m_Sprite: {fileID: -153694302, guid: c5633e20c54532144855410ba4a12e8c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.4, y: 0.4}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -243,14 +243,14 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 5
-  m_Material: {fileID: 6200000, guid: 56da0b99ddd7cee45b985aafcd2c2a31, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -263,7 +263,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 8276557472334215289}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: bfd09f91bd8191a468d0b77d91918304, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -286,12 +286,12 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.25, y: 1.25}
-    newSize: {x: 0.4, y: 0.4}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -338,7 +338,7 @@ MonoBehaviour:
   markLeftTile: {fileID: 11400000, guid: 909178a3b74f9534eb4d1eb7d90862bb, type: 2}
   floorLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1600
 --- !u!114 &3248228707705162313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,7 +359,7 @@ MonoBehaviour:
   speed: 5
   environmentGravityScale: 5
   lastDirection: 0
-  checkWallRadius: 0.6
+  wallCheckBox: {x: 0, y: 0, z: 0}
   normalWallLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -367,10 +367,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   isTouchingNormalWall: 0
+  isTouchingGlassWall: 0
   groundCheckCollider: {fileID: 4332633839407706824}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 1095232
+    m_Bits: 1094720
   _isGrounded: 0
 --- !u!114 &5613869237819076943
 MonoBehaviour:

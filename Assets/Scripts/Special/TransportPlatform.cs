@@ -1,28 +1,50 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class TransportPlatform : MonoBehaviour
 {
-    public List<string> applicableTags; // Các tag được phép di chuyển
-    private void OnCollisionEnter2D(Collision2D collision)
+    public List<string> applicableTags;
+    private Vector3 lastPosition;
+    private List<Rigidbody2D> carriedBodies = new List<Rigidbody2D>();
+
+    void Start()
+    {
+        lastPosition = transform.position;
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 delta = transform.position - lastPosition;
+
+        foreach (var rb in carriedBodies)
+        {
+            if (rb != null)
+            {
+                rb.position += (Vector2)delta; // Cộng delta vào vị trí thực
+            }
+        }
+
+        lastPosition = transform.position;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (applicableTags.Contains(collision.gameObject.tag))
         {
-            collision.transform.SetParent(transform, true);
+            Rigidbody2D rb = collision.collider.attachedRigidbody;
+            if (rb != null && !carriedBodies.Contains(rb))
+            {
+                carriedBodies.Add(rb);
+            }
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    void OnCollisionExit2D(Collision2D collision)
     {
-        // Kiểm tra nếu gameObject và cha còn tồn tại trước khi hủy liên kết
-        if (applicableTags.Contains(collision.gameObject.tag) &&
-            collision.transform != null &&
-            gameObject.activeInHierarchy &&
-            collision.gameObject.activeInHierarchy)
+        Rigidbody2D rb = collision.collider.attachedRigidbody;
+        if (rb != null)
         {
-
-            collision.transform.SetParent(null);
+            carriedBodies.Remove(rb);
         }
     }
 }

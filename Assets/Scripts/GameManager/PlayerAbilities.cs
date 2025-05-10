@@ -29,7 +29,8 @@ public class PlayerAbilities : MonoBehaviour
     public bool isHidden = false;
     [HideInInspector] public TeleportTower currentTower;
     [HideInInspector] public float teleportDelay = 0.5f;
-    [HideInInspector] public Vector2 storedVelocity;
+    //[HideInInspector]
+    public Vector2 storedVelocity;
     [SerializeField] private TeleportTower closestAvailableTower;
 
     [Header("Shooting")]
@@ -310,6 +311,7 @@ public class PlayerAbilities : MonoBehaviour
 
             // Khôi phục vận tốc trước khi teleport
             AudioManager.Instance.PlaySFX("enter");
+            StartCoroutine(TemporaryStopUpdatingHorizontalVelocity());
             rb.velocity = storedVelocity;
         }
     }
@@ -351,7 +353,7 @@ public class PlayerAbilities : MonoBehaviour
     private void PlayerShoot()
     {
         AudioManager.Instance.PlaySFX("shoot");
-        Instantiate(playerBulletPrefab, transform.position, transform.rotation);
+        Instantiate(playerBulletPrefab, transform.position + Vector3.up * 0.1f, transform.rotation);
     }
     public bool CanTalkToNPC() => (abilityOrder == 2);
     public bool CanOpenChest() => (abilityOrder == 1);

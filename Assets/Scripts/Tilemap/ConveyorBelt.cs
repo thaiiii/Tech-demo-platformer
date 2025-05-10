@@ -1,29 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ConveyorBelt : MonoBehaviour
 {
     private GameObject conveyorPlatform;
-    private List<Transform> objectsOnBelt = new List<Transform>(); //list các vật thể trên băng
+    private List<Transform> objectsOnBelt = new List<Transform>();
+    private Dictionary<Rigidbody2D, RigidbodyInterpolation2D> originalInterpolation = new Dictionary<Rigidbody2D, RigidbodyInterpolation2D>();
 
-    public float conveyorSpeed = 3f; // Tốc độ băng chuyền
-    public bool moveRight = true; // Hướng băng chuyền
+    public float conveyorSpeed = 3f;
+    public bool moveRight = true;
     public bool isActive = true;
 
-    //Save info
     public bool savedActivationStatus;
     public bool savedDirection = true;
 
-
     private void Start()
     {
-        // Tạo một object vô hình để giữ các vật thể trên băng chuyền
         conveyorPlatform = new GameObject("PushingObject");
         conveyorPlatform.transform.position = transform.position;
         conveyorPlatform.transform.SetParent(transform);
 
-        //First save
         savedDirection = moveRight;
         savedActivationStatus = isActive;
     }
@@ -32,8 +28,9 @@ public class ConveyorBelt : MonoBehaviour
     {
         if (isActive && objectsOnBelt.Count > 0)
         {
-            // Di chuyển nền tảng vô hình theo hướng băng chuyền
             float direction = moveRight ? 1 : -1;
+            if (moveRight)
+                GetComponent<SpriteRenderer>().flipX = true;
             conveyorPlatform.transform.position += new Vector3(conveyorSpeed * Time.deltaTime * direction, 0, 0);
         }
         if (objectsOnBelt.Count == 0)
@@ -41,7 +38,6 @@ public class ConveyorBelt : MonoBehaviour
             if (conveyorPlatform.transform.position != transform.position)
                 conveyorPlatform.transform.position = transform.position;
         }
-
     }
 
     private void LateUpdate()
@@ -51,7 +47,6 @@ public class ConveyorBelt : MonoBehaviour
             Vector3 offset = conveyorPlatform.transform.position - transform.position;
             conveyorPlatform.transform.position = transform.position;
 
-            //Di chuyển các vật thể về đúng chỗ tương ứng
             foreach (Transform obj in objectsOnBelt)
             {
                 obj.position += offset;
@@ -61,19 +56,36 @@ public class ConveyorBelt : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Khi vật thể chạm vào băng chuyền, đặt nó làm con của ConveyorPlatform
-        collision.transform.SetParent(conveyorPlatform.transform);
-        objectsOnBelt.Add(collision.transform);
+        Rigidbody2D rb = collision.rigidbody;
+        if (rb != null)
+        {
+            // Lưu lại trạng thái interpolate hiện tại
+            if (!originalInterpolation.ContainsKey(rb))
+            {
+                originalInterpolation.Add(rb, rb.interpolation);
+                rb.interpolation = RigidbodyInterpolation2D.None;
+            }
 
+            collision.transform.SetParent(conveyorPlatform.transform);
+            if (!objectsOnBelt.Contains(collision.transform))
+                objectsOnBelt.Add(collision.transform);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (!gameObject.activeInHierarchy) return; // Nếu băng chuyền bị vô hiệu hóa, không làm gì cả.
+        Rigidbody2D rb = collision.rigidbody;
+        if (rb != null)
+        {
+            if (originalInterpolation.ContainsKey(rb))
+            {
+                rb.interpolation = originalInterpolation[rb]; // Phục hồi lại interpolate gốc
+                originalInterpolation.Remove(rb);
+            }
+        }
 
         if (objectsOnBelt.Contains(collision.transform) && collision.transform.parent != null)
         {
-            // Khi rời băng chuyền, gỡ khỏi ConveyorPlatform
             collision.transform.SetParent(null);
             objectsOnBelt.Remove(collision.transform);
         }
@@ -84,5 +96,6 @@ public class ConveyorBelt : MonoBehaviour
         isActive = savedActivationStatus;
         moveRight = savedDirection;
     }
+
     public void SwitchDirection() => moveRight = !moveRight;
 }

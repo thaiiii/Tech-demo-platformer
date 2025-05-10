@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator animator;
+    Collider2D col;
     private GameTimer gameTimer;
     [HideInInspector] public Vector3 startPosition;
 
@@ -24,11 +25,12 @@ public class Player : MonoBehaviour
 
     [Header("Wall")]
     private float wallSlideSpeed = 2f;
-    [HideInInspector] public float checkWallRadius = 0.6f;
+    [HideInInspector] public Vector3 wallCheckBox;
     [HideInInspector] public LayerMask normalWallLayer; //normal wall block
     [HideInInspector] public LayerMask glassWallLayer; //glass wall block
-    [SerializeField] private bool isTouchingNormalWall = false;
-    private bool isTouchingGlassWall = false;
+    [HideInInspector] private bool isTouchingNormalWall = false;
+    [HideInInspector] private bool isTouchingGlassWall = false;
+
 
 
     [Header("Ground")]
@@ -58,10 +60,12 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         gameTimer = FindAnyObjectByType<GameTimer>();
+        col = GetComponent<Collider2D>();
     }
     void Start()
     {
         startPosition = transform.position;
+        wallCheckBox = col.bounds.size + new Vector3(0.2f, -0.2f, 0f);
     }
     void Update()
     {
@@ -91,10 +95,9 @@ public class Player : MonoBehaviour
             gameTimer.StartTimer();
         }
 
-
         // Kiểm tra xem người chơi có chạm vào block thường hay block kính
-        isTouchingNormalWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, normalWallLayer);
-        isTouchingGlassWall = Physics2D.OverlapCircle(transform.position, checkWallRadius, glassWallLayer);
+        isTouchingNormalWall = Physics2D.OverlapBox(transform.position, wallCheckBox, 0f, normalWallLayer);
+        isTouchingGlassWall = Physics2D.OverlapBox(transform.position, wallCheckBox, 0f, glassWallLayer);
         if (Input.GetButton("Jump") && (isTouchingNormalWall || isTouchingGlassWall))
         {
             // Tạm thời vô hiệu hóa trọng lực khi giữ Space
@@ -114,9 +117,9 @@ public class Player : MonoBehaviour
             }
 
             // Sử dụng Raycast để phát hiện hướng của tường
-            RaycastHit2D wallHit = Physics2D.Raycast(transform.position, Vector2.left, checkWallRadius, normalWallLayer | glassWallLayer);
+            RaycastHit2D wallHit = Physics2D.Raycast(transform.position, Vector2.left, wallCheckBox.x / 2 + 0.1f, normalWallLayer | glassWallLayer);
             bool isTouchingLeftWall = wallHit && wallHit.collider != null;
-            wallHit = Physics2D.Raycast(transform.position, Vector2.right, checkWallRadius, normalWallLayer | glassWallLayer);
+            wallHit = Physics2D.Raycast(transform.position, Vector2.right, wallCheckBox.x / 2 + 0.1f, normalWallLayer | glassWallLayer);
             bool isTouchingRightWall = wallHit && wallHit.collider != null;
 
             if (horizontalValue > 0 && isTouchingLeftWall)
@@ -279,11 +282,11 @@ public class Player : MonoBehaviour
     #endregion
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position, checkWallRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(transform.position, wallCheckBox);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawCube(groundCheckCollider.position, new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f));
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawCube(groundCheckCollider.position, new Vector2(GetComponent<Collider2D>().bounds.size.x - 0.1f, 0.1f));
     }
 
 }

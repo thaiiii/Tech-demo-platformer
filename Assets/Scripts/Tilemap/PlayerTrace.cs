@@ -58,62 +58,44 @@ public class PlayerTrace : MonoBehaviour
     void PlaceMark()
     {
         // Lấy tọa độ, scale của Player (có offset)
-        playerScale = transform.localScale.y;
-        Vector3 topOffset = new Vector3(0, -1.5f, 0);
-        Vector3 bottomOffset = new Vector3(0, 0.7f, 0);
-        Vector3 rightOffset = new Vector3(-0.6f * playerScale, 0, 0);
-        Vector3 leftOffset = new Vector3(0.6f * playerScale, 0, 0);
-        Vector3 playerPosition = transform.position;
-
-        Debug.DrawLine(playerPosition, playerPosition + rightOffset, Color.red);
-        Debug.DrawLine(playerPosition, playerPosition + leftOffset, Color.red);
-        //Debug.DrawLine(playerPosition, playerPosition + leftOffset*10, Color.red);
-        //Debug.DrawLine(new Vector3(0,0,0),new Vector3(1,1,1));
-
-        // Chuyển đổi vị trí của Player (có offset) sang tọa độ của các Tile cần mark
-        for (int i = 0; i < tilemaps.Count  ; i++)
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        if (playerCollider == null)
         {
-            Vector3Int topTilePosition = tilemaps[i].WorldToCell(playerPosition + topOffset);
-            Vector3Int bottomTilePosition = tilemaps[i].WorldToCell(playerPosition + bottomOffset);
-            Vector3Int rightTilePosition = tilemaps[i].WorldToCell(playerPosition + rightOffset);
-            Vector3Int leftTilePosition = tilemaps[i].WorldToCell(playerPosition + leftOffset);
+            Debug.LogWarning("Player doesn't have a Collider2D attached!");
+            return;
+        }
 
-            // Kiểm tra xem cá tile có phải là ô thuộc lớp "Floor" không
-            if (tilemaps[i].HasTile(topTilePosition) && tilemaps[i].GetTile(topTilePosition) != null)
-            {
-                // Đặt dấu vết lên Tile
-                if (markTopTilemap.GetTile(topTilePosition) == null)
-                {
-                    markTopTilemap.SetTile(topTilePosition, markTopTile);
-                }
-            }
+        Bounds bounds = playerCollider.bounds;
+        Vector3 center = bounds.center;
+        Vector3 extents = bounds.extents;
 
-            if (tilemaps[i].HasTile(bottomTilePosition) && tilemaps[i].GetTile(bottomTilePosition) != null)
-            {
-                // Đặt dấu vết lên Tile
-                if (markBottomTilemap.GetTile(bottomTilePosition) == null)
-                {
-                    markBottomTilemap.SetTile(bottomTilePosition, markBottomTile);
-                }
-            }
+        // Offset: cách các cạnh của collider
+        Vector3 bottomOffset = new Vector3(0, extents.y + 0.05f, 0);
+        Vector3 topOffset = new Vector3(0, -extents.y - 0.05f, 0);
+        Vector3 leftOffset = new Vector3(extents.x + 0.05f, 0, 0);
+        Vector3 rightOffset = new Vector3(-extents.x - 0.05f, 0, 0);
 
-            if (tilemaps[i].HasTile(rightTilePosition) && tilemaps[i].GetTile(rightTilePosition) != null)
-            {
-                // Đặt dấu vết lên Tile
-                if (markRightTilemap.GetTile(rightTilePosition) == null)
-                {
-                    markRightTilemap.SetTile(rightTilePosition, markRightTile);
-                }
-            }
+        
 
-            if (tilemaps[i].HasTile(leftTilePosition) && tilemaps[i].GetTile(leftTilePosition) != null)
-            {
-                // Đặt dấu vết lên Tile
-                if (markLeftTilemap.GetTile(leftTilePosition) == null)
-                {
-                    markLeftTilemap.SetTile(leftTilePosition, markLeftTile);
-                }
-            }
+        for (int i = 0; i < tilemaps.Count; i++)
+        {
+            Vector3Int topTile = tilemaps[i].WorldToCell(center + topOffset);
+            Vector3Int bottomTile = tilemaps[i].WorldToCell(center + bottomOffset);
+            Vector3Int rightTile = tilemaps[i].WorldToCell(center + rightOffset);
+            Vector3Int leftTile = tilemaps[i].WorldToCell(center + leftOffset);
+
+
+            if (tilemaps[i].HasTile(topTile) && markTopTilemap.GetTile(topTile) == null)
+                markTopTilemap.SetTile(topTile, markTopTile);
+
+            if (tilemaps[i].HasTile(bottomTile) && markBottomTilemap.GetTile(bottomTile) == null)
+                markBottomTilemap.SetTile(bottomTile, markBottomTile);
+
+            if (tilemaps[i].HasTile(rightTile) && markRightTilemap.GetTile(rightTile) == null)
+                markRightTilemap.SetTile(rightTile, markRightTile);
+
+            if (tilemaps[i].HasTile(leftTile) && markLeftTilemap.GetTile(leftTile) == null)
+                markLeftTilemap.SetTile(leftTile, markLeftTile);
         }
     }
 

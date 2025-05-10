@@ -5,6 +5,7 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     public bool isActivated = false;
+    public bool hasSound = true;
     Animator animator;
     private void Awake()
     {
@@ -16,7 +17,8 @@ public class Checkpoint : MonoBehaviour
         {
             if (!isActivated)
             {
-                AudioManager.Instance.PlaySFX("checkpoint");
+                if (hasSound)
+                    AudioManager.Instance.PlaySFX("checkpoint");
                 //Save time
                 SaveTime();
                 //Save info player

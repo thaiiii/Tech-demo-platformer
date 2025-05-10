@@ -99,7 +99,7 @@ public class PlayerEffects : MonoBehaviour
         FindFirstObjectByType<Player>().transform.localScale = targetScale;
 
         //Thay doi radius check wall
-        FindFirstObjectByType<Player>().checkWallRadius *= FindFirstObjectByType<Player>().transform.localScale.y;
+        FindFirstObjectByType<Player>().wallCheckBox *= FindFirstObjectByType<Player>().transform.localScale.y;
     }
     private IEnumerator SmoothZoom(float targetSize, float duration)
     {
