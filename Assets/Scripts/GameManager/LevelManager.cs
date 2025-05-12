@@ -17,6 +17,7 @@ public class LevelManager : MonoBehaviour
 
     Transform ui;
     Button settingsButton;
+    Button backButton;
     private void Awake()
     {
         if (Instance == null)
@@ -85,6 +86,7 @@ public class LevelManager : MonoBehaviour
 
         ui = GameObject.Find("Levels").transform;
         settingsButton = ui.Find("SettingsButton").GetComponent<Button>();
+        backButton = ui.Find("BackButton").GetComponent<Button>();
         levelsContainer = GameObject.Find("LevelsPanel")?.transform;
 
         AssignLevelButtons();
@@ -119,6 +121,16 @@ public class LevelManager : MonoBehaviour
             settingsButton.onClick.RemoveAllListeners();
             settingsButton.onClick.AddListener(LoadSettings);
         }
+
+        if (backButton == null)
+        {
+            return;
+        }
+        if (backButton.onClick.GetPersistentEventCount() == 0)
+        {
+            backButton.onClick.RemoveAllListeners();
+            backButton.onClick.AddListener(LoadStart);
+        }
     }
     public void LoadLevel(string levelName)
     {
@@ -134,6 +146,10 @@ public class LevelManager : MonoBehaviour
     public void LoadSettings()
     {
         SceneManager.LoadScene("SettingsMenu", LoadSceneMode.Additive);
+    }
+    public void LoadStart()
+    {
+        SceneManager.LoadScene("StartMenu");
     }
 
 }

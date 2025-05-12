@@ -31,6 +31,8 @@ public class ConveyorBelt : MonoBehaviour
             float direction = moveRight ? 1 : -1;
             if (moveRight)
                 GetComponent<SpriteRenderer>().flipX = true;
+            else
+                GetComponent<SpriteRenderer>().flipX=false;
             conveyorPlatform.transform.position += new Vector3(conveyorSpeed * Time.deltaTime * direction, 0, 0);
         }
         if (objectsOnBelt.Count == 0)
