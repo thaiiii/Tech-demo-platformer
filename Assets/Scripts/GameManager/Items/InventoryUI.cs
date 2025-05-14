@@ -34,6 +34,9 @@ public class InventoryUI : MonoBehaviour
         else if (SceneManager.GetActiveScene().name == "SettingsMenu")
         {
         }
+        else if (SceneManager.GetActiveScene().name == "StartMenu")
+        {
+        }
         else
         {
             GameObject UI = GameObject.Find("General UI").gameObject;

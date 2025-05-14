@@ -106,6 +106,9 @@ public class LevelCompleteMenu : MonoBehaviour
         levelSummaryUI.SetActive(true);
         Time.timeScale = 0; // Tạm dừng game
 
+        //Xử lý level unlock
+        UnlockLevel();
+
         // Hiển thị số lần chết và thời gian
         deathsText.text = $"Deaths: {GameStats.Instance.levelDeaths}";
         timeText.text = $"Time: {GameStats.Instance.levelTime:F2}";
@@ -135,5 +138,29 @@ public class LevelCompleteMenu : MonoBehaviour
         pauseMenu.RestartStage();
         levelSummaryUI.SetActive(false);
     }
+
+ 
+    void UnlockLevel()
+    {
+        Debug.Log("check");
+        string sceneName = SceneManager.GetActiveScene().name;
+        int levelNumber = ExtractLevelNumber(sceneName);
+
+        // Unlock màn kế tiếp (levelNumber + 1)
+        GetComponent<LevelManager>().SaveLevelUnlocked(levelNumber + 1);
+    }
+    int ExtractLevelNumber(string sceneName)
+    {
+        // Giả sử tên luôn bắt đầu bằng "Level"
+        string numberPart = sceneName.Replace("Level", "");
+        int.TryParse(numberPart, out int level);
+        return level;
+    }
     #endregion
+
+    [ContextMenu("Check level unlock")]
+    void CheckLevelUnlock()
+    {
+        Debug.Log(PlayerPrefs.GetInt("HighestLevel", 1));
+    }
 }

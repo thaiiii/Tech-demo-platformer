@@ -20,7 +20,8 @@ public class PauseMenu : MonoBehaviour
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        isPaused = false;
+        if (!isSettingsOpen)
+            isPaused = false;
         InitializeUIReferences(); // Cập nhật tham chiếu khi scene mới được tải
         InitializeGameObjectReferences(); //Cập nhật tham chiếu các game object khác
     }
@@ -83,7 +84,7 @@ public class PauseMenu : MonoBehaviour
             gameTimer = null;
             player = null;
         }
-            
+
     }
 
     // Update is called once per frame
@@ -94,12 +95,7 @@ public class PauseMenu : MonoBehaviour
         {
             if (CheckTalking())
                 return;
-            if (isSettingsOpen)
-            {
-                OpenSettingsFromPause();
-                return;
-            }
-            if (isPaused)
+            if (isPaused && !isSettingsOpen)
             {
                 ResumeStage();
                 return;
@@ -168,7 +164,6 @@ public class PauseMenu : MonoBehaviour
     {
         FindObjectOfType<LevelCompleteMenu>().isComplete = false;
         isPaused = false;
-
         Time.timeScale = 1f;
         pauseMenuUI.SetActive(false);
         //Reset objects method here
@@ -200,9 +195,10 @@ public class PauseMenu : MonoBehaviour
     }
     public void OpenSettingsFromPause()
     {
+        isSettingsOpen = true;
         SceneManager.LoadScene("SettingsMenu", LoadSceneMode.Additive);
     }
-    
+
     //Reset player and all health object
     private void ResetPlayer()
     {

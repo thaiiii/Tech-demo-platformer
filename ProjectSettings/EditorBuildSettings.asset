@@ -15,10 +15,13 @@ EditorBuildSettings:
     path: Assets/Scenes/SettingsMenu.unity
     guid: 88583438cdf988643bb3606b24484542
   - enabled: 1
-    path: Assets/Scenes/TechDemoStage.unity
+    path: Assets/Scenes/Level 0.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/Level (2).unity
+    path: Assets/Scenes/Level 1.unity
+    guid: e20c805010f18a24eafc77fdd4abb85c
+  - enabled: 1
+    path: Assets/Scenes/Level 2.unity
     guid: b4240135779b3754a9c9499ed907f1f0
   - enabled: 0
     path: Assets/Scenes/Level (3).unity

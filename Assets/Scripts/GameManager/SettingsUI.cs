@@ -45,6 +45,7 @@ public class SettingsUI : MonoBehaviour
     public void BackFromSettings()
     {
         // Unload scene Settings
+        FindAnyObjectByType<PauseMenu>().isSettingsOpen = false;
         SceneManager.UnloadSceneAsync("SettingsMenu");
     }
     private void LoadAudioSettings()

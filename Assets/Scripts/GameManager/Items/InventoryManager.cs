@@ -65,7 +65,11 @@ public class InventoryManager : MonoBehaviour
         else if (SceneManager.GetActiveScene().name == "SettingsMenu")
         {
 
-        }    
+        }   
+        else if (SceneManager.GetActiveScene().name == "StartMenu")
+        {
+
+        }
         else
             player = FindAnyObjectByType<Player>().gameObject;
     }
