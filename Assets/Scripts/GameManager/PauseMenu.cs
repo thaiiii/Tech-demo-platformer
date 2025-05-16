@@ -31,7 +31,11 @@ public class PauseMenu : MonoBehaviour
     }
     private void InitializeUIReferences()
     {
-        if (SceneManager.GetActiveScene().name != "MainMenu")
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+            pauseMenuUI = null;
+        else if (SceneManager.GetActiveScene().name == "StartMenu")
+            pauseMenuUI = null;
+        else
         {
             GameObject UI = GameObject.Find("General UI");
             if (UI == null)
@@ -54,7 +58,7 @@ public class PauseMenu : MonoBehaviour
             if (restartButton != null)
             {
                 restartButton.onClick.RemoveAllListeners();
-                restartButton.onClick.AddListener(RestartStage);
+                restartButton.onClick.AddListener(() => RestartStage(false));
             }
             if (menuButton != null)
             {
@@ -67,22 +71,24 @@ public class PauseMenu : MonoBehaviour
                 settingsButton.onClick.AddListener(OpenSettingsFromPause);
             }
         }
-        else
-        {
-            pauseMenuUI = null;
-        }
+
     }
     private void InitializeGameObjectReferences()
     {
-        if (SceneManager.GetActiveScene().name != "MainMenu")
-        {
-            gameTimer = FindAnyObjectByType<GameTimer>();
-            player = FindAnyObjectByType<Player>();
-        }
-        else
+        if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             gameTimer = null;
             player = null;
+        }
+        else if (SceneManager.GetActiveScene().name == "StartMenu")
+        {
+            gameTimer = null;
+            player = null;
+        }
+        else
+        {
+            gameTimer = FindAnyObjectByType<GameTimer>();
+            player = FindAnyObjectByType<Player>();
         }
 
     }
@@ -160,7 +166,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1; //Khoi phuc toc do game
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single); //Tai lai menu
     }
-    public void RestartStage()
+    public void RestartStage(bool isFromBeginning)
     {
         FindObjectOfType<LevelCompleteMenu>().isComplete = false;
         isPaused = false;
@@ -179,6 +185,8 @@ public class PauseMenu : MonoBehaviour
         ResetConveyorBelt();
         ResetChest();
         ResetPushableBox();
+        if (isFromBeginning)
+            ResetCheckpoint();
 
         //Reset trap position and status
         ResetCannon();
@@ -189,7 +197,7 @@ public class PauseMenu : MonoBehaviour
         ResetGun();
 
         //ResetPlayer
-        ResetPlayer();
+        ResetPlayer(isFromBeginning);
         ResetAllHealthObject();
 
     }
@@ -200,14 +208,14 @@ public class PauseMenu : MonoBehaviour
     }
 
     //Reset player and all health object
-    private void ResetPlayer()
+    private void ResetPlayer(bool isFromBeginning)
     {
         player.GetComponent<SpriteRenderer>().enabled = true;
         player.GetComponent<PlayerAbilities>().ExitTower();
         player.GetComponent<PlayerAbilities>().ExitCannon(Vector2.up, 0f);
         player.GetComponent<PlayerAbilities>().ExitRobot();
         player.transform.parent = null;
-        player.ResetPosition();
+        player.ResetPosition(isFromBeginning);
 
     }
     private void ResetAllHealthObject()
@@ -300,7 +308,15 @@ public class PauseMenu : MonoBehaviour
             pushableBox.LoadStartPosition();
         }
     }
-
+    private void ResetCheckpoint()
+    {
+        List<Checkpoint> checkpoints = new List<Checkpoint>(FindObjectsOfType<Checkpoint>());
+        foreach (Checkpoint cp in checkpoints)
+        {
+            cp.isActivated = false;
+            cp.GetComponent<Animator>().SetBool("isActivated", cp.isActivated);
+        }
+    }
     //Reset trap
     private void ResetCannon()
     {

@@ -101,7 +101,7 @@ public class PlayerDeath : MonoBehaviour
         deathUI.SetActive(false);
         isDead = false;
 
-        FindAnyObjectByType<PauseMenu>().RestartStage();
+        FindAnyObjectByType<PauseMenu>().RestartStage(false);
         virtualCamera.Follow = transform;
 
     }

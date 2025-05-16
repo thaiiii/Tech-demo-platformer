@@ -151,7 +151,6 @@ public class LevelManager : MonoBehaviour
         }
         if (settingsButton.onClick.GetPersistentEventCount() == 0)
         {
-            settingsButton.onClick.RemoveAllListeners();
             settingsButton.onClick.AddListener(LoadSettings);
         }
 
@@ -161,7 +160,6 @@ public class LevelManager : MonoBehaviour
         }
         if (backButton.onClick.GetPersistentEventCount() == 0)
         {
-            backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(LoadStart);
         }
     }

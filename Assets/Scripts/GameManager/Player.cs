@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     Collider2D col;
     private GameTimer gameTimer;
     [HideInInspector] public Vector3 startPosition;
+    [HideInInspector] public Vector3 respawnPosition;
 
     [Header("Movement")]
     private bool hasMoved = false; //Kiem tra xem da di chuyen chua
@@ -65,6 +66,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         startPosition = transform.position;
+        respawnPosition = transform.position;
         wallCheckBox = col.bounds.size + new Vector3(0.2f, -0.2f, 0f);
     }
     void Update()
@@ -240,10 +242,16 @@ public class Player : MonoBehaviour
 
 
     #region Stage
-    public void ResetPosition() // Trạng thái về vị trí spawn, chưa từng di chuyển
+    public void ResetPosition(bool isFromBeginning) // Trạng thái về vị trí spawn, chưa từng di chuyển
     {
         LockMove(false);
-        transform.position = startPosition;
+        if (isFromBeginning)
+        {
+            transform.position = startPosition;
+            respawnPosition = startPosition;
+        }
+        else
+            transform.position = respawnPosition;
         hasMoved = false;
         isMoveable = true;
         rb.gravityScale = 5f;
@@ -276,7 +284,7 @@ public class Player : MonoBehaviour
     }
     public void Death() //Chết = không cho phép di chuyển + về vị trí spawn, chưa từng di chuyển
     {
-        ResetPosition();
+        ResetPosition(false);
         LockMove(false);
     }
     #endregion

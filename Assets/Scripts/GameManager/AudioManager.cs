@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,10 @@ public class AudioManager : MonoBehaviour
     public List<AudioClip> sfxClips;
     private Dictionary<string, AudioClip> sfxDict = new Dictionary<string, AudioClip>();
     private Dictionary<string, AudioSource> activeStopableSFX = new Dictionary<string, AudioSource>();
+
+    [Header("BGM")]
+    public List<AudioClip> bgmClips;
+    private Dictionary<string, AudioClip> bgmDict = new Dictionary<string, AudioClip>();
 
     [Header("Volume")]
     [SerializeField] private AudioMixer audioMixer;
@@ -45,21 +50,31 @@ public class AudioManager : MonoBehaviour
             if (!sfxDict.ContainsKey(clip.name))
                 sfxDict.Add(clip.name, clip);
         }
-        if (SceneManager.GetActiveScene().name == "MainMenu")
+        foreach (AudioClip clip in bgmClips)
         {
-            StopBGM();
+            if (!bgmDict.ContainsKey(clip.name))
+                bgmDict.Add(clip.name, clip);
+        }
+        if (SceneManager.GetActiveScene().name == "MainMenu" || SceneManager.GetActiveScene().name == "StartMenu")
+        {
+            if(!bgmSource.isPlaying)
+                PlayBGM("bgm02");
         }
         else
         {
-            PlayBGM();
+            PlayBGM("bgm01");
         }
     }
 
     #region Play sfx & Bgm
-    public void PlayBGM()
+    public void PlayBGM(string bgm)
     {
-        bgmSource.loop = true;
-        bgmSource.Play();
+        if (bgmDict.TryGetValue(bgm, out AudioClip clip))
+        {
+            bgmSource.clip = clip;
+            bgmSource.loop = true;
+            bgmSource.Play();
+        }
     }
     public void StopBGM() => bgmSource.Stop();
     public void PlaySFX(string sfxName)
@@ -102,7 +117,6 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.SetFloat(BGM_VOLUME, Mathf.Clamp(volume, 0.0001f, 1f));
 
     }
-
     public void SetSFXVolume(float volume)
     {
         float volumeDb = Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f;

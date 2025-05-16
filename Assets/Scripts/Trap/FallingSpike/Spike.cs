@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Spike : MonoBehaviour
 {
@@ -10,6 +11,12 @@ public class Spike : MonoBehaviour
     {
         // Gọi sự kiện hủy gai
         OnSpikeDestroyed?.Invoke();
+        StartCoroutine(DelayDestroy());
+    }
+    
+    IEnumerator DelayDestroy()
+    {
+        yield return new WaitForSeconds(0.2f);
         Destroy(gameObject); // Hủy gai
     }
 }

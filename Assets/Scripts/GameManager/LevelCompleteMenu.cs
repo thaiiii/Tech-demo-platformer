@@ -25,7 +25,20 @@ public class LevelCompleteMenu : MonoBehaviour
     }
     private void InitializeUIReferences()
     {
-        if (SceneManager.GetActiveScene().name != "MainMenu")
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            levelSummaryUI = null;
+            deathsText = null;
+            timeText = null;
+            nextLevelButton = null;
+            restartLevelButton = null;
+            mainMenuButton = null;
+        }
+        else if (SceneManager.GetActiveScene().name == "StartMenu")
+        {
+
+        }
+        else
         {
             //Tìm các UI tong scene
             GameObject UI = GameObject.Find("General UI");
@@ -36,9 +49,10 @@ public class LevelCompleteMenu : MonoBehaviour
             levelSummaryUI = UI.transform.Find("LevelCompleteUI").gameObject;
             deathsText = levelSummaryUI.transform.Find("LevelDeath").GetComponent<TextMeshProUGUI>();
             timeText = levelSummaryUI.transform.Find("LevelTime").GetComponent<TextMeshProUGUI>();
-            nextLevelButton = levelSummaryUI.transform.Find("NextButton").GetComponent<Button>();
-            restartLevelButton = levelSummaryUI.transform.Find("RestartButton").GetComponent<Button>();
-            mainMenuButton = levelSummaryUI.transform.Find("MenuButton").GetComponent<Button>();
+            GameObject buttons = levelSummaryUI.transform.Find("Buttons").gameObject;
+            nextLevelButton = buttons.transform.Find("NextButton").GetComponent<Button>();
+            restartLevelButton = buttons.transform.Find("RestartButton").GetComponent<Button>();
+            mainMenuButton = buttons.transform.Find("MenuButton").GetComponent<Button>();
 
             //Gắn sự kiện cho các nút
             if (nextLevelButton != null)
@@ -57,15 +71,7 @@ public class LevelCompleteMenu : MonoBehaviour
                 mainMenuButton.onClick.AddListener(LoadMenu);
             }
         }
-        else
-        {
-            levelSummaryUI = null;
-            deathsText = null;
-            timeText = null;
-            nextLevelButton = null;
-            restartLevelButton = null;
-            mainMenuButton = null;
-        }
+        
     }
     private void InitiallizeGameObjectReferences()
     {
@@ -135,14 +141,13 @@ public class LevelCompleteMenu : MonoBehaviour
     }
     public void RestartLevel()
     {
-        pauseMenu.RestartStage();
+        pauseMenu.RestartStage(true);
         levelSummaryUI.SetActive(false);
     }
 
  
     void UnlockLevel()
     {
-        Debug.Log("check");
         string sceneName = SceneManager.GetActiveScene().name;
         int levelNumber = ExtractLevelNumber(sceneName);
 

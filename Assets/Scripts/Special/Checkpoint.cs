@@ -74,7 +74,7 @@ public class Checkpoint : MonoBehaviour
     }
     private void SavePlayer(GameObject player)
     {
-        player.GetComponent<Player>().startPosition = transform.position + Vector3.up * 1f + Vector3.right * 1.5f;
+        player.GetComponent<Player>().respawnPosition = transform.position + Vector3.up * 1f + Vector3.right * 1.5f;
         List<HealthComponent> healthComponents = new List<HealthComponent>(FindObjectsOfType<HealthComponent>());
         foreach (HealthComponent health in healthComponents)
         {
