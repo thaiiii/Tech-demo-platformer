@@ -45,7 +45,7 @@ public class GunTrap : MonoBehaviour
         bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
 
         // Hủy đạn sau một thời gian (tránh tiêu tốn tài nguyên)
-        Destroy(bullet, 5f);
+        Destroy(bullet, 10f);
     }
     public void LoadSavedGunStatus()
     {
